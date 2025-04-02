@@ -1,4 +1,5 @@
 ---
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCategories, getBlogPostsByCategory } from '../../lib/supabase';
 
 // Dinamik rota parametresini al
@@ -19,129 +20,83 @@ if (!category) {
 const posts = await getBlogPostsByCategory(category.id);
 
 const pageTitle = category.name;
+const description = category.description || `${category.name} bölgesinde bina güçlendirme hizmetleri`;
 ---
 
-<html lang="tr">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{pageTitle}</title>
-		<style>
-			body {
-				font-family: Arial, sans-serif;
-				max-width: 800px;
-				margin: 0 auto;
-				padding: 20px;
-				line-height: 1.6;
-			}
-			header {
-				border-bottom: 1px solid #ddd;
-				margin-bottom: 20px;
-				padding-bottom: 10px;
-			}
-			.nav-links {
-				display: flex;
-				gap: 15px;
-				margin-bottom: 20px;
-			}
-			.category-info {
-				background-color: #f4f4f4;
-				padding: 15px;
-				border-radius: 4px;
-				margin-bottom: 20px;
-			}
-			.post-list {
-				display: flex;
-				flex-direction: column;
-				gap: 20px;
-			}
-			.post-card {
-				border: 1px solid #ddd;
-				border-radius: 4px;
-				padding: 15px;
-				transition: transform 0.2s;
-			}
-			.post-card:hover {
-				transform: translateY(-3px);
-				box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-			}
-			.post-title {
-				margin-top: 0;
-				font-size: 1.3rem;
-			}
-			.post-date {
-				color: #666;
-				font-size: 0.9rem;
-				margin-bottom: 10px;
-			}
-			.post-link {
-				display: inline-block;
-				margin-top: 10px;
-				color: #0066cc;
-				text-decoration: none;
-			}
-			.post-link:hover {
-				text-decoration: underline;
-			}
-			.no-posts {
-				background-color: #f8f8f8;
-				padding: 20px;
-				border-radius: 4px;
-				text-align: center;
-				color: #666;
-			}
-			footer {
-				margin-top: 30px;
-				border-top: 1px solid #ddd;
-				padding-top: 10px;
-				font-size: 0.9em;
-				color: #666;
-			}
-		</style>
-	</head>
-	<body>
-		<header>
-			<h1>{pageTitle}</h1>
-			<div class="nav-links">
-				<a href="/">Ana Sayfa</a>
-				<a href="/kategoriler">Kategoriler</a>
-				<a href="/hakkinda">Hakkında</a>
-			</div>
-		</header>
-		
-		<main>
-			<div class="category-info">
-				<p><strong>Kategori:</strong> {category.name}</p>
-				{category.description && <p>{category.description}</p>}
-				<p><strong>Makale Sayısı:</strong> {posts.length}</p>
-			</div>
-			
-			{posts.length === 0 ? (
-				<div class="no-posts">
-					<p>Bu kategoride henüz makale bulunmamaktadır.</p>
+<BaseLayout pageTitle={pageTitle} description={description}>
+	<div class="category-info">
+		<p><strong>Kategori:</strong> {category.name}</p>
+		{category.description && <p>{category.description}</p>}
+		<p><strong>Makale Sayısı:</strong> {posts.length}</p>
+	</div>
+	
+	{posts.length === 0 ? (
+		<div class="no-posts">
+			<p>Bu kategoride henüz makale bulunmamaktadır.</p>
+		</div>
+	) : (
+		<div class="post-list">
+			{posts.map((post) => (
+				<div class="post-card">
+					<h2 class="post-title">{post.title}</h2>
+					<p class="post-date">
+						{new Date(post.created_at).toLocaleDateString('tr-TR')}
+					</p>
+					<p>{post.meta_description}</p>
+					<a href={`/blog/${post.slug}`} class="post-link">
+						Devamını Oku →
+					</a>
 				</div>
-			) : (
-				<div class="post-list">
-					{posts.map((post) => (
-						<div class="post-card">
-							<h2 class="post-title">{post.title}</h2>
-							<p class="post-date">
-								{new Date(post.created_at).toLocaleDateString('tr-TR')}
-							</p>
-							<p>{post.meta_description}</p>
-							<a href={`/blog/${post.slug}`} class="post-link">
-								Devamını Oku →
-							</a>
-						</div>
-					))}
-				</div>
-			)}
-		</main>
-		
-		<footer>
-			<p>© {new Date().getFullYear()} Coolify Test Projesi</p>
-		</footer>
-	</body>
-</html> 
+			))}
+		</div>
+	)}
+	
+	<style>
+		.category-info {
+			background-color: #f4f4f4;
+			padding: 15px;
+			border-radius: 4px;
+			margin-bottom: 20px;
+		}
+		.post-list {
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+		}
+		.post-card {
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			padding: 15px;
+			transition: transform 0.2s;
+		}
+		.post-card:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+		}
+		.post-title {
+			margin-top: 0;
+			font-size: 1.3rem;
+		}
+		.post-date {
+			color: #666;
+			font-size: 0.9rem;
+			margin-bottom: 10px;
+		}
+		.post-link {
+			display: inline-block;
+			margin-top: 10px;
+			color: #0066cc;
+			text-decoration: none;
+		}
+		.post-link:hover {
+			text-decoration: underline;
+		}
+		.no-posts {
+			background-color: #f8f8f8;
+			padding: 20px;
+			border-radius: 4px;
+			text-align: center;
+			color: #666;
+		}
+	</style>
+</BaseLayout> 

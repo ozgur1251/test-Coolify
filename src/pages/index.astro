@@ -52,15 +52,6 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
   </div>
 
   <style>
-    :root {
-      --max-width: 1200px;
-      --card-min-width: 280px;
-    }
-    
-    body {
-      max-width: var(--max-width);
-      width: 90%;
-    }
     .categories-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(var(--card-min-width), 1fr));
@@ -141,27 +132,6 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
     }
     .category-link:hover {
       background-color: #004d99;
-    }
-    
-    @media (min-width: 1600px) {
-      :root {
-        --max-width: 1400px;
-        --card-min-width: 300px;
-      }
-    }
-    
-    /* Mobil uyumluluk için */
-    @media (max-width: 768px) {
-      :root {
-        --card-min-width: 240px;
-      }
-      body {
-        width: 95%;
-        padding: 15px;
-      }
-      .categories-grid {
-        gap: 20px;
-      }
     }
     
     @media (max-width: 600px) {
