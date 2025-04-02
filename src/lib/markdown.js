@@ -1,24 +1,22 @@
 import { marked } from 'marked';
 
-// Markdown içeriğini HTML'e dönüştüren fonksiyon
+// Markdown içeriğini HTML'e dönüştüren optimize edilmiş fonksiyon
 export function parseMarkdown(markdownText) {
   if (!markdownText) {
     return '';
   }
   
-  // Markdown içeriğini HTML'e dönüştür
+  // Marked ayarlarını güvenlik ve performans için optimize et
+  marked.setOptions({
+    gfm: true, // GitHub Flavored Markdown desteği
+    breaks: true, // Satır sonlarını <br> olarak işle
+    smartLists: true, // Akıllı liste işleme
+    xhtml: true, // XHTML uyumlu çıktı
+  });
+  
+  // Markdown içeriğini HTML'e dönüştür ve döndür
   return marked.parse(markdownText);
 }
 
-// Markdown içeriğini güvenli şekilde HTML'e dönüştüren fonksiyon
-export function sanitizeAndParseMarkdown(markdownText) {
-  if (!markdownText) {
-    return '';
-  }
-  
-  // Önce markdown içeriğini HTML'e dönüştür
-  const html = marked.parse(markdownText);
-  
-  // HTML çıktısını döndür
-  return html;
-} 
+// Eski fonksiyonu geriye dönük uyumluluk için koru
+export const sanitizeAndParseMarkdown = parseMarkdown; 

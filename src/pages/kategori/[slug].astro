@@ -50,53 +50,65 @@ const description = category.description || `${category.name} bölgesinde bina g
 			))}
 		</div>
 	)}
-	
-	<style>
-		.category-info {
-			background-color: #f4f4f4;
-			padding: 15px;
-			border-radius: 4px;
-			margin-bottom: 20px;
-		}
-		.post-list {
-			display: flex;
-			flex-direction: column;
-			gap: 20px;
-		}
-		.post-card {
-			border: 1px solid #ddd;
-			border-radius: 4px;
-			padding: 15px;
-			transition: transform 0.2s;
-		}
-		.post-card:hover {
-			transform: translateY(-3px);
-			box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-		}
-		.post-title {
-			margin-top: 0;
-			font-size: 1.3rem;
-		}
-		.post-date {
-			color: #666;
-			font-size: 0.9rem;
-			margin-bottom: 10px;
-		}
-		.post-link {
-			display: inline-block;
-			margin-top: 10px;
-			color: #0066cc;
-			text-decoration: none;
-		}
-		.post-link:hover {
-			text-decoration: underline;
-		}
-		.no-posts {
-			background-color: #f8f8f8;
-			padding: 20px;
-			border-radius: 4px;
-			text-align: center;
-			color: #666;
-		}
-	</style>
-</BaseLayout> 
+</BaseLayout>
+
+<style>
+  .category-info {
+    background-color: #f4f4f4;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  
+  /* Post listeleme stilleri */
+  .post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .post-card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .post-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  
+  .post-title {
+    margin-top: 0;
+    font-size: 1.3rem;
+  }
+  
+  .post-date, .post-link {
+    font-size: 0.9rem;
+  }
+  
+  .post-date {
+    color: #666;
+    margin-bottom: 10px;
+  }
+  
+  .post-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #0066cc;
+    text-decoration: none;
+  }
+  
+  .post-link:hover {
+    text-decoration: underline;
+  }
+  
+  .no-posts {
+    background-color: #f8f8f8;
+    padding: 20px;
+    border-radius: 4px;
+    text-align: center;
+    color: #666;
+  }
+</style>
