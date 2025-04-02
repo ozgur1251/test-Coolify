@@ -1,64 +1,16 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
 const pageTitle = "Hakkımızda";
 ---
 
-<html lang="tr">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{pageTitle}</title>
-		<style>
-			body {
-				font-family: Arial, sans-serif;
-				max-width: 800px;
-				margin: 0 auto;
-				padding: 20px;
-				line-height: 1.6;
-			}
-			header {
-				border-bottom: 1px solid #ddd;
-				margin-bottom: 20px;
-				padding-bottom: 10px;
-			}
-			.nav-links {
-				display: flex;
-				gap: 15px;
-				margin-bottom: 20px;
-			}
-			footer {
-				margin-top: 30px;
-				border-top: 1px solid #ddd;
-				padding-top: 10px;
-				font-size: 0.9em;
-				color: #666;
-			}
-		</style>
-	</head>
-	<body>
-		<header>
-			<h1>{pageTitle}</h1>
-			<div class="nav-links">
-				<a href="/">Ana Sayfa</a>
-				<a href="/kategoriler">Kategoriler</a>
-				<a href="/hakkinda">Hakkımızda</a>
-			</div>
-		</header>
-		
-		<main>
-			<h2>Firmamız Hakkında</h2>
-			<p>İstanbul Bina Güçlendirme, 2010 yılından bu yana İstanbul ve çevresinde yüksek kaliteli bina güçlendirme hizmetleri sunmaktadır. Uzman kadromuz ve modern teknolojilerimizle binaların güvenliğini en üst seviyeye çıkarmak için çalışıyoruz.</p>
-			
-			<h2>Uzmanlık Alanlarımız</h2>
-			<p>Karbon fiber, CFRP, kolon güçlendirme, kiriş güçlendirme, yapısal güçlendirme ve betonarme güçlendirme konularında uzmanız. Depreme dayanıklı bina tasarımı ve güçlendirmesi konusunda geniş bir tecrübeye sahibiz.</p>
-			
-			<h2>Misyonumuz</h2>
-			<p>Müşterilerimize en yüksek kalitede hizmet sunarak, binaların güvenliğini ve dayanıklılığını artırmak için çalışıyoruz. Deprem riskine karşı binaları korumak ve güçlendirmek, toplum güvenliğine katkıda bulunmak en önemli hedefimizdir.</p>
-		</main>
-		
-		<footer>
-			<p>© {new Date().getFullYear()} İstanbul Bina Güçlendirme</p>
-		</footer>
-	</body>
-</html> 
+<BaseLayout pageTitle={pageTitle}>
+	<h2>Firmamız Hakkında</h2>
+	<p>İstanbul Bina Güçlendirme, 2010 yılından bu yana İstanbul ve çevresinde yüksek kaliteli bina güçlendirme hizmetleri sunmaktadır. Uzman kadromuz ve modern teknolojilerimizle binaların güvenliğini en üst seviyeye çıkarmak için çalışıyoruz.</p>
+	
+	<h2>Uzmanlık Alanlarımız</h2>
+	<p>Karbon fiber, CFRP, kolon güçlendirme, kiriş güçlendirme, yapısal güçlendirme ve betonarme güçlendirme konularında uzmanız. Depreme dayanıklı bina tasarımı ve güçlendirmesi konusunda geniş bir tecrübeye sahibiz.</p>
+	
+	<h2>Misyonumuz</h2>
+	<p>Müşterilerimize en yüksek kalitede hizmet sunarak, binaların güvenliğini ve dayanıklılığını artırmak için çalışıyoruz. Deprem riskine karşı binaları korumak ve güçlendirmek, toplum güvenliğine katkıda bulunmak en önemli hedefimizdir.</p>
+</BaseLayout> 

@@ -1,4 +1,5 @@
 ---
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getBlogPostBySlug, getCategories } from '../../lib/supabase';
 import { parseMarkdown } from '../../lib/markdown';
 
@@ -76,183 +77,138 @@ if (post.faq && Array.isArray(post.faq)) {
 }
 
 const pageTitle = post.title;
+const description = post.meta_description;
 ---
 
-<html lang="tr">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{pageTitle}</title>
-		<meta name="description" content={post.meta_description} />
-		<meta name="keywords" content={post.keywords ? post.keywords.join(', ') : ''} />
-		<style>
-			body {
-				font-family: Arial, sans-serif;
-				max-width: 800px;
-				margin: 0 auto;
-				padding: 20px;
-				line-height: 1.6;
-			}
-			header {
-				border-bottom: 1px solid #ddd;
-				margin-bottom: 20px;
-				padding-bottom: 10px;
-			}
-			.nav-links {
-				display: flex;
-				gap: 15px;
-				margin-bottom: 20px;
-			}
-			.post-header {
-				margin-bottom: 30px;
-			}
-			.post-title {
-				margin-bottom: 10px;
-				font-size: 2rem;
-			}
-			.post-meta {
-				display: flex;
-				justify-content: space-between;
-				color: #666;
-				font-size: 0.9rem;
-				margin-bottom: 20px;
-			}
-			.post-category {
-				background-color: #e8f5e9;
-				display: inline-block;
-				padding: 3px 8px;
-				border-radius: 4px;
-				margin-right: 10px;
-			}
-			.post-content {
-				margin-bottom: 30px;
-			}
-			.post-content h2 {
-				margin-top: 1.5em;
-				margin-bottom: 0.5em;
-				font-size: 1.6rem;
-			}
-			.post-content h3 {
-				margin-top: 1.2em;
-				margin-bottom: 0.5em;
-				font-size: 1.4rem;
-			}
-			.post-content p {
-				margin-bottom: 1em;
-			}
-			.post-content ul, .post-content ol {
-				margin-bottom: 1em;
-				padding-left: 2em;
-			}
-			.post-content blockquote {
-				border-left: 4px solid #ddd;
-				padding-left: 1em;
-				margin-left: 0;
-				margin-right: 0;
-				font-style: italic;
-				color: #555;
-			}
-			.post-content pre {
-				background-color: #f5f5f5;
-				padding: 1em;
-				border-radius: 4px;
-				overflow-x: auto;
-			}
-			.post-content code {
-				background-color: #f5f5f5;
-				padding: 0.2em 0.4em;
-				border-radius: 4px;
-				font-family: monospace;
-			}
-			.featured-image {
-				width: 100%;
-				max-height: 400px;
-				object-fit: cover;
-				border-radius: 4px;
-				margin-bottom: 20px;
-			}
-			.faq-section {
-				margin-top: 40px;
-				background-color: #f4f4f4;
-				padding: 20px;
-				border-radius: 4px;
-			}
-			.faq-item {
-				margin-bottom: 20px;
-			}
-			.faq-question {
-				font-weight: bold;
-				margin-bottom: 5px;
-			}
-			.faq-answer {
-				margin-left: 1em;
-			}
-			footer {
-				margin-top: 30px;
-				border-top: 1px solid #ddd;
-				padding-top: 10px;
-				font-size: 0.9em;
-				color: #666;
-			}
-		</style>
-	</head>
-	<body>
-		<header>
-			<h1>Blog</h1>
-			<div class="nav-links">
-				<a href="/">Ana Sayfa</a>
-				<a href="/kategoriler">Kategoriler</a>
-				<a href="/hakkinda">Hakkımızda</a>
-			</div>
-		</header>
-		
-		<main>
-			<article>
-				<div class="post-header">
-					<h1 class="post-title">{post.title}</h1>
-					<div class="post-meta">
-						<div>
-							{category && (
-								<a href={`/kategori/${category.slug}`} class="post-category">
-									{category.name}
-								</a>
-							)}
-							<span>Tarih: {new Date(post.created_at).toLocaleDateString('tr-TR')}</span>
-						</div>
-					</div>
-					
-					{post.featured_image && (
-						<img 
-							src={post.featured_image} 
-							alt={post.title} 
-							class="featured-image"
-							loading="lazy"
-						/>
-					)}
-				</div>
-				
-				<div class="post-content">
-					<div set:html={contentHtml} />
-				</div>
-				
-				{hasFaq && (
-					<div class="faq-section">
-						<h2>Sık Sorulan Sorular</h2>
-						{processedFaq.map((item: FaqItem) => (
-							<div class="faq-item">
-								<div class="faq-question">{item.question}</div>
-								<div class="faq-answer" set:html={parseMarkdown(item.answer)} />
-							</div>
-						))}
-					</div>
-				)}
-			</article>
-		</main>
-		
-		<footer>
-			<p>© {new Date().getFullYear()} İstanbul Bina Güçlendirme</p>
-		</footer>
-	</body>
-</html> 
+<BaseLayout pageTitle={pageTitle} description={description}>
+  <slot slot="head">
+    <meta name="keywords" content={post.keywords ? post.keywords.join(', ') : ''} />
+    <style>
+      .post-header {
+        margin-bottom: 30px;
+      }
+      .post-title {
+        margin-bottom: 10px;
+        font-size: 2rem;
+      }
+      .post-meta {
+        display: flex;
+        justify-content: space-between;
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+      }
+      .post-category {
+        background-color: #e8f5e9;
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 4px;
+        margin-right: 10px;
+      }
+      .post-content {
+        margin-bottom: 30px;
+      }
+      .post-content h2 {
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+        font-size: 1.6rem;
+      }
+      .post-content h3 {
+        margin-top: 1.2em;
+        margin-bottom: 0.5em;
+        font-size: 1.4rem;
+      }
+      .post-content p {
+        margin-bottom: 1em;
+      }
+      .post-content ul, .post-content ol {
+        margin-bottom: 1em;
+        padding-left: 2em;
+      }
+      .post-content blockquote {
+        border-left: 4px solid #ddd;
+        padding-left: 1em;
+        margin-left: 0;
+        margin-right: 0;
+        font-style: italic;
+        color: #555;
+      }
+      .post-content pre {
+        background-color: #f5f5f5;
+        padding: 1em;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+      .post-content code {
+        background-color: #f5f5f5;
+        padding: 0.2em 0.4em;
+        border-radius: 4px;
+        font-family: monospace;
+      }
+      .featured-image {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-bottom: 20px;
+      }
+      .faq-section {
+        margin-top: 40px;
+        background-color: #f4f4f4;
+        padding: 20px;
+        border-radius: 4px;
+      }
+      .faq-item {
+        margin-bottom: 20px;
+      }
+      .faq-question {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .faq-answer {
+        margin-left: 1em;
+      }
+    </style>
+  </slot>
+
+  <article>
+    <div class="post-header">
+      <h1 class="post-title">{post.title}</h1>
+      <div class="post-meta">
+        <div>
+          {category && (
+            <a href={`/kategori/${category.slug}`} class="post-category">
+              {category.name}
+            </a>
+          )}
+          <span>Tarih: {new Date(post.created_at).toLocaleDateString('tr-TR')}</span>
+        </div>
+      </div>
+      
+      {post.featured_image && (
+        <img 
+          src={post.featured_image} 
+          alt={post.title} 
+          class="featured-image"
+          loading="lazy"
+        />
+      )}
+    </div>
+    
+    <div class="post-content">
+      <div set:html={contentHtml} />
+    </div>
+    
+    {hasFaq && (
+      <div class="faq-section">
+        <h2>Sık Sorulan Sorular</h2>
+        {processedFaq.map((item: FaqItem) => (
+          <div class="faq-item">
+            <div class="faq-question">{item.question}</div>
+            <div class="faq-answer" set:html={parseMarkdown(item.answer)} />
+          </div>
+        ))}
+      </div>
+    )}
+  </article>
+</BaseLayout> 
