@@ -1,4 +1,65 @@
-# Astro Starter Kit: Minimal
+# Astro.js Coolify Test Projesi
+
+Bu proje, Astro.js kullanarak oluşturulmuş basit bir web sitesinin Coolify ile nasıl self-host edilebileceğini göstermek için oluşturulmuştur.
+
+## Özellikler
+
+- Astro.js ile SSR (Sunucu Tarafında Render)
+- Coolify ile self-host deployment
+- Basit ve anlaşılır tasarım
+- Çoklu sayfa yapısı
+
+## Gereksinimler
+
+- Node.js 18 veya üzeri
+- Coolify kurulu bir sunucu veya Coolify hesabı
+
+## Yerel Geliştirme
+
+Projeyi yerel ortamda çalıştırmak için:
+
+```bash
+# Bağımlılıkları yükleyin
+npm install
+
+# Geliştirme sunucusunu başlatın
+npm run dev
+```
+
+## Derleme
+
+Projeyi derlemek için:
+
+```bash
+npm run build
+```
+
+Derlenen dosyalar `dist/` klasöründe oluşturulacaktır.
+
+## Coolify ile Dağıtım
+
+1. Coolify'da yeni bir servis oluşturun
+2. GitHub repository'nizi bağlayın
+3. Dockerfile kullanarak dağıtım yapılandırmasını seçin
+4. Dağıtımı başlatın
+
+## Docker ile Çalıştırma
+
+```bash
+# Docker imajını oluşturun
+docker build -t astro-coolify-test .
+
+# Docker konteynerini çalıştırın
+docker run -p 3000:3000 astro-coolify-test
+```
+
+## Lisans
+
+MIT
+
+---
+
+Bu proje Coolify kullanılarak self-host edilen uygulamaların bir test örneğidir.
 
 ```sh
 npm create astro@latest -- --template minimal

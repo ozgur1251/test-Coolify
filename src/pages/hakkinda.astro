@@ -1,7 +1,5 @@
 ---
-// Server tarafında çalışacak kod buraya
-const pageTitle = "Coolify Test";
-const currentTime = new Date().toLocaleString('tr-TR');
+const pageTitle = "Hakkında";
 ---
 
 <html lang="tr">
@@ -29,12 +27,6 @@ const currentTime = new Date().toLocaleString('tr-TR');
 				gap: 15px;
 				margin-bottom: 20px;
 			}
-			.server-time {
-				background-color: #f4f4f4;
-				padding: 10px;
-				border-radius: 4px;
-				margin: 20px 0;
-			}
 			footer {
 				margin-top: 30px;
 				border-top: 1px solid #ddd;
@@ -54,25 +46,18 @@ const currentTime = new Date().toLocaleString('tr-TR');
 		</header>
 		
 		<main>
-			<p>Bu basit bir Astro.js projesidir ve Coolify üzerinde self-host edilmek için tasarlanmıştır.</p>
+			<h2>Proje Hakkında</h2>
+			<p>Bu proje, Coolify ile self-host edilen bir Astro.js web sitesi örneğidir.</p>
 			
-			<div class="server-time">
-				<h2>Sunucu Zamanı:</h2>
-				<p>{currentTime}</p>
-				<p><em>Bu zaman sunucu tarafında oluşturulmuştur (SSR).</em></p>
-			</div>
+			<h2>Coolify Nedir?</h2>
+			<p>Coolify, kendi altyapınızda uygulamaları kolayca dağıtmanızı sağlayan açık kaynaklı bir self-hosting platformudur. Heroku ve Netlify gibi bulut hizmetlerine alternatif olarak kendi sunucunuzda uygulamalarınızı barındırmanızı sağlar.</p>
 			
-			<h2>Coolify Self-Host Özellikleri:</h2>
-			<ul>
-				<li>Kendi sunucunuzda uygulamaları barındırabilirsiniz</li>
-				<li>Otomatik dağıtım ve CI/CD imkanı</li>
-				<li>Kolay yönetim arayüzü</li>
-				<li>Açık kaynaklı ve ücretsiz</li>
-			</ul>
+			<h2>Astro.js Nedir?</h2>
+			<p>Astro, modern web siteleri oluşturmak için tasarlanmış yeni bir web framework'üdür. Astro ile MPA (Çok Sayfalı Uygulama) veya SPA (Tek Sayfalı Uygulama) tarzı web siteleri oluşturabilirsiniz. En az miktarda JavaScript ile en yüksek performansı hedefler.</p>
 		</main>
 		
 		<footer>
 			<p>© {new Date().getFullYear()} Coolify Test Projesi</p>
 		</footer>
 	</body>
-</html>
+</html> 
