@@ -1,12 +1,8 @@
 ---
 // Server tarafında çalışacak kod buraya
-import { getAllBlogPosts, getCategories, getCategoryPostCounts } from '../lib/supabase';
+import { getCategories, getCategoryPostCounts } from '../lib/supabase';
 
 const pageTitle = "İstanbul Bina Güçlendirme";
-
-// Son 5 blog yazısını getirelim
-const recentPosts = await getAllBlogPosts();
-const latestPosts = recentPosts.slice(0, 5);
 
 // Kategori bilgilerini getirelim
 const categories = await getCategories();
@@ -21,10 +17,8 @@ const categoriesWithCounts = categories.map(category => {
   };
 });
 
-// Sadece yazısı olan kategorileri filtreleyelim ve en fazla 6 tanesini gösterelim
-const activeCategories = categoriesWithCounts
-  .filter(cat => cat.postCount > 0)
-  .slice(0, 6);
+// Tüm kategorileri gösterelim, blog yazısı olmayan kategoriler de dahil
+const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - a.postCount);
 ---
 
 <html lang="tr">
@@ -53,39 +47,6 @@ const activeCategories = categoriesWithCounts
 				gap: 15px;
 				margin-bottom: 20px;
 			}
-			.recent-posts {
-				margin: 30px 0;
-			}
-			.post-card {
-				border: 1px solid #ddd;
-				border-radius: 4px;
-				padding: 15px;
-				margin-bottom: 15px;
-				transition: transform 0.2s;
-			}
-			.post-card:hover {
-				transform: translateY(-3px);
-				box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-			}
-			.post-title {
-				margin-top: 0;
-				font-size: 1.2rem;
-			}
-			.post-date {
-				color: #666;
-				font-size: 0.8rem;
-				margin-bottom: 10px;
-			}
-			.post-description {
-				margin-bottom: 10px;
-			}
-			.post-link {
-				color: #0066cc;
-				text-decoration: none;
-			}
-			.post-link:hover {
-				text-decoration: underline;
-			}
 			.categories-grid {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -97,27 +58,47 @@ const activeCategories = categoriesWithCounts
 				border-radius: 4px;
 				padding: 15px;
 				transition: transform 0.2s;
+				display: flex;
+				flex-direction: column;
+				height: 100%;
 			}
 			.category-card:hover {
 				transform: translateY(-5px);
 				box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 			}
+			.category-image {
+				width: 100%;
+				height: 150px;
+				object-fit: cover;
+				border-radius: 4px;
+				margin-bottom: 10px;
+			}
 			.category-name {
 				margin-top: 0;
 				font-size: 1.2rem;
 			}
+			.category-description {
+				margin: 10px 0;
+				font-size: 0.9rem;
+				flex-grow: 1;
+			}
 			.post-count {
 				color: #666;
 				font-size: 0.9rem;
+				margin-bottom: 10px;
 			}
 			.category-link {
 				display: block;
-				margin-top: 10px;
+				margin-top: auto;
 				color: #0066cc;
 				text-decoration: none;
+				text-align: center;
+				padding: 8px;
+				background-color: #f0f0f0;
+				border-radius: 4px;
 			}
 			.category-link:hover {
-				text-decoration: underline;
+				background-color: #e0e0e0;
 			}
 			.view-all {
 				display: block;
@@ -132,6 +113,16 @@ const activeCategories = categoriesWithCounts
 				padding-top: 10px;
 				font-size: 0.9em;
 				color: #666;
+			}
+			
+			/* Mobil uyumluluk için */
+			@media (max-width: 600px) {
+				.categories-grid {
+					grid-template-columns: 1fr;
+				}
+				.category-card {
+					margin-bottom: 15px;
+				}
 			}
 		</style>
 	</head>
@@ -148,45 +139,31 @@ const activeCategories = categoriesWithCounts
 		<main>
 			<p>İstanbul ve çevresinde bina güçlendirme hizmetleri sunuyoruz. CFRP ve Karbon Fiber uygulamalarında uzmanız.</p>
 			
-			<h2>Hizmetlerimiz:</h2>
-			<ul>
-				<li>Karbon Fiber Güçlendirme</li>
-				<li>CFRP Uygulamaları</li>
-				<li>Kolon ve Kiriş Güçlendirme</li>
-				<li>Bina Güçlendirme Danışmanlığı</li>
-			</ul>
-			
-			{activeCategories.length > 0 && (
-				<div class="categories-section">
-					<h2>Bölgeler</h2>
-					<div class="categories-grid">
-						{activeCategories.map((category) => (
-							<div class="category-card">
-								<h3 class="category-name">{category.name}</h3>
-								<p class="post-count">Makale Sayısı: {category.postCount}</p>
-								<a href={`/kategori/${category.slug}`} class="category-link">
-									Detayları Görüntüle →
-								</a>
-							</div>
-						))}
-					</div>
-					<a href="/kategoriler" class="view-all">Tüm Bölgeleri Görüntüle →</a>
-				</div>
-			)}
-			
-			{latestPosts.length > 0 && (
-				<div class="recent-posts">
-					<h2>Son Eklenen Blog Yazıları</h2>
-					{latestPosts.map(post => (
-						<div class="post-card">
-							<h3 class="post-title">{post.title}</h3>
-							<p class="post-date">{new Date(post.created_at).toLocaleDateString('tr-TR')}</p>
-							<p class="post-description">{post.meta_description}</p>
-							<a href={`/blog/${post.slug}`} class="post-link">Devamını Oku →</a>
+			<div class="categories-section">
+				<h2>Bölgelere Göre Hizmetlerimiz</h2>
+				<div class="categories-grid">
+					{sortedCategories.map((category) => (
+						<div class="category-card">
+							{category.featured_image && (
+								<img 
+									src={category.featured_image} 
+									alt={category.name} 
+									class="category-image"
+									loading="lazy"
+								/>
+							)}
+							<h3 class="category-name">{category.name}</h3>
+							{category.description && (
+								<p class="category-description">{category.description}</p>
+							)}
+							<p class="post-count">Makale Sayısı: {category.postCount}</p>
+							<a href={`/kategori/${category.slug}`} class="category-link">
+								Detayları Görüntüle
+							</a>
 						</div>
 					))}
 				</div>
-			)}
+			</div>
 		</main>
 		
 		<footer>
