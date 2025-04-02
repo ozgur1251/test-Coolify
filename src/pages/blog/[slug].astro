@@ -35,17 +35,50 @@ console.log('FAQ değeri:', post.faq);
 let processedFaq: FaqItem[] = [];
 let hasFaq = false;
 
+// Farklı formatlarda gelebilecek FAQ verilerini işleyelim
 if (post.faq && Array.isArray(post.faq)) {
-  // FAQ datasını filtreleyelim ve geçerli olanları alalım
-  processedFaq = post.faq.filter((item: any) => 
+  // 1. Format: {question, answer} yapısında olanlar
+  const standardFormat = post.faq.filter((item: any) => 
     item && 
     typeof item === 'object' && 
-    typeof item.question === 'string' && 
-    typeof item.answer === 'string'
-  );
+    (typeof item.question === 'string' || typeof item.Question === 'string') && 
+    (typeof item.answer === 'string' || typeof item.Answer === 'string')
+  ).map((item: any) => ({
+    question: item.question || item.Question,
+    answer: item.answer || item.Answer
+  }));
+
+  // 2. Format: {soru, cevap} yapısında olanlar (Türkçe key'ler)
+  const turkishFormat = post.faq.filter((item: any) =>
+    item &&
+    typeof item === 'object' &&
+    (typeof item.soru === 'string' || typeof item.Soru === 'string') &&
+    (typeof item.cevap === 'string' || typeof item.Cevap === 'string')
+  ).map((item: any) => ({
+    question: item.soru || item.Soru,
+    answer: item.cevap || item.Cevap
+  }));
+
+  // İki formatı birleştirelim
+  processedFaq = [...standardFormat, ...turkishFormat];
+  
+  // SSS alternatif alanı
+  if (processedFaq.length === 0 && post.sss && Array.isArray(post.sss)) {
+    const sssFormat = post.sss.filter((item: any) =>
+      item &&
+      typeof item === 'object' &&
+      (typeof item.soru === 'string' || typeof item.question === 'string') &&
+      (typeof item.cevap === 'string' || typeof item.answer === 'string')
+    ).map((item: any) => ({
+      question: item.soru || item.question,
+      answer: item.cevap || item.answer
+    }));
+    
+    processedFaq = [...processedFaq, ...sssFormat];
+  }
   
   hasFaq = processedFaq.length > 0;
-  console.log('Filtrelenmiş FAQ sayısı:', processedFaq.length);
+  console.log('Toplam işlenmiş FAQ sayısı:', processedFaq.length);
   if (processedFaq.length > 0) {
     console.log('İlk FAQ örneği:', processedFaq[0]);
   }
