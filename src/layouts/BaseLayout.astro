@@ -5,8 +5,9 @@ import Navigation from '../components/Navigation.astro';
 const { pageTitle, description = "İstanbul'da bina güçlendirme, karbon fiber, kolon, kiriş güçlendirme hizmetleri. CFRP uygulamalarında uzman ekip." } = Astro.props;
 
 // Sayfa tipine göre maksimum genişlik ayarı
-// Ana sayfada daha geniş (1200px), diğer sayfalarda daha dar (800px)
-const isHomePage = Astro.url.pathname === "/";
+// Blog detay sayfası için dar (800px), diğer tüm sayfalar için daha geniş (1200px)
+const currentPath = Astro.url.pathname;
+const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/';
 ---
 
 <html lang="tr">
@@ -19,7 +20,7 @@ const isHomePage = Astro.url.pathname === "/";
 		<meta name="description" content={description} />
 		<slot name="head" />
 	</head>
-	<body class={isHomePage ? "home-page" : "content-page"}>
+	<body class={isBlogDetail ? "blog-detail-page" : "wide-page"}>
 		<header>
 			<h1>{pageTitle}</h1>
 			<Navigation />
@@ -37,8 +38,8 @@ const isHomePage = Astro.url.pathname === "/";
 
 <style is:global>
   :root {
-    --max-width-home: 1200px;
-    --max-width-content: 800px;
+    --max-width-wide: 1200px;
+    --max-width-blog-detail: 800px;
     --card-min-width: 280px;
   }
   
@@ -49,13 +50,14 @@ const isHomePage = Astro.url.pathname === "/";
     line-height: 1.6;
   }
   
-  .home-page {
-    max-width: var(--max-width-home);
+  .wide-page {
+    max-width: var(--max-width-wide);
     width: 90%;
   }
   
-  .content-page {
-    max-width: var(--max-width-content);
+  .blog-detail-page {
+    max-width: var(--max-width-blog-detail);
+    width: 90%;
   }
   
   header {
@@ -85,14 +87,14 @@ const isHomePage = Astro.url.pathname === "/";
   }
   
   @media (max-width: 600px) {
-    .home-page, .content-page {
+    .wide-page, .blog-detail-page {
       width: 95%;
     }
   }
   
   @media (min-width: 1600px) {
     :root {
-      --max-width-home: 1400px;
+      --max-width-wide: 1400px;
     }
   }
 </style> 
