@@ -3,11 +3,6 @@ import { createClient } from '@supabase/supabase-js';
 // Supabase istemcisini oluştur
 const supabaseUrl = import.meta.env.SUPABASE_URL;
 const supabaseKey = import.meta.env.SUPABASE_KEY;
-
-// Hata ayıklama için URL ve Key değerlerini yazdır
-console.log('Supabase URL kullanılıyor:', !!supabaseUrl);
-console.log('Supabase Key tanımlı mı:', !!supabaseKey);
-
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Tüm kategorileri getir

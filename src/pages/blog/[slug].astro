@@ -26,11 +26,6 @@ interface FaqItem {
 // İçeriği markdown'dan HTML'e dönüştür
 const contentHtml = parseMarkdown(post.content);
 
-// DEBUG: FAQ verisi kontrolü
-console.log('Post bilgisi:', { id: post.id, title: post.title, slug: post.slug });
-console.log('FAQ tipi:', post.faq ? typeof post.faq : 'undefined');
-console.log('FAQ değeri:', post.faq);
-
 // FAQ verisi geçerli mi kontrolü
 let processedFaq: FaqItem[] = [];
 let hasFaq = false;
@@ -78,13 +73,7 @@ if (post.faq && Array.isArray(post.faq)) {
   }
   
   hasFaq = processedFaq.length > 0;
-  console.log('Toplam işlenmiş FAQ sayısı:', processedFaq.length);
-  if (processedFaq.length > 0) {
-    console.log('İlk FAQ örneği:', processedFaq[0]);
-  }
 }
-
-console.log('hasFaq değeri:', hasFaq);
 
 const pageTitle = post.title;
 ---
@@ -215,7 +204,7 @@ const pageTitle = post.title;
 			<div class="nav-links">
 				<a href="/">Ana Sayfa</a>
 				<a href="/kategoriler">Kategoriler</a>
-				<a href="/hakkinda">Hakkında</a>
+				<a href="/hakkinda">Hakkımızda</a>
 			</div>
 		</header>
 		
@@ -239,6 +228,7 @@ const pageTitle = post.title;
 							src={post.featured_image} 
 							alt={post.title} 
 							class="featured-image"
+							loading="lazy"
 						/>
 					)}
 				</div>
@@ -262,7 +252,7 @@ const pageTitle = post.title;
 		</main>
 		
 		<footer>
-			<p>© {new Date().getFullYear()} Coolify Test Projesi</p>
+			<p>© {new Date().getFullYear()} İstanbul Bina Güçlendirme</p>
 		</footer>
 	</body>
 </html> 

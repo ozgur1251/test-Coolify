@@ -3,7 +3,6 @@
 import { getAllBlogPosts, getCategoryPostCounts } from '../lib/supabase';
 
 const pageTitle = "İstanbul Bina Güçlendirme";
-const currentTime = new Date().toLocaleString('tr-TR');
 
 // Son 5 blog yazısını getirelim
 const recentPosts = await getAllBlogPosts();
@@ -22,6 +21,7 @@ const activeCategories = categoryStats.filter(cat => cat.post_count > 0);
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{pageTitle}</title>
+		<meta name="description" content="İstanbul'da bina güçlendirme, karbon fiber, kolon, kiriş güçlendirme hizmetleri. CFRP uygulamalarında uzman ekip." />
 		<style>
 			body {
 				font-family: Arial, sans-serif;
@@ -104,7 +104,7 @@ const activeCategories = categoryStats.filter(cat => cat.post_count > 0);
 			<div class="nav-links">
 				<a href="/">Ana Sayfa</a>
 				<a href="/kategoriler">Kategoriler</a>
-				<a href="/hakkinda">Hakkında</a>
+				<a href="/hakkinda">Hakkımızda</a>
 			</div>
 		</header>
 		
