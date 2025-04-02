@@ -113,4 +113,32 @@ export async function getBlogPostBySlug(slug) {
   }
   
   return data;
+}
+
+// Bir blog yazısına FAQ eklemek için fonksiyon
+export async function updateBlogPostFaq(postId, faqData) {
+  if (!postId || !faqData || !Array.isArray(faqData)) {
+    console.error('Geçersiz parametre: post ID veya FAQ verisi eksik');
+    return { success: false, error: 'Geçersiz parametre' };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .update({ 
+        faq: faqData,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', postId);
+    
+    if (error) {
+      console.error('Blog yazısı güncellenirken hata:', error);
+      return { success: false, error };
+    }
+    
+    return { success: true, data };
+  } catch (e) {
+    console.error('FAQ güncellerken beklenmeyen hata:', e);
+    return { success: false, error: e.message };
+  }
 } 

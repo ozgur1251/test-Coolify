@@ -1,0 +1,148 @@
+---
+import { getAllBlogPosts, updateBlogPostFaq } from '../../lib/supabase';
+import { testFaq } from '../../lib/testFaq';
+
+// Blog yazılarını getir
+const posts = await getAllBlogPosts();
+
+// Form gönderildi mi kontrolü
+let formSubmitted = false;
+let result = null;
+
+// Post isteği kontrolü
+if (Astro.request.method === 'POST') {
+  try {
+    const formData = await Astro.request.formData();
+    const postId = formData.get('postId');
+    
+    // Test FAQ verisini kullan
+    const faqData = testFaq;
+    
+    // Supabase'e gönder
+    result = await updateBlogPostFaq(postId, faqData);
+    formSubmitted = true;
+  } catch (error) {
+    console.error('Form işlenirken hata:', error);
+  }
+}
+---
+
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>FAQ Ekle - Admin Panel</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      h1 {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      select, button {
+        width: 100%;
+        padding: 8px;
+        font-size: 16px;
+      }
+      button {
+        background-color: #0066cc;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      button:hover {
+        background-color: #004c99;
+      }
+      .alert {
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: 4px;
+      }
+      .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+      .sample-faq {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 20px;
+      }
+      .sample-faq h3 {
+        margin-top: 0;
+      }
+      .faq-item {
+        margin-bottom: 15px;
+      }
+      .faq-question {
+        font-weight: bold;
+      }
+      .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        color: #0066cc;
+        text-decoration: none;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Blog Yazısına FAQ Ekle</h1>
+    
+    {formSubmitted && result && (
+      <div class={`alert ${result.success ? 'alert-success' : 'alert-danger'}`}>
+        {result.success 
+          ? 'FAQ başarıyla eklendi! Blog sayfasını kontrol edebilirsiniz.' 
+          : `Hata oluştu: ${result.error}`
+        }
+      </div>
+    )}
+    
+    <form method="POST">
+      <div class="form-group">
+        <label for="postId">Blog Yazısı Seçin:</label>
+        <select name="postId" id="postId" required>
+          <option value="">Seçiniz...</option>
+          {posts.map(post => (
+            <option value={post.id}>{post.title}</option>
+          ))}
+        </select>
+      </div>
+      
+      <button type="submit">Örnek FAQ Ekle</button>
+    </form>
+    
+    <div class="sample-faq">
+      <h3>Eklenecek Örnek FAQ:</h3>
+      {testFaq.map(item => (
+        <div class="faq-item">
+          <div class="faq-question">S: {item.question}</div>
+          <div class="faq-answer">C: {item.answer}</div>
+        </div>
+      ))}
+    </div>
+    
+    <a href="/" class="back-link">Ana Sayfaya Dön</a>
+  </body>
+</html> 
