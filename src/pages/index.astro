@@ -66,12 +66,21 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
 				transform: translateY(-5px);
 				box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 			}
+			.image-container {
+				width: 100%;
+				position: relative;
+				margin-bottom: 10px;
+				overflow: hidden;
+				border-radius: 4px;
+				aspect-ratio: 16/10;
+			}
 			.category-image {
 				width: 100%;
-				height: 150px;
+				height: 100%;
 				object-fit: cover;
-				border-radius: 4px;
-				margin-bottom: 10px;
+				position: absolute;
+				top: 0;
+				left: 0;
 			}
 			.category-name {
 				margin-top: 0;
@@ -81,6 +90,11 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
 				margin: 10px 0;
 				font-size: 0.9rem;
 				flex-grow: 1;
+				/* Açıklama çok uzunsa üç satırda kes */
+				display: -webkit-box;
+				-webkit-line-clamp: 3;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
 			}
 			.post-count {
 				color: #666;
@@ -123,6 +137,9 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
 				.category-card {
 					margin-bottom: 15px;
 				}
+				.image-container {
+					aspect-ratio: 4/3; /* Mobilde daha kare görünüm */
+				}
 			}
 		</style>
 	</head>
@@ -145,12 +162,14 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
 					{sortedCategories.map((category) => (
 						<div class="category-card">
 							{category.featured_image && (
-								<img 
-									src={category.featured_image} 
-									alt={category.name} 
-									class="category-image"
-									loading="lazy"
-								/>
+								<div class="image-container">
+									<img 
+										src={category.featured_image} 
+										alt={category.name} 
+										class="category-image"
+										loading="lazy"
+									/>
+								</div>
 							)}
 							<h3 class="category-name">{category.name}</h3>
 							{category.description && (

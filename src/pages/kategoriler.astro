@@ -56,27 +56,61 @@ const categoriesWithPosts = categoriesWithCounts.filter(category => category.pos
 				border-radius: 4px;
 				padding: 15px;
 				transition: transform 0.2s;
+				display: flex;
+				flex-direction: column;
+				height: 100%;
 			}
 			.category-card:hover {
 				transform: translateY(-5px);
 				box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 			}
+			.image-container {
+				width: 100%;
+				position: relative;
+				margin-bottom: 10px;
+				overflow: hidden;
+				border-radius: 4px;
+				aspect-ratio: 16/10;
+			}
+			.category-image {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
 			.category-name {
 				margin-top: 0;
 				font-size: 1.2rem;
 			}
+			.category-description {
+				margin: 10px 0;
+				font-size: 0.9rem;
+				flex-grow: 1;
+				/* Açıklama çok uzunsa üç satırda kes */
+				display: -webkit-box;
+				-webkit-line-clamp: 3;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+			}
 			.post-count {
 				color: #666;
 				font-size: 0.9rem;
+				margin-bottom: 10px;
 			}
 			.category-link {
 				display: block;
-				margin-top: 10px;
+				margin-top: auto;
 				color: #0066cc;
 				text-decoration: none;
+				text-align: center;
+				padding: 8px;
+				background-color: #f0f0f0;
+				border-radius: 4px;
 			}
 			.category-link:hover {
-				text-decoration: underline;
+				background-color: #e0e0e0;
 			}
 			footer {
 				margin-top: 30px;
@@ -84,6 +118,19 @@ const categoriesWithPosts = categoriesWithCounts.filter(category => category.pos
 				padding-top: 10px;
 				font-size: 0.9em;
 				color: #666;
+			}
+			
+			/* Mobil uyumluluk için */
+			@media (max-width: 600px) {
+				.categories-grid {
+					grid-template-columns: 1fr;
+				}
+				.category-card {
+					margin-bottom: 15px;
+				}
+				.image-container {
+					aspect-ratio: 4/3; /* Mobilde daha kare görünüm */
+				}
 			}
 		</style>
 	</head>
@@ -103,10 +150,23 @@ const categoriesWithPosts = categoriesWithCounts.filter(category => category.pos
 			<div class="categories-grid">
 				{categoriesWithPosts.map((category) => (
 					<div class="category-card">
+						{category.featured_image && (
+							<div class="image-container">
+								<img 
+									src={category.featured_image} 
+									alt={category.name} 
+									class="category-image"
+									loading="lazy"
+								/>
+							</div>
+						)}
 						<h2 class="category-name">{category.name}</h2>
+						{category.description && (
+							<p class="category-description">{category.description}</p>
+						)}
 						<p class="post-count">Makale Sayısı: {category.postCount}</p>
 						<a href={`/kategori/${category.slug}`} class="category-link">
-							Makaleleri Görüntüle →
+							Makaleleri Görüntüle
 						</a>
 					</div>
 				))}
