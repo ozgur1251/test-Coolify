@@ -1,8 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase istemcisini oluştur
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-const supabaseKey = import.meta.env.PUBLIC_SUPABASE_KEY;
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || 'https://aysvtpqhbzbfstlrfeqi.supabase.co';
+const supabaseKey = import.meta.env.PUBLIC_SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5c3Z0cHFoYnpiZnN0bHJmZXFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTAzMjU2NTksImV4cCI6MjAyNTkwMTY1OX0.ynP_RngqVlOj5hW4HbN9GKO2kmjdz4cdoB7xrOZP9f8';
+
+// Hata ayıklama için URL ve Key değerlerini yazdır
+console.log('Supabase URL:', supabaseUrl);
+console.log('Supabase Key başlangıcı:', supabaseKey.substring(0, 20) + '...');
+
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Tüm kategorileri getir
