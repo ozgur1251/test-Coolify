@@ -1,7 +1,6 @@
 ---
 import { getBlogPostBySlug, getCategories } from '../../lib/supabase';
 import { parseMarkdown } from '../../lib/markdown';
-import { testFaq } from '../../lib/testFaq';
 
 // Dinamik rota parametresini al
 const { slug } = Astro.params;
@@ -27,9 +26,6 @@ interface FaqItem {
 // İçeriği markdown'dan HTML'e dönüştür
 const contentHtml = parseMarkdown(post.content);
 
-// Debug: FAQ verisi kontrolü
-console.log('Post Data FAQ:', post.faq);
-
 // FAQ verisi geçerli mi kontrolü
 let processedFaq: FaqItem[] = [];
 let hasFaq = false;
@@ -45,16 +41,6 @@ if (post.faq && Array.isArray(post.faq)) {
   
   hasFaq = processedFaq.length > 0;
 }
-
-// Eğer FAQ verisi yoksa test verisini kullan
-if (!hasFaq) {
-  console.log('FAQ verisi bulunamadı, test verisi kullanılıyor.');
-  processedFaq = testFaq;
-  hasFaq = true;
-}
-
-console.log('Processed FAQ items:', processedFaq.length);
-console.log('Has FAQ:', hasFaq);
 
 const pageTitle = post.title;
 ---
