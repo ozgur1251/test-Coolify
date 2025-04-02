@@ -54,34 +54,38 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
   <style>
     .categories-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(var(--card-min-width), 1fr));
-      gap: 25px;
-      margin-top: 20px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 35px;
+      margin-top: 30px;
       width: 100%;
     }
+    
     .category-card {
       border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 15px;
+      border-radius: 12px;
+      padding: 20px;
       transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
       height: 100%;
       background-color: #fff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
     }
+    
     .category-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
     }
+    
     .image-container {
       width: 100%;
       position: relative;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       overflow: hidden;
-      border-radius: 6px;
+      border-radius: 8px;
       aspect-ratio: 16/10;
     }
+    
     .category-image {
       width: 100%;
       height: 100%;
@@ -91,18 +95,21 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
       left: 0;
       transition: transform 0.5s ease;
     }
+    
     .category-card:hover .category-image {
       transform: scale(1.05);
     }
+    
     .category-name {
       margin-top: 0;
-      margin-bottom: 10px;
-      font-size: 1.3rem;
+      margin-bottom: 12px;
+      font-size: 1.4rem;
       color: #333;
     }
+    
     .category-description {
-      margin: 10px 0;
-      font-size: 0.95rem;
+      margin: 12px 0;
+      font-size: 1rem;
       flex-grow: 1;
       /* Açıklama çok uzunsa üç satırda kes */
       display: -webkit-box;
@@ -111,13 +118,15 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
       overflow: hidden;
       color: #555;
     }
+    
     .post-count {
       color: #666;
       font-size: 0.9rem;
-      margin-bottom: 15px;
-      padding-bottom: 5px;
+      margin-bottom: 18px;
+      padding-bottom: 8px;
       border-bottom: 1px solid #eee;
     }
+    
     .category-link {
       display: block;
       margin-top: auto;
@@ -125,24 +134,36 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
       background-color: #0066cc;
       text-decoration: none;
       text-align: center;
-      padding: 10px;
-      border-radius: 6px;
+      padding: 12px;
+      border-radius: 8px;
       font-weight: 500;
       transition: background-color 0.3s;
     }
+    
     .category-link:hover {
       background-color: #004d99;
+    }
+    
+    @media (max-width: 1024px) {
+      .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
     
     @media (max-width: 600px) {
       .categories-grid {
         grid-template-columns: 1fr;
+        gap: 25px;
       }
+      
       .category-card {
-        margin-bottom: 15px;
+        margin-bottom: 0;
+        padding: 15px;
       }
+      
       .image-container {
         aspect-ratio: 4/3; /* Mobilde daha kare görünüm */
+        margin-bottom: 15px;
       }
     }
   </style>

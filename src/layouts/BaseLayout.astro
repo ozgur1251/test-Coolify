@@ -20,17 +20,17 @@ const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/
 		<meta name="description" content={description} />
 		<slot name="head" />
 	</head>
-	<body class={isBlogDetail ? "blog-detail-page" : "wide-page"}>
-		<header>
+	<body>
+		<header class="standard-header">
 			<h1>{pageTitle}</h1>
 			<Navigation />
 		</header>
 		
-		<main>
+		<main class={isBlogDetail ? "blog-detail-page" : "wide-page"}>
 			<slot />
 		</main>
 		
-		<footer>
+		<footer class="standard-footer">
 			<p>© {new Date().getFullYear()} İstanbul Bina Güçlendirme</p>
 		</footer>
 	</body>
@@ -40,6 +40,7 @@ const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/
   :root {
     --max-width-wide: 1200px;
     --max-width-blog-detail: 800px;
+    --max-width-standard: 800px;
     --card-min-width: 280px;
   }
   
@@ -48,16 +49,26 @@ const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/
     margin: 0 auto;
     padding: 20px;
     line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .standard-header, .standard-footer {
+    width: 100%;
+    max-width: var(--max-width-standard);
+    margin: 0 auto;
   }
   
   .wide-page {
     max-width: var(--max-width-wide);
-    width: 90%;
+    width: 100%;
   }
   
   .blog-detail-page {
     max-width: var(--max-width-blog-detail);
-    width: 90%;
+    width: 100%;
   }
   
   header {
@@ -81,12 +92,16 @@ const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/
       --card-min-width: 240px;
     }
     body {
-      width: 95%;
       padding: 15px;
+    }
+    .standard-header, .standard-footer,
+    .wide-page, .blog-detail-page {
+      width: 95%;
     }
   }
   
   @media (max-width: 600px) {
+    .standard-header, .standard-footer,
     .wide-page, .blog-detail-page {
       width: 95%;
     }
