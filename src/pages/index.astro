@@ -1,6 +1,6 @@
 ---
 // Server tarafında çalışacak kod buraya
-import { getAllBlogPosts, getCategoryPostCounts } from '../lib/supabase';
+import { getAllBlogPosts, getCategories, getCategoryPostCounts } from '../lib/supabase';
 
 const pageTitle = "İstanbul Bina Güçlendirme";
 
@@ -8,10 +8,23 @@ const pageTitle = "İstanbul Bina Güçlendirme";
 const recentPosts = await getAllBlogPosts();
 const latestPosts = recentPosts.slice(0, 5);
 
-// Kategori istatistiklerini getirelim
+// Kategori bilgilerini getirelim
+const categories = await getCategories();
 const categoryStats = await getCategoryPostCounts();
-// Post sayısı olan kategorileri filtreleyelim
-const activeCategories = categoryStats.filter(cat => cat.post_count > 0);
+
+// Kategori ve post sayılarını birleştirelim
+const categoriesWithCounts = categories.map(category => {
+  const countInfo = categoryStats.find(c => c.id === category.id);
+  return {
+    ...category,
+    postCount: countInfo ? countInfo.post_count : 0
+  };
+});
+
+// Sadece yazısı olan kategorileri filtreleyelim ve en fazla 6 tanesini gösterelim
+const activeCategories = categoriesWithCounts
+  .filter(cat => cat.postCount > 0)
+  .slice(0, 6);
 ---
 
 <html lang="tr">
@@ -73,14 +86,38 @@ const activeCategories = categoryStats.filter(cat => cat.post_count > 0);
 			.post-link:hover {
 				text-decoration: underline;
 			}
-			.category-stats {
-				background-color: #f5f5f5;
-				padding: 15px;
-				border-radius: 4px;
-				margin: 20px 0;
+			.categories-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+				gap: 20px;
+				margin-top: 20px;
 			}
-			.category-item {
-				margin-bottom: 5px;
+			.category-card {
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				padding: 15px;
+				transition: transform 0.2s;
+			}
+			.category-card:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+			}
+			.category-name {
+				margin-top: 0;
+				font-size: 1.2rem;
+			}
+			.post-count {
+				color: #666;
+				font-size: 0.9rem;
+			}
+			.category-link {
+				display: block;
+				margin-top: 10px;
+				color: #0066cc;
+				text-decoration: none;
+			}
+			.category-link:hover {
+				text-decoration: underline;
 			}
 			.view-all {
 				display: block;
@@ -111,6 +148,32 @@ const activeCategories = categoryStats.filter(cat => cat.post_count > 0);
 		<main>
 			<p>İstanbul ve çevresinde bina güçlendirme hizmetleri sunuyoruz. CFRP ve Karbon Fiber uygulamalarında uzmanız.</p>
 			
+			<h2>Hizmetlerimiz:</h2>
+			<ul>
+				<li>Karbon Fiber Güçlendirme</li>
+				<li>CFRP Uygulamaları</li>
+				<li>Kolon ve Kiriş Güçlendirme</li>
+				<li>Bina Güçlendirme Danışmanlığı</li>
+			</ul>
+			
+			{activeCategories.length > 0 && (
+				<div class="categories-section">
+					<h2>Bölgeler</h2>
+					<div class="categories-grid">
+						{activeCategories.map((category) => (
+							<div class="category-card">
+								<h3 class="category-name">{category.name}</h3>
+								<p class="post-count">Makale Sayısı: {category.postCount}</p>
+								<a href={`/kategori/${category.slug}`} class="category-link">
+									Detayları Görüntüle →
+								</a>
+							</div>
+						))}
+					</div>
+					<a href="/kategoriler" class="view-all">Tüm Bölgeleri Görüntüle →</a>
+				</div>
+			)}
+			
 			{latestPosts.length > 0 && (
 				<div class="recent-posts">
 					<h2>Son Eklenen Blog Yazıları</h2>
@@ -122,30 +185,8 @@ const activeCategories = categoryStats.filter(cat => cat.post_count > 0);
 							<a href={`/blog/${post.slug}`} class="post-link">Devamını Oku →</a>
 						</div>
 					))}
-					<a href="/kategoriler" class="view-all">Tüm Kategorileri Gör →</a>
 				</div>
 			)}
-			
-			{activeCategories.length > 0 && (
-				<div class="category-stats">
-					<h2>Kategoriler</h2>
-					<ul>
-						{activeCategories.map(cat => (
-							<li class="category-item">
-								<a href={`/kategori/${cat.slug}`}>{cat.name}</a> ({cat.post_count} makale)
-							</li>
-						))}
-					</ul>
-				</div>
-			)}
-			
-			<h2>Hizmetlerimiz:</h2>
-			<ul>
-				<li>Karbon Fiber Güçlendirme</li>
-				<li>CFRP Uygulamaları</li>
-				<li>Kolon ve Kiriş Güçlendirme</li>
-				<li>Bina Güçlendirme Danışmanlığı</li>
-			</ul>
 		</main>
 		
 		<footer>
