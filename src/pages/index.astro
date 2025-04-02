@@ -2,6 +2,8 @@
 // Server tarafında çalışacak kod buraya
 const pageTitle = "Coolify Test";
 const currentTime = new Date().toLocaleString('tr-TR');
+const apiUrl = import.meta.env.API_URL || "API URL tanımlanmamış";
+const environment = import.meta.env.NODE_ENV || "development";
 ---
 
 <html lang="tr">
@@ -35,6 +37,13 @@ const currentTime = new Date().toLocaleString('tr-TR');
 				border-radius: 4px;
 				margin: 20px 0;
 			}
+			.env-info {
+				background-color: #e8f5e9;
+				padding: 10px;
+				border-radius: 4px;
+				margin: 20px 0;
+				border: 1px solid #c8e6c9;
+			}
 			footer {
 				margin-top: 30px;
 				border-top: 1px solid #ddd;
@@ -60,6 +69,13 @@ const currentTime = new Date().toLocaleString('tr-TR');
 				<h2>Sunucu Zamanı:</h2>
 				<p>{currentTime}</p>
 				<p><em>Bu zaman sunucu tarafında oluşturulmuştur (SSR).</em></p>
+			</div>
+			
+			<div class="env-info">
+				<h2>Çevre Değişkenleri:</h2>
+				<p><strong>API URL:</strong> {apiUrl}</p>
+				<p><strong>Ortam:</strong> {environment}</p>
+				<p><em>Bu değerler .env dosyasından veya Coolify Environment Variables'dan gelir.</em></p>
 			</div>
 			
 			<h2>Coolify Self-Host Özellikleri:</h2>
