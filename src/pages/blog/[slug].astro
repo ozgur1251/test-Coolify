@@ -16,6 +16,12 @@ if (!post) {
 const categories = await getCategories();
 const category = categories.find(cat => cat.id === post.category_id);
 
+// FAQ için bir arayüz tanımlayalım
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
 const pageTitle = post.title;
 ---
 
@@ -141,7 +147,7 @@ const pageTitle = post.title;
 				{post.faq && post.faq.length > 0 && (
 					<div class="faq-section">
 						<h2>Sık Sorulan Sorular</h2>
-						{post.faq.map((item) => (
+						{post.faq.map((item: FaqItem) => (
 							<div class="faq-item">
 								<div class="faq-question">{item.question}</div>
 								<div class="faq-answer">{item.answer}</div>
