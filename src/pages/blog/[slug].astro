@@ -26,6 +26,28 @@ interface FaqItem {
 // İçeriği markdown'dan HTML'e dönüştür
 const contentHtml = parseMarkdown(post.content);
 
+// Debug: FAQ verisi kontrolü
+console.log('Post Data FAQ:', post.faq);
+
+// FAQ verisi geçerli mi kontrolü
+let processedFaq: FaqItem[] = [];
+let hasFaq = false;
+
+if (post.faq && Array.isArray(post.faq)) {
+  // FAQ datasını filtreleyelim ve geçerli olanları alalım
+  processedFaq = post.faq.filter((item: any) => 
+    item && 
+    typeof item === 'object' && 
+    typeof item.question === 'string' && 
+    typeof item.answer === 'string'
+  );
+  
+  hasFaq = processedFaq.length > 0;
+}
+
+console.log('Processed FAQ items:', processedFaq.length);
+console.log('Has FAQ:', hasFaq);
+
 const pageTitle = post.title;
 ---
 
@@ -187,15 +209,22 @@ const pageTitle = post.title;
 					<div set:html={contentHtml} />
 				</div>
 				
-				{post.faq && post.faq.length > 0 && (
+				{hasFaq ? (
 					<div class="faq-section">
 						<h2>Sık Sorulan Sorular</h2>
-						{post.faq.map((item: FaqItem) => (
+						{processedFaq.map((item: FaqItem) => (
 							<div class="faq-item">
 								<div class="faq-question">{item.question}</div>
 								<div class="faq-answer" set:html={parseMarkdown(item.answer)} />
 							</div>
 						))}
+					</div>
+				) : (
+					<div class="debug-info" style="background-color: #f8f8f8; padding: 10px; margin-top: 20px; border-radius: 4px; display: none;">
+						<p><strong>Debug Bilgisi:</strong> Bu yazıda sıkça sorulan sorular bulunmuyor veya veri formatı uygun değil.</p>
+						<p>FAQ Veri Tipi: {typeof post.faq}</p>
+						<p>FAQ Array mi?: {Array.isArray(post.faq) ? 'Evet' : 'Hayır'}</p>
+						{post.faq && <p>FAQ Uzunluğu: {Array.isArray(post.faq) ? post.faq.length : 'Dizi değil'}</p>}
 					</div>
 				)}
 			</article>

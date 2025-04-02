@@ -81,5 +81,36 @@ export async function getBlogPostBySlug(slug) {
     return null;
   }
   
+  // JSON veri tiplerini doğru formatta işleyelim
+  try {
+    // FAQ verisi kontrolü ve dönüştürme
+    if (data.faq) {
+      // Eğer string olarak geldiyse JSON parse edelim
+      if (typeof data.faq === 'string') {
+        data.faq = JSON.parse(data.faq);
+      }
+      
+      // Eğer array değilse ve object ise, array'e çevirelim
+      if (!Array.isArray(data.faq) && typeof data.faq === 'object') {
+        data.faq = [data.faq];
+      }
+    } else {
+      // FAQ verisi yoksa boş array olarak ekleyelim
+      data.faq = [];
+    }
+    
+    // Keywords verisi kontrolü
+    if (data.keywords && typeof data.keywords === 'string') {
+      data.keywords = JSON.parse(data.keywords);
+    }
+    
+    // Social media verisi kontrolü
+    if (data.social_media && typeof data.social_media === 'string') {
+      data.social_media = JSON.parse(data.social_media);
+    }
+  } catch (e) {
+    console.error('JSON verilerini işlerken hata:', e);
+  }
+  
   return data;
 } 
