@@ -26,6 +26,11 @@ interface FaqItem {
 // İçeriği markdown'dan HTML'e dönüştür
 const contentHtml = parseMarkdown(post.content);
 
+// DEBUG: FAQ verisi kontrolü
+console.log('Post bilgisi:', { id: post.id, title: post.title, slug: post.slug });
+console.log('FAQ tipi:', post.faq ? typeof post.faq : 'undefined');
+console.log('FAQ değeri:', post.faq);
+
 // FAQ verisi geçerli mi kontrolü
 let processedFaq: FaqItem[] = [];
 let hasFaq = false;
@@ -40,7 +45,13 @@ if (post.faq && Array.isArray(post.faq)) {
   );
   
   hasFaq = processedFaq.length > 0;
+  console.log('Filtrelenmiş FAQ sayısı:', processedFaq.length);
+  if (processedFaq.length > 0) {
+    console.log('İlk FAQ örneği:', processedFaq[0]);
+  }
 }
+
+console.log('hasFaq değeri:', hasFaq);
 
 const pageTitle = post.title;
 ---
