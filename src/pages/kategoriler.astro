@@ -1,3 +1,4 @@
+---
 import { getCategories, getCategoryPostCounts } from '../lib/supabase';
 
 const pageTitle = "Kategoriler";
@@ -16,6 +17,7 @@ const categoriesWithCounts = categories.map(category => {
 
 // Sadece post sayısı 0'dan büyük olan kategorileri filtreleyelim
 const categoriesWithPosts = categoriesWithCounts.filter(category => category.postCount > 0);
+---
 
 <html lang="tr">
 	<head>

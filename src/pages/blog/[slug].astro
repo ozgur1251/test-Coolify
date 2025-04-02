@@ -1,3 +1,4 @@
+---
 import { getBlogPostBySlug, getCategories } from '../../lib/supabase';
 
 // Dinamik rota parametresini al
@@ -16,6 +17,7 @@ const categories = await getCategories();
 const category = categories.find(cat => cat.id === post.category_id);
 
 const pageTitle = post.title;
+---
 
 <html lang="tr">
 	<head>
