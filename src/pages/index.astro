@@ -2,10 +2,8 @@
 // Server tarafında çalışacak kod buraya
 import { getAllBlogPosts, getCategoryPostCounts } from '../lib/supabase';
 
-const pageTitle = "Coolify Test";
+const pageTitle = "İstanbul Bina Güçlendirme";
 const currentTime = new Date().toLocaleString('tr-TR');
-const apiUrl = import.meta.env.SUPABASE_URL || "API URL tanımlanmamış";
-const environment = import.meta.env.NODE_ENV || "development";
 
 // Son 5 blog yazısını getirelim
 const recentPosts = await getAllBlogPosts();
@@ -41,19 +39,6 @@ const activeCategories = categoryStats.filter(cat => cat.post_count > 0);
 				display: flex;
 				gap: 15px;
 				margin-bottom: 20px;
-			}
-			.server-time {
-				background-color: #f4f4f4;
-				padding: 10px;
-				border-radius: 4px;
-				margin: 20px 0;
-			}
-			.env-info {
-				background-color: #e8f5e9;
-				padding: 10px;
-				border-radius: 4px;
-				margin: 20px 0;
-				border: 1px solid #c8e6c9;
 			}
 			.recent-posts {
 				margin: 30px 0;
@@ -124,20 +109,7 @@ const activeCategories = categoryStats.filter(cat => cat.post_count > 0);
 		</header>
 		
 		<main>
-			<p>Bu basit bir Astro.js projesidir ve Coolify üzerinde self-host edilmek için tasarlanmıştır.</p>
-			
-			<div class="server-time">
-				<h2>Sunucu Zamanı:</h2>
-				<p>{currentTime}</p>
-				<p><em>Bu zaman sunucu tarafında oluşturulmuştur (SSR).</em></p>
-			</div>
-			
-			<div class="env-info">
-				<h2>Çevre Değişkenleri:</h2>
-				<p><strong>API URL:</strong> {apiUrl}</p>
-				<p><strong>Ortam:</strong> {environment}</p>
-				<p><em>Bu değerler .env dosyasından veya Coolify Environment Variables'dan gelir.</em></p>
-			</div>
+			<p>İstanbul ve çevresinde bina güçlendirme hizmetleri sunuyoruz. CFRP ve Karbon Fiber uygulamalarında uzmanız.</p>
 			
 			{latestPosts.length > 0 && (
 				<div class="recent-posts">
@@ -167,17 +139,17 @@ const activeCategories = categoryStats.filter(cat => cat.post_count > 0);
 				</div>
 			)}
 			
-			<h2>Coolify Self-Host Özellikleri:</h2>
+			<h2>Hizmetlerimiz:</h2>
 			<ul>
-				<li>Kendi sunucunuzda uygulamaları barındırabilirsiniz</li>
-				<li>Otomatik dağıtım ve CI/CD imkanı</li>
-				<li>Kolay yönetim arayüzü</li>
-				<li>Açık kaynaklı ve ücretsiz</li>
+				<li>Karbon Fiber Güçlendirme</li>
+				<li>CFRP Uygulamaları</li>
+				<li>Kolon ve Kiriş Güçlendirme</li>
+				<li>Bina Güçlendirme Danışmanlığı</li>
 			</ul>
 		</main>
 		
 		<footer>
-			<p>© {new Date().getFullYear()} Coolify Test Projesi</p>
+			<p>© {new Date().getFullYear()} İstanbul Bina Güçlendirme</p>
 		</footer>
 	</body>
 </html>
