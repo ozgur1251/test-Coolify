@@ -1,9 +1,20 @@
 ---
 // Server tarafında çalışacak kod buraya
+import { getAllBlogPosts, getCategoryPostCounts } from '../lib/supabase';
+
 const pageTitle = "Coolify Test";
 const currentTime = new Date().toLocaleString('tr-TR');
-const apiUrl = import.meta.env.API_URL || "API URL tanımlanmamış";
+const apiUrl = import.meta.env.SUPABASE_URL || "API URL tanımlanmamış";
 const environment = import.meta.env.NODE_ENV || "development";
+
+// Son 5 blog yazısını getirelim
+const recentPosts = await getAllBlogPosts();
+const latestPosts = recentPosts.slice(0, 5);
+
+// Kategori istatistiklerini getirelim
+const categoryStats = await getCategoryPostCounts();
+// Post sayısı olan kategorileri filtreleyelim
+const activeCategories = categoryStats.filter(cat => cat.post_count > 0);
 ---
 
 <html lang="tr">
@@ -44,6 +55,55 @@ const environment = import.meta.env.NODE_ENV || "development";
 				margin: 20px 0;
 				border: 1px solid #c8e6c9;
 			}
+			.recent-posts {
+				margin: 30px 0;
+			}
+			.post-card {
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				padding: 15px;
+				margin-bottom: 15px;
+				transition: transform 0.2s;
+			}
+			.post-card:hover {
+				transform: translateY(-3px);
+				box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+			}
+			.post-title {
+				margin-top: 0;
+				font-size: 1.2rem;
+			}
+			.post-date {
+				color: #666;
+				font-size: 0.8rem;
+				margin-bottom: 10px;
+			}
+			.post-description {
+				margin-bottom: 10px;
+			}
+			.post-link {
+				color: #0066cc;
+				text-decoration: none;
+			}
+			.post-link:hover {
+				text-decoration: underline;
+			}
+			.category-stats {
+				background-color: #f5f5f5;
+				padding: 15px;
+				border-radius: 4px;
+				margin: 20px 0;
+			}
+			.category-item {
+				margin-bottom: 5px;
+			}
+			.view-all {
+				display: block;
+				text-align: center;
+				margin-top: 15px;
+				color: #0066cc;
+				text-decoration: none;
+			}
 			footer {
 				margin-top: 30px;
 				border-top: 1px solid #ddd;
@@ -58,6 +118,7 @@ const environment = import.meta.env.NODE_ENV || "development";
 			<h1>{pageTitle}</h1>
 			<div class="nav-links">
 				<a href="/">Ana Sayfa</a>
+				<a href="/kategoriler">Kategoriler</a>
 				<a href="/hakkinda">Hakkında</a>
 			</div>
 		</header>
@@ -77,6 +138,34 @@ const environment = import.meta.env.NODE_ENV || "development";
 				<p><strong>Ortam:</strong> {environment}</p>
 				<p><em>Bu değerler .env dosyasından veya Coolify Environment Variables'dan gelir.</em></p>
 			</div>
+			
+			{latestPosts.length > 0 && (
+				<div class="recent-posts">
+					<h2>Son Eklenen Blog Yazıları</h2>
+					{latestPosts.map(post => (
+						<div class="post-card">
+							<h3 class="post-title">{post.title}</h3>
+							<p class="post-date">{new Date(post.created_at).toLocaleDateString('tr-TR')}</p>
+							<p class="post-description">{post.meta_description}</p>
+							<a href={`/blog/${post.slug}`} class="post-link">Devamını Oku →</a>
+						</div>
+					))}
+					<a href="/kategoriler" class="view-all">Tüm Kategorileri Gör →</a>
+				</div>
+			)}
+			
+			{activeCategories.length > 0 && (
+				<div class="category-stats">
+					<h2>Kategoriler</h2>
+					<ul>
+						{activeCategories.map(cat => (
+							<li class="category-item">
+								<a href={`/kategori/${cat.slug}`}>{cat.name}</a> ({cat.post_count} makale)
+							</li>
+						))}
+					</ul>
+				</div>
+			)}
 			
 			<h2>Coolify Self-Host Özellikleri:</h2>
 			<ul>
