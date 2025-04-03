@@ -25,12 +25,20 @@ const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/
 		<meta http-equiv="Cache-Control" content="max-age=604800" />
 		<meta http-equiv="x-content-type-options" content="nosniff" />
 		<!-- SEO iyileştirmeleri -->
-		<link rel="canonical" href={new URL(Astro.url.pathname, Astro.site).href} />
+		{Astro.site ? 
+			<link rel="canonical" href={new URL(Astro.url.pathname, Astro.site).href} />
+		:
+			<link rel="canonical" href={Astro.url.pathname} />
+		}
 		<meta name="robots" content="index, follow" />
 		<meta property="og:title" content={pageTitle} />
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="website" />
-		<meta property="og:url" content={new URL(Astro.url.pathname, Astro.site).href} />
+		{Astro.site ? 
+			<meta property="og:url" content={new URL(Astro.url.pathname, Astro.site).href} />
+		:
+			<meta property="og:url" content={Astro.url.pathname} />
+		}
 		<!-- Kritik CSS satır içi olarak yükleniyor -->
 		<style>
 			/* Kritik CSS - Sayfa yüklenirken öncelikli gösterilecek stil tanımları */
