@@ -113,17 +113,19 @@ Projenin çalışması için aşağıdaki ortam değişkenlerinin tanımlanması
 
 - `SUPABASE_URL`: Supabase API URL
 - `SUPABASE_KEY`: Supabase API Anahtarı
-- `SITE_URL`: Sitenin tam URL'si (örn: https://binaguclendirme.com)
+- `SITE_URL`: Sitenin tam URL'si (örn: https://example.com)
 
 ### Coolify Konfigürasyonu
 
-Coolify'da dağıtım yaparken şu ortam değişkenlerini ayarlayın:
+Coolify'da dağıtım yaparken aşağıdaki ortam değişkenlerini ayarlayın:
 
 ```
 SITE_URL=https://example.com
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_KEY=your-supabase-key
 ```
+
+Önemli: Ortam değişkenleri doğrudan Coolify dashboard üzerinden ayarlanmalıdır. `.env.production` dosyası kullanılmamaktadır.
 
 `SITE_URL` değişkeni SEO optimizasyonları, canonical URL'ler ve sitemap oluşturma için kullanılmaktadır.
 

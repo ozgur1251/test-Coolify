@@ -8,6 +8,12 @@ import { getCategories, getAllBlogPosts } from './supabase.js';
  */
 export async function generateSitemapXml(siteUrl) {
   try {
+    // Site URL kontrolü
+    if (!siteUrl) {
+      console.error('Sitemap oluşturulamadı, SITE_URL tanımlanmamış');
+      return getDefaultSitemap('');
+    }
+    
     // Site URL'sinin sonunda / varsa kaldırıyoruz
     siteUrl = siteUrl.replace(/\/$/, '');
     
@@ -127,17 +133,18 @@ function escapeXml(str) {
  */
 function getDefaultSitemap(siteUrl) {
   const today = new Date().toISOString().split('T')[0];
+  const baseUrl = siteUrl || '';
   
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>${siteUrl}/</loc>
+    <loc>${baseUrl}/</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>${siteUrl}/hakkinda</loc>
+    <loc>${baseUrl}/hakkinda</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -153,6 +160,12 @@ function getDefaultSitemap(siteUrl) {
  */
 export function generateRobotsTxt(siteUrl) {
   try {
+    // Site URL kontrolü
+    if (!siteUrl) {
+      console.error('Robots.txt oluşturulamadı, SITE_URL tanımlanmamış');
+      return `User-agent: *\nAllow: /`;
+    }
+    
     // Site URL'sinin sonunda / varsa kaldırıyoruz
     siteUrl = siteUrl.replace(/\/$/, '');
     

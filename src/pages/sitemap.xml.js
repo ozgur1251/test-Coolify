@@ -2,7 +2,9 @@ import { generateSitemapXml } from '../lib/sitemap.js';
 
 export async function GET({ site }) {
   try {
-    const siteUrl = site ? site.toString() : process.env.SITE_URL || 'https://binaguclendirme.com';
+    const siteUrl = site ? site.toString() : process.env.SITE_URL;
+    
+    console.log('Sitemap oluşturuluyor. Site URL:', siteUrl);
     
     const xml = await generateSitemapXml(siteUrl);
     
@@ -17,7 +19,9 @@ export async function GET({ site }) {
     
     // Basit bir varsayılan sitemap döndür
     const today = new Date().toISOString().split('T')[0];
-    const siteUrl = site ? site.toString() : process.env.SITE_URL || 'https://binaguclendirme.com';
+    const siteUrl = site ? site.toString() : process.env.SITE_URL;
+    
+    console.error('Fallback sitemap oluşturuluyor. Site URL:', siteUrl);
     
     const fallbackXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

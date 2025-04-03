@@ -2,7 +2,9 @@ import { generateRobotsTxt } from '../lib/sitemap.js';
 
 export async function GET({ site }) {
   try {
-    const siteUrl = site ? site.toString() : process.env.SITE_URL || 'https://binaguclendirme.com';
+    const siteUrl = site ? site.toString() : process.env.SITE_URL;
+    
+    console.log('Robots.txt oluşturuluyor. Site URL:', siteUrl);
     
     const robotsTxt = generateRobotsTxt(siteUrl);
     
@@ -14,6 +16,7 @@ export async function GET({ site }) {
     });
   } catch (error) {
     console.error('Robots.txt endpoint hatası:', error);
+    console.error('Fallback robots.txt oluşturuluyor.');
     
     // Basit bir varsayılan robots.txt döndür
     return new Response(`User-agent: *
