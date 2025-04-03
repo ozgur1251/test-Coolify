@@ -6,6 +6,8 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
+ARG SITE_URL
+ENV SITE_URL=${SITE_URL}
 RUN npm run build
 
 FROM node:20-alpine AS runtime
@@ -16,6 +18,8 @@ COPY --from=build /app/node_modules ./node_modules/
 
 ENV HOST=0.0.0.0
 ENV PORT=3000
+ARG SITE_URL
+ENV SITE_URL=${SITE_URL}
 EXPOSE 3000
 
 CMD ["node", "./dist/server/entry.mjs"] 

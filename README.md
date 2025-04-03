@@ -106,3 +106,23 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+## Ortam Değişkenleri
+
+Projenin çalışması için aşağıdaki ortam değişkenlerinin tanımlanması gerekir:
+
+- `SUPABASE_URL`: Supabase API URL
+- `SUPABASE_KEY`: Supabase API Anahtarı
+- `SITE_URL`: Sitenin tam URL'si (örn: https://binaguclendirme.com)
+
+### Coolify Konfigürasyonu
+
+Coolify'da dağıtım yaparken şu ortam değişkenlerini ayarlayın:
+
+```
+SITE_URL=https://example.com
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your-supabase-key
+```
+
+`SITE_URL` değişkeni SEO optimizasyonları, canonical URL'ler ve sitemap oluşturma için kullanılmaktadır.

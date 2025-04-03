@@ -18,6 +18,28 @@ const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/
 		<meta name="generator" content={Astro.generator} />
 		<title>{pageTitle}</title>
 		<meta name="description" content={description} />
+		<!-- Performans optimizasyonları -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<!-- Compresyon ve cache kullanımını belirt -->
+		<meta http-equiv="Cache-Control" content="max-age=604800" />
+		<meta http-equiv="x-content-type-options" content="nosniff" />
+		<!-- SEO iyileştirmeleri -->
+		<link rel="canonical" href={new URL(Astro.url.pathname, Astro.site).href} />
+		<meta name="robots" content="index, follow" />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={new URL(Astro.url.pathname, Astro.site).href} />
+		<!-- Kritik CSS satır içi olarak yükleniyor -->
+		<style>
+			/* Kritik CSS - Sayfa yüklenirken öncelikli gösterilecek stil tanımları */
+			body{margin:0;font-family:Arial,sans-serif;line-height:1.6;color:#333}
+			header{margin-bottom:20px;padding:0 20px}
+			h1{margin-top:0;margin-bottom:15px;line-height:1.2}
+			.nav-container{margin-bottom:30px}
+			.main-nav{display:flex;gap:10px;align-items:center;margin:10px 0}
+		</style>
 		<slot name="head" />
 	</head>
 	<body>
@@ -34,6 +56,32 @@ const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/
 			<p>© {new Date().getFullYear()} İstanbul Bina Güçlendirme</p>
 		</footer>
 	</body>
+	<!-- JavaScript yükleme optimizasyonu -->
+	<script>
+		// LCP (Largest Contentful Paint) performansını iyileştirme
+		document.addEventListener('DOMContentLoaded', () => {
+			// Görsel yükleme optimizasyonu
+			if ('loading' in HTMLImageElement.prototype) {
+				// Tarayıcı native lazy-loading destekliyorsa
+				document.querySelectorAll('img[loading="lazy"]').forEach((element) => {
+					const img = element as HTMLImageElement;
+					// Görsel zaten viewport içindeyse hemen yükle
+					if (img.getBoundingClientRect().top < window.innerHeight) {
+						img.loading = 'eager';
+						img.setAttribute('fetchpriority', 'high');
+					}
+				});
+			}
+			
+			// Genişlik/Yükseklik değerlerini eksik olan görsellere ekle
+			document.querySelectorAll('img:not([width]):not([height])').forEach((element) => {
+				const img = element as HTMLImageElement;
+				// Eksik boyut değerlerini varsayılan olarak ekle
+				if (!img.width) img.width = 400;
+				if (!img.height) img.height = 225;
+			});
+		});
+	</script>
 </html>
 
 <style is:global>
