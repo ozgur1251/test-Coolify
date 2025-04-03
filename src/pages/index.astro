@@ -28,7 +28,7 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
   <h2>Bölgelere Göre Hizmetlerimiz</h2>
   <div class="categories-grid">
     {sortedCategories.map((category) => (
-      <div class="category-card">
+      <div class="category-card card">
         {category.featured_image && (
           <div class="image-container">
             <img 
@@ -44,7 +44,7 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
           <p class="category-description">{category.description}</p>
         )}
         <p class="post-count">Makale Sayısı: {category.postCount}</p>
-        <a href={`/kategori/${category.slug}`} class="category-link">
+        <a href={`/kategori/${category.slug}`} class="category-link btn btn-primary">
           Detayları Görüntüle
         </a>
       </div>
@@ -55,26 +55,25 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
     .categories-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 35px;
-      margin-top: 30px;
+      column-gap: 35px;
+      row-gap: 45px;
+      margin-top: 40px;
+      margin-bottom: 40px;
       width: 100%;
     }
     
     .category-card {
-      border: 1px solid #ddd;
-      border-radius: 12px;
       padding: 20px;
-      transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
       height: 100%;
-      background-color: #fff;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      border-radius: var(--radius-lg);
     }
     
     .category-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--color-border-dark);
     }
     
     .image-container {
@@ -82,7 +81,7 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
       position: relative;
       margin-bottom: 20px;
       overflow: hidden;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       aspect-ratio: 16/10;
     }
     
@@ -93,7 +92,7 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
       position: absolute;
       top: 0;
       left: 0;
-      transition: transform 0.5s ease;
+      transition: transform var(--transition-slow);
     }
     
     .category-card:hover .category-image {
@@ -102,13 +101,14 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
     
     .category-name {
       margin-top: 0;
-      margin-bottom: 12px;
+      margin-bottom: 15px;
       font-size: 1.4rem;
-      color: #333;
+      color: var(--color-text);
+      letter-spacing: -0.01em;
     }
     
     .category-description {
-      margin: 12px 0;
+      margin: 0 0 15px 0;
       font-size: 1rem;
       flex-grow: 1;
       /* Açıklama çok uzunsa üç satırda kes */
@@ -116,44 +116,42 @@ const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - 
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      color: #555;
+      color: var(--color-text-light);
+      line-height: 1.5;
     }
     
     .post-count {
-      color: #666;
+      color: var(--color-text-light);
       font-size: 0.9rem;
-      margin-bottom: 18px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #eee;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--color-grey-medium);
     }
     
     .category-link {
       display: block;
       margin-top: auto;
-      color: #fff;
-      background-color: #0066cc;
-      text-decoration: none;
-      text-align: center;
       padding: 12px;
-      border-radius: 8px;
-      font-weight: 500;
-      transition: background-color 0.3s;
+      border-radius: var(--radius-md);
     }
     
     .category-link:hover {
-      background-color: #004d99;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
     }
     
     @media (max-width: 1024px) {
       .categories-grid {
         grid-template-columns: repeat(2, 1fr);
+        row-gap: 35px;
       }
     }
     
     @media (max-width: 600px) {
       .categories-grid {
         grid-template-columns: 1fr;
-        gap: 25px;
+        gap: 30px;
+        margin-top: 30px;
       }
       
       .category-card {
