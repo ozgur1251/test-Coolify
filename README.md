@@ -126,3 +126,14 @@ SUPABASE_KEY=your-supabase-key
 ```
 
 `SITE_URL` değişkeni SEO optimizasyonları, canonical URL'ler ve sitemap oluşturma için kullanılmaktadır.
+
+## SEO Özellikleri
+
+Proje, aşağıdaki SEO özelliklerini içerir:
+
+- **Sitemap.xml**: Tüm kategorileri ve blog yazılarını içeren otomatik oluşturulan sitemap. `/sitemap.xml` adresinden erişilebilir.
+- **Robots.txt**: Arama motorları için robots.txt dosyası. `/robots.txt` adresinden erişilebilir.
+- **Canonical URL'ler**: Tüm sayfalarda canonical URL'ler otomatik olarak eklenir.
+- **Open Graph Etiketleri**: Sosyal medya paylaşımları için Open Graph meta etiketleri.
+
+Site URL'si dinamik olarak `SITE_URL` ortam değişkeninden alınır.
