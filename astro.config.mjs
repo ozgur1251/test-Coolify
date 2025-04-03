@@ -1,11 +1,11 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import node from '@astrojs/node';
+import 'dotenv/config'; // Dotenv'i yapılandırma dosyasında doğrudan yükle
 
-// Ortam değişkeninden site URL'sini al
-const SITE_URL = process.env.SITE_URL;
+// Ortam değişkenine erişim
+const siteUrl = process.env.SITE_URL;
 
-// Site URL yoksa özelliği yapılandırmadan geç, varsa site özelliğini ekle
 /** @type {import('astro').AstroUserConfig} */
 const config = {
   output: 'server',
@@ -14,12 +14,16 @@ const config = {
   })
 };
 
-// Site URL varsa site özelliğini ekle
-if (SITE_URL) {
-  config.site = SITE_URL;
-  console.log('Site URL yapılandırıldı:', SITE_URL);
+// Ortam değişkeni varsa site ayarını ekle
+if (siteUrl) {
+  // Trailing slash olmadan URL kullan
+  config.site = siteUrl.replace(/\/$/, '');
+  console.log('Site URL yapılandırıldı:', config.site);
 } else {
-  console.warn('SITE_URL ortam değişkeni tanımlanmamış. Site URL yapılandırılmadı.');
+  // Ortam değişkeni bulunamazsa uyarı ver
+  console.error('UYARI: SITE_URL ortam değişkeni bulunamadı!');
+  console.error('Bu değişken .env dosyasında veya Coolify ortam değişkenlerinde tanımlanmalıdır.');
+  console.error('Site URL yapılandırması eksik olduğu için bazı özellikler düzgün çalışmayabilir.');
 }
 
 // https://astro.build/config

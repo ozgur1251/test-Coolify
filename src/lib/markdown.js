@@ -18,5 +18,5 @@ export function parseMarkdown(markdownText) {
   return marked.parse(markdownText);
 }
 
-// Eski fonksiyonu geriye dönük uyumluluk için koru
+// Geriye dönük uyumluluk için - başka dosyalarda kullanılıyorsa fonksiyon adını aynı tut
 export const sanitizeAndParseMarkdown = parseMarkdown; 

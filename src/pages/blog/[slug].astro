@@ -24,6 +24,9 @@ interface FaqItem {
   answer: string;
 }
 
+// Sosyal medya değerlerini işle (varsayılan değerler atama)
+const socialMedia = post.social_media || {};
+
 // İçeriği markdown'dan HTML'e dönüştür
 const contentHtml = parseMarkdown(post.content);
 
@@ -46,17 +49,103 @@ const processedFaq = processFaqData(post.faq) || processFaqData(post.sss) || [];
 const hasFaq = processedFaq.length > 0;
 
 const pageTitle = post.title;
-const description = post.meta_description;
+const description = post.meta_description || post.excerpt || post.title;
+const keywords = post.keywords ? post.keywords.join(', ') : `bina güçlendirme, ${category?.name || ''}, ${post.title}`;
+
+// SEO için görsel verilerini hazırlama
+const imageUrl = socialMedia.image || post.featured_image || '';
+const imageAlt = socialMedia.image_alt || post.title || '';
+const publishDate = post.published_at || post.created_at;
+const modifiedDate = post.updated_at || publishDate;
+
+// Görsel boyutları için (yatay veya dikey kontrolü)
+let imageWidth = 1320;
+let imageHeight = 920;
+// Görsel dikey mi kontrolü yapılabilir - varsayılan olarak yatay kabul ediyoruz
+
+// Sosyal medya etiketleri
+const socialTitle = socialMedia.title || post.title;
+const socialDescription = socialMedia.description || post.meta_description || post.excerpt || '';
+const twitterCard = socialMedia.twitter_card || 'summary_large_image';
+const twitterUsername = socialMedia.twitter_username || '';
+const facebookAppId = socialMedia.facebook_app_id || '';
+
+// Canonical URL 
+const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
+
+// Yapısal veri (schema.org) oluşturma
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.title,
+  "description": description,
+  "author": {
+    "@type": "Organization",
+    "name": post.author || "İstanbul Bina Güçlendirme"
+  },
+  "datePublished": new Date(publishDate).toISOString(),
+  "dateModified": new Date(modifiedDate).toISOString(),
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": canonicalURL
+  },
+  "image": imageUrl || null,
+  "publisher": {
+    "@type": "Organization",
+    "name": "İstanbul Bina Güçlendirme",
+    "logo": {
+      "@type": "ImageObject",
+      "url": Astro.site ? new URL("/favicon.svg", Astro.site).href : "/favicon.svg"
+    }
+  }
+};
+
+// FAQ şeması
+const faqSchema = hasFaq ? {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": processedFaq.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+} : null;
 ---
 
-<BaseLayout pageTitle={pageTitle} description={description}>
+<BaseLayout 
+  pageTitle={socialTitle}
+  description={socialDescription}
+  keywords={keywords}
+  imageUrl={imageUrl}
+  imageAlt={imageAlt}
+  type="article"
+  author={post.author || "İstanbul Bina Güçlendirme"}
+  twitterCard={twitterCard}
+>
   <slot slot="head">
-    <meta name="keywords" content={post.keywords ? post.keywords.join(', ') : ''} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta property="article:published_time" content={new Date(publishDate).toISOString()} />
+    <meta property="article:modified_time" content={new Date(modifiedDate).toISOString()} />
+    {category && <meta property="article:section" content={category.name} />}
+    {post.keywords && post.keywords.map((keyword: string) => (
+      <meta property="article:tag" content={keyword} />
+    ))}
+    
+    {facebookAppId && <meta property="fb:app_id" content={facebookAppId} />}
+    {twitterUsername && <meta name="twitter:site" content={`@${twitterUsername}`} />}
+    {twitterUsername && <meta name="twitter:creator" content={`@${twitterUsername}`} />}
+    
+    <!-- Yapısal veri -->
+    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+    {hasFaq && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
   </slot>
 
-  <article>
+  <article itemscope itemtype="https://schema.org/BlogPosting">
     <div class="post-header">
-      <h1 class="post-title">{post.title}</h1>
+      <h1 class="post-title" itemprop="headline">{post.title}</h1>
       <div class="post-meta">
         <div>
           {category && (
@@ -64,21 +153,31 @@ const description = post.meta_description;
               {category.name}
             </a>
           )}
-          <span>Tarih: {new Date(post.created_at).toLocaleDateString('tr-TR')}</span>
+          <span>Tarih: <time itemprop="datePublished" datetime={new Date(publishDate).toISOString()}>{new Date(publishDate).toLocaleDateString('tr-TR')}</time></span>
+          {modifiedDate !== publishDate && 
+            <span>Güncelleme: <time itemprop="dateModified" datetime={new Date(modifiedDate).toISOString()}>{new Date(modifiedDate).toLocaleDateString('tr-TR')}</time></span>
+          }
         </div>
       </div>
       
       {post.featured_image && (
-        <img 
-          src={post.featured_image} 
-          alt={post.title} 
-          class="featured-image"
-          loading="lazy"
-        />
+        <div class="featured-image-container">
+          <img 
+            src={post.featured_image} 
+            alt={imageAlt} 
+            class="featured-image"
+            loading="lazy"
+            itemprop="image"
+            width="1320"
+            height="920"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </div>
       )}
     </div>
     
-    <div class="post-content">
+    <div class="post-content" itemprop="articleBody">
       <div set:html={contentHtml} />
     </div>
     
@@ -86,25 +185,60 @@ const description = post.meta_description;
       <div class="faq-section">
         <h2>Sık Sorulan Sorular</h2>
         {processedFaq.map((item: FaqItem) => (
-          <div class="faq-item">
-            <div class="faq-question">{item.question}</div>
-            <div class="faq-answer" set:html={parseMarkdown(item.answer)} />
+          <div class="faq-item" itemscope itemtype="https://schema.org/Question">
+            <div class="faq-question" itemprop="name">{item.question}</div>
+            <div class="faq-answer" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+              <div itemprop="text" set:html={parseMarkdown(item.answer)} />
+            </div>
           </div>
         ))}
       </div>
     )}
+    
+    {/* Kategori ve etiket navigasyonu */}
+    <div class="post-navigation">
+      <div class="post-tags">
+        {post.keywords && post.keywords.length > 0 && (
+          <div class="tags-container">
+            <span class="tags-label">Etiketler:</span>
+            <ul class="tag-list">
+              {post.keywords.map((tag: string) => (
+                <li class="tag-item">
+                  <span class="tag-text">{tag}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+      
+      {category && (
+        <div class="related-category">
+          <span class="category-label">Kategori:</span>
+          <a href={`/kategori/${category.slug}`} class="category-link">{category.name}</a>
+        </div>
+      )}
+    </div>
   </article>
 </BaseLayout>
 
 <style>
   .post-header {
     margin-bottom: 30px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    padding: 0 1rem;
   }
   
   .post-title {
     margin-bottom: 10px;
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: var(--color-text);
+    line-height: 1.3;
+    word-wrap: break-word;
+    font-weight: 600;
   }
   
   .post-meta {
@@ -123,84 +257,211 @@ const description = post.meta_description;
     margin-right: 10px;
   }
   
+  .featured-image-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto 20px;
+    position: relative;
+    aspect-ratio: 1320/920;
+  }
+  
   .featured-image {
     width: 100%;
-    max-height: 400px;
+    height: 100%;
     object-fit: cover;
     border-radius: var(--radius-sm);
-    margin-bottom: 20px;
   }
   
   /* İçerik stilleri */
   .post-content {
     margin-bottom: 30px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    padding: 0 1rem;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
   }
   
-  .post-content h2 {
-    margin-top: 1.5em;
-    margin-bottom: 0.5em;
-    font-size: 1.6rem;
-    color: var(--color-text);
-  }
-  
-  .post-content h3 {
-    margin-top: 1.2em;
-    margin-bottom: 0.5em;
-    font-size: 1.4rem;
-    color: var(--color-text);
-  }
-  
-  .post-content p, .post-content ul, .post-content ol {
-    margin-bottom: 1em;
-    color: var(--color-text);
-  }
-  
-  .post-content ul, .post-content ol {
-    padding-left: 2em;
-  }
-  
-  .post-content blockquote {
-    border-left: 4px solid var(--color-border-dark);
-    padding-left: 1em;
-    margin: 0 0 1em 0;
-    font-style: italic;
-    color: var(--color-text-light);
-  }
-  
-  .post-content pre {
-    background-color: var(--color-grey-light);
-    padding: 1em;
+  .post-content :global(img) {
+    max-width: 100%;
+    height: auto;
     border-radius: var(--radius-sm);
+    margin: 1rem 0;
+  }
+  
+  .post-content :global(pre) {
     overflow-x: auto;
+    max-width: 100%;
   }
   
-  .post-content code {
-    background-color: var(--color-grey-light);
-    padding: 0.2em 0.4em;
-    border-radius: var(--radius-sm);
-    font-family: monospace;
+  .post-content :global(table) {
+    max-width: 100%;
+    overflow-x: auto;
+    display: block;
   }
   
   /* FAQ stilleri */
   .faq-section {
-    margin-top: 40px;
-    background-color: var(--color-grey-light);
-    padding: 20px;
-    border-radius: var(--radius-sm);
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    max-width: 100%;
+    width: 100%;
   }
   
   .faq-item {
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1rem;
+  }
+  
+  .faq-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
   }
   
   .faq-question {
-    font-weight: bold;
-    margin-bottom: 5px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
     color: var(--color-text);
+    cursor: pointer;
+    font-size: 1.1rem;
   }
   
   .faq-answer {
-    margin-left: 1em;
-    color: var(--color-text);
+    color: var(--color-text-light);
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+  
+  /* Post navigation */
+  .post-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 2rem auto 0;
+    border-top: 1px solid var(--color-border);
+    padding-top: 1.5rem;
+    max-width: 100%;
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .post-tags {
+    flex: 1;
+    min-width: 250px;
+  }
+  
+  .tags-container {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  
+  .tags-label {
+    font-weight: 600;
+    margin-right: 0.5rem;
+  }
+  
+  .tag-list {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+  }
+  
+  .tag-item {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--color-bg-accent);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+  }
+  
+  .related-category {
+    margin-top: 1rem;
+  }
+  
+  .category-label {
+    font-weight: 600;
+    margin-right: 0.5rem;
+  }
+  
+  .category-link {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  
+  .category-link:hover {
+    text-decoration: underline;
+  }
+
+  article {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  /* Responsive tasarım */
+  @media (min-width: 993px) {
+    .post-content, .post-navigation, .faq-section {
+      max-width: 800px;
+    }
+    
+    .post-header {
+      max-width: 1200px;
+    }
+    
+    .featured-image-container {
+      max-width: 1320px;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .featured-image-container {
+      max-width: 100%;
+    }
+    
+    .post-content, .post-navigation, .faq-section {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .post-title {
+      font-size: 1.5rem;
+    }
+    
+    .featured-image-container {
+      aspect-ratio: 1320/920;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .post-title {
+      font-size: 1.3rem;
+    }
+    
+    .post-meta {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .featured-image-container {
+      aspect-ratio: 1.33/1; /* Daha kare formata yakın */
+    }
+    
+    .post-content, .post-navigation, .faq-section, .post-header {
+      padding: 0 1.25rem;
+    }
+    
+    .faq-question {
+      font-size: 1rem;
+    }
   }
 </style> 

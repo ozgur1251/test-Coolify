@@ -2,74 +2,42 @@
 // Navigation.astro - Tüm sayfalarda kullanılacak ortak navigasyon bileşeni
 ---
 
-<div class="nav-container">
-  <div class="border-wrapper full-width">
-    <div class="nav-border nav-border-top"></div>
-  </div>
-  <nav class="main-nav">
-    <a href="/" class="nav-item reset-link" aria-label="Ana Sayfa - İstanbul Bina Güçlendirme">Ana Sayfa</a>
-    <a href="/hakkinda" class="nav-item reset-link" aria-label="Hakkımızda - İstanbul Bina Güçlendirme Hizmetleri">Hakkımızda</a>
-  </nav>
-  <div class="border-wrapper full-width">
-    <div class="nav-border nav-border-bottom"></div>
+<div class="nav-wrapper">
+  <div class="nav-container">
+    <div class="nav-border top-border"></div>
+    <nav class="main-nav">
+      <a href="/" class="nav-item" aria-label="Ana Sayfa - İstanbul Bina Güçlendirme">Ana Sayfa</a>
+      <a href="/hakkinda" class="nav-item" aria-label="Hakkımızda - İstanbul Bina Güçlendirme Hizmetleri">Hakkımızda</a>
+    </nav>
+    <div class="nav-border bottom-border"></div>
   </div>
 </div>
 
 <style>
-  /* Tüm bağlantı stillerini sıfırla */
-  .reset-link {
-    text-decoration: none !important;
-    border-bottom: none !important;
-    background-image: none !important;
-    box-shadow: none !important;
+  .nav-wrapper {
+    width: 100%;
+    position: relative;
+    margin: 0;
+    padding: 0;
   }
-  
-  .reset-link::after,
-  .reset-link::before {
-    display: none !important;
-    content: none !important;
-  }
-  
+
   .nav-container {
     position: relative;
     width: 100%;
-    margin-bottom: 30px;
-    padding: 0;
-    z-index: 10;
-    height: 80px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-  }
-  
-  .border-wrapper {
-    position: relative;
-    width: 100%;
-    height: 1px;
-    overflow: hidden;
-  }
-  
-  .full-width {
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    width: 100vw;
-    position: relative;
-  }
-  
-  .main-nav {
-    display: flex;
-    gap: 10px;
     align-items: center;
-    margin: 10px 0;
-    height: 40px;
+    height: auto;
+    margin: 0;
+    padding: 0;
   }
   
   .nav-border {
-    position: absolute;
-    width: 100%;
+    position: relative;
+    width: 100vw;
     height: 1px;
+    left: 50%;
+    transform: translateX(-50%);
     background: linear-gradient(90deg, 
       rgba(0,0,0,0) 0%, 
       rgba(0,102,204,0.2) 15%, 
@@ -79,40 +47,62 @@
       rgba(0,102,204,0.2) 85%, 
       rgba(0,0,0,0) 100%
     );
-    left: 0;
-    right: 0;
+    margin: 0;
+    padding: 0;
   }
   
-  .nav-border::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -50%;
-    width: 200%;
-    height: 1px;
-    background: inherit;
+  .top-border {
+    margin-bottom: 10px;
+  }
+  
+  .bottom-border {
+    margin-top: 10px;
+  }
+  
+  .main-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: var(--max-width-standard);
+    margin: 0 auto;
+    padding: 5px 20px;
+    height: 40px;
   }
   
   .nav-item {
     color: var(--color-text);
     text-decoration: none;
-    padding: 8px 16px;
-    border-radius: var(--radius-sm);
     font-weight: 500;
-    font-size: 1rem;
-    border-bottom: 0 !important;
+    padding: 5px 10px;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
   
-  .nav-item:hover {
-    background-color: var(--color-grey-light);
+  .nav-item:hover,
+  .nav-item:focus {
+    background-color: var(--color-primary-light);
     color: var(--color-primary);
-    border-bottom: 0 !important;
-    text-decoration: none !important;
   }
   
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
+    .nav-item {
+      padding: 6px 12px;
+    }
+    
     .main-nav {
-      justify-content: center;
+      padding: 6px 20px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .nav-item {
+      padding: 8px 15px;
+    }
+    
+    .main-nav {
+      gap: 12px;
     }
   }
 </style> 

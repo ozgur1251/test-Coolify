@@ -1,16 +1,208 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const pageTitle = "Hakkımızda";
+const pageTitle = "Hakkımızda - İstanbul Bina Güçlendirme";
+const description = "2010 yılından bu yana İstanbul ve çevresinde yüksek kaliteli bina güçlendirme hizmetleri sunan firmamız hakkında bilgi edinin. Uzman kadromuz ve modern teknolojilerimizle binaların güvenliğini en üst seviyeye çıkarıyoruz.";
+const keywords = ["bina güçlendirme", "deprem güçlendirme", "İstanbul bina güçlendirme", "karbon fiber güçlendirme", "yapısal güçlendirme", "betonarme güçlendirme"];
+
+// Yapısal veri
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": pageTitle,
+  "description": description,
+  "publisher": {
+    "@type": "Organization",
+    "name": "İstanbul Bina Güçlendirme",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://istanbulbinaguclendirme.com/images/logo.png"
+    }
+  },
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "İstanbul Bina Güçlendirme",
+    "description": "Bina güçlendirme ve depreme karşı koruma çözümleri sunan firma",
+    "foundingDate": "2010",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "İstanbul",
+      "addressRegion": "Marmara",
+      "addressCountry": "TR"
+    },
+    "areaServed": "İstanbul ve çevresi",
+    "serviceType": ["Bina Güçlendirme", "Karbon Fiber Güçlendirme", "Deprem Güçlendirme"]
+  }
+};
 ---
 
-<BaseLayout pageTitle={pageTitle}>
-	<h2>Firmamız Hakkında</h2>
-	<p>İstanbul Bina Güçlendirme, 2010 yılından bu yana İstanbul ve çevresinde yüksek kaliteli bina güçlendirme hizmetleri sunmaktadır. Uzman kadromuz ve modern teknolojilerimizle binaların güvenliğini en üst seviyeye çıkarmak için çalışıyoruz.</p>
+<BaseLayout 
+  pageTitle={pageTitle}
+  description={description}
+  keywords={keywords}
+  structuredData={structuredData}
+>
+	<main class="about-container">
+		<section class="about-section">
+			<h1>Firmamız Hakkında</h1>
+			<div class="about-content">
+				<p class="lead-text">İstanbul Bina Güçlendirme, 2010 yılından bu yana İstanbul ve çevresinde yüksek kaliteli bina güçlendirme hizmetleri sunmaktadır. Uzman kadromuz ve modern teknolojilerimizle binaların güvenliğini en üst seviyeye çıkarmak için çalışıyoruz.</p>
+				
+				<h2>Uzmanlık Alanlarımız</h2>
+				<p>Karbon fiber, CFRP, kolon güçlendirme, kiriş güçlendirme, yapısal güçlendirme ve betonarme güçlendirme konularında uzmanız. Depreme dayanıklı bina tasarımı ve güçlendirmesi konusunda geniş bir tecrübeye sahibiz.</p>
+				
+				<h2>Misyonumuz</h2>
+				<p>Müşterilerimize en yüksek kalitede hizmet sunarak, binaların güvenliğini ve dayanıklılığını artırmak için çalışıyoruz. Deprem riskine karşı binaları korumak ve güçlendirmek, toplum güvenliğine katkıda bulunmak en önemli hedefimizdir.</p>
+			
+				<h2>Değerlerimiz</h2>
+				<ul class="values-list">
+					<li><strong>Kalite:</strong> Her projede en yüksek kalitede malzeme ve işçilik standartlarını uyguluyoruz.</li>
+					<li><strong>Güvenlik:</strong> Çalışanlarımızın ve müşterilerimizin güvenliği her zaman önceliğimizdir.</li>
+					<li><strong>İnovasyon:</strong> Sektördeki en son teknolojileri ve yöntemleri takip ederek hizmetlerimizi sürekli geliştiriyoruz.</li>
+					<li><strong>Dürüstlük:</strong> İş ilişkilerimizde şeffaflık ve dürüstlük ilkelerini benimsiyoruz.</li>
+					<li><strong>Müşteri Memnuniyeti:</strong> Müşteri ihtiyaçlarını anlamak ve en iyi çözümleri sunmak için özenle çalışıyoruz.</li>
+				</ul>
+			</div>
+		</section>
+		
+		<section class="about-section">
+			<h2>Neden Bizi Seçmelisiniz?</h2>
+			<div class="features-grid">
+				<div class="feature-card">
+					<h3>Uzman Kadro</h3>
+					<p>Alanında uzman mühendisler ve teknik personel ile binanızın güvenliği için en iyi çözümleri sunuyoruz.</p>
+				</div>
+				<div class="feature-card">
+					<h3>Kaliteli Malzeme</h3>
+					<p>Tüm projelerimizde yüksek kaliteli malzemeler kullanarak uzun ömürlü çözümler sağlıyoruz.</p>
+				</div>
+				<div class="feature-card">
+					<h3>Uygun Fiyat</h3>
+					<p>Yüksek kaliteli hizmeti rekabetçi fiyatlarla sunarak müşteri memnuniyetini en üst düzeyde tutuyoruz.</p>
+				</div>
+			</div>
+		</section>
+	</main>
 	
-	<h2>Uzmanlık Alanlarımız</h2>
-	<p>Karbon fiber, CFRP, kolon güçlendirme, kiriş güçlendirme, yapısal güçlendirme ve betonarme güçlendirme konularında uzmanız. Depreme dayanıklı bina tasarımı ve güçlendirmesi konusunda geniş bir tecrübeye sahibiz.</p>
-	
-	<h2>Misyonumuz</h2>
-	<p>Müşterilerimize en yüksek kalitede hizmet sunarak, binaların güvenliğini ve dayanıklılığını artırmak için çalışıyoruz. Deprem riskine karşı binaları korumak ve güçlendirmek, toplum güvenliğine katkıda bulunmak en önemli hedefimizdir.</p>
+	<style>
+		.about-container {
+			max-width: 1100px;
+			margin: 0 auto;
+			padding: 0 1rem;
+		}
+		
+		.about-section {
+			margin-bottom: 3rem;
+		}
+		
+		.about-section h1 {
+			font-size: 1.8rem;
+			margin-bottom: 1.5rem;
+			color: var(--color-text);
+			font-weight: 600;
+		}
+		
+		.about-section h2 {
+			font-size: 1.5rem;
+			margin: 2rem 0 1rem;
+			color: var(--color-text);
+			font-weight: 600;
+		}
+		
+		.about-content {
+			background-color: white;
+			padding: 1.5rem;
+			border-radius: var(--radius-md);
+			box-shadow: var(--shadow-sm);
+		}
+		
+		.lead-text {
+			font-size: 1.1rem;
+			line-height: 1.6;
+			margin-bottom: 1.5rem;
+		}
+		
+		.values-list {
+			list-style-type: disc;
+			padding-left: 1.5rem;
+			margin-bottom: 1rem;
+		}
+		
+		.values-list li {
+			margin-bottom: 0.5rem;
+		}
+		
+		.features-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+			gap: 1.5rem;
+		}
+		
+		.feature-card {
+			background-color: white;
+			padding: 1.25rem;
+			border-radius: var(--radius-sm);
+			box-shadow: var(--shadow-sm);
+		}
+		
+		.feature-card h3 {
+			font-size: 1.25rem;
+			margin-bottom: 0.75rem;
+			color: var(--color-text);
+			font-weight: 600;
+		}
+		
+		@media (max-width: 768px) {
+			.features-grid {
+				grid-template-columns: 1fr;
+				gap: 1rem;
+			}
+			
+			.about-section h1 {
+				font-size: 1.5rem;
+			}
+			
+			.about-section h2 {
+				font-size: 1.4rem;
+			}
+			
+			.about-content {
+				padding: 1.25rem;
+			}
+			
+			.feature-card h3 {
+				font-size: 1.2rem;
+			}
+			
+			.about-container {
+				padding: 0 1.25rem;
+			}
+		}
+		
+		@media (max-width: 480px) {
+			.about-section h1 {
+				font-size: 1.3rem;
+			}
+			
+			.about-section h2 {
+				font-size: 1.2rem;
+			}
+			
+			.feature-card h3 {
+				font-size: 1.1rem;
+			}
+			
+			.features-grid {
+				gap: 1rem;
+			}
+			
+			.feature-card {
+				padding: 1rem;
+			}
+			
+			.about-container {
+				padding: 0 1rem;
+			}
+		}
+	</style>
 </BaseLayout> 

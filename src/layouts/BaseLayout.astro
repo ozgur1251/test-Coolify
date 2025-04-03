@@ -2,12 +2,26 @@
 // BaseLayout.astro - Tüm sayfalarda kullanılacak ortak temel düzen
 import Navigation from '../components/Navigation.astro';
 
-const { pageTitle, description = "İstanbul'da bina güçlendirme, karbon fiber, kolon, kiriş güçlendirme hizmetleri. CFRP uygulamalarında uzman ekip." } = Astro.props;
+const { 
+	pageTitle, 
+	description = "İstanbul'da bina güçlendirme, karbon fiber, kolon, kiriş güçlendirme hizmetleri. CFRP uygulamalarında uzman ekip.",
+	keywords = "bina güçlendirme, karbon fiber, kolon güçlendirme, deprem güçlendirme, CFRP",
+	imageUrl = "",
+	imageAlt = "",
+	type = "website",
+	twitterCard = "summary_large_image",
+	author = "İstanbul Bina Güçlendirme",
+	noindex = false,
+	structuredData
+} = Astro.props;
 
 // Sayfa tipine göre maksimum genişlik ayarı
 // Blog detay sayfası için dar (800px), diğer tüm sayfalar için daha geniş (1200px)
 const currentPath = Astro.url.pathname;
 const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/';
+
+// Görsel URL'si için kontrol
+const ogImageUrl = imageUrl ? (imageUrl.startsWith('http') ? imageUrl : (Astro.site ? new URL(imageUrl, Astro.site).href : imageUrl)) : '';
 ---
 
 <html lang="tr">
@@ -18,43 +32,69 @@ const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/
 		<meta name="generator" content={Astro.generator} />
 		<title>{pageTitle}</title>
 		<meta name="description" content={description} />
+		<meta name="keywords" content={keywords} />
+		<meta name="author" content={author} />
+		{noindex && <meta name="robots" content="noindex" />}
+		
 		<!-- Performans optimizasyonları -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		
 		<!-- Compresyon ve cache kullanımını belirt -->
 		<meta http-equiv="Cache-Control" content="max-age=604800" />
 		<meta http-equiv="x-content-type-options" content="nosniff" />
+		
 		<!-- SEO iyileştirmeleri -->
 		{Astro.site ? 
 			<link rel="canonical" href={new URL(Astro.url.pathname, Astro.site).href} />
 		:
 			<link rel="canonical" href={Astro.url.pathname} />
 		}
-		<meta name="robots" content="index, follow" />
+		{!noindex && <meta name="robots" content="index, follow" />}
+		
+		<!-- Open Graph / Facebook -->
+		<meta property="og:locale" content="tr_TR" />
+		<meta property="og:type" content={type} />
 		<meta property="og:title" content={pageTitle} />
 		<meta property="og:description" content={description} />
-		<meta property="og:type" content="website" />
 		{Astro.site ? 
 			<meta property="og:url" content={new URL(Astro.url.pathname, Astro.site).href} />
 		:
 			<meta property="og:url" content={Astro.url.pathname} />
 		}
+		{ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+		{imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+		<meta property="og:site_name" content="İstanbul Bina Güçlendirme" />
+		
+		<!-- Twitter -->
+		<meta name="twitter:card" content={twitterCard} />
+		<meta name="twitter:title" content={pageTitle} />
+		<meta name="twitter:description" content={description} />
+		{ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
+		{imageAlt && <meta name="twitter:image:alt" content={imageAlt} />}
+
+		<!-- Yapısal veri ekle -->
+		{structuredData && <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
+		
 		<!-- Kritik CSS satır içi olarak yükleniyor -->
 		<style>
 			/* Kritik CSS - Sayfa yüklenirken öncelikli gösterilecek stil tanımları */
-			body{margin:0;font-family:Arial,sans-serif;line-height:1.6;color:#333}
-			header{margin-bottom:20px;padding:0 20px}
-			h1{margin-top:0;margin-bottom:15px;line-height:1.2}
-			.nav-container{margin-bottom:30px}
-			.main-nav{display:flex;gap:10px;align-items:center;margin:10px 0}
+			body{margin:0;font-family:Arial,sans-serif;line-height:1.6;color:#333;overflow-x:hidden;}
+			.site-header{width:100%;text-align:center;padding:15px 0 0;}
+			.header-container{max-width:800px;width:100%;margin:0 auto;padding:0 1rem;}
+			.page-title{margin:0;padding:0 0 15px;line-height:1.2;font-size:1.8rem;text-align:center;height:70px;display:flex;align-items:center;justify-content:center;font-weight:600;}
+			@media (max-width:768px){.page-title{font-size:1.5rem;height:60px;padding:0 0 10px;}}
 		</style>
 		<slot name="head" />
 	</head>
 	<body>
-		<header class="standard-header">
-			<h1>{pageTitle}</h1>
-			<Navigation />
+		<header class="site-header">
+			<div class="header-container">
+				<h1 class="page-title">{pageTitle}</h1>
+			</div>
 		</header>
+		
+		<Navigation />
 		
 		<main class={isBlogDetail ? "blog-detail-page" : "wide-page"}>
 			<slot />
@@ -71,22 +111,27 @@ const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/
 			// Görsel yükleme optimizasyonu
 			if ('loading' in HTMLImageElement.prototype) {
 				// Tarayıcı native lazy-loading destekliyorsa
-				document.querySelectorAll('img[loading="lazy"]').forEach((element) => {
-					const img = element as HTMLImageElement;
-					// Görsel zaten viewport içindeyse hemen yükle
-					if (img.getBoundingClientRect().top < window.innerHeight) {
-						img.loading = 'eager';
-						img.setAttribute('fetchpriority', 'high');
+				document.querySelectorAll('img[loading="lazy"]').forEach(function(element) {
+					// JavaScript uyumlu kod, TypeScript sözdizimi yok
+					const img = element;
+					if (img instanceof HTMLImageElement) {
+						// Görsel zaten viewport içindeyse hemen yükle
+						if (img.getBoundingClientRect().top < window.innerHeight) {
+							img.loading = 'eager';
+							img.setAttribute('fetchpriority', 'high');
+						}
 					}
 				});
 			}
 			
 			// Genişlik/Yükseklik değerlerini eksik olan görsellere ekle
-			document.querySelectorAll('img:not([width]):not([height])').forEach((element) => {
-				const img = element as HTMLImageElement;
-				// Eksik boyut değerlerini varsayılan olarak ekle
-				if (!img.width) img.width = 400;
-				if (!img.height) img.height = 225;
+			document.querySelectorAll('img:not([width]):not([height])').forEach(function(element) {
+				// JavaScript uyumlu kod, TypeScript sözdizimi yok
+				if (element instanceof HTMLImageElement) {
+					// Eksik boyut değerlerini varsayılan olarak ekle
+					if (!element.width) element.width = 400;
+					if (!element.height) element.height = 225;
+				}
 			});
 		});
 	</script>
@@ -112,6 +157,8 @@ const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/
     --color-border-dark: #ddd;
     --color-grey-light: #f5f5f5;
     --color-grey-medium: #eee;
+    --color-bg-secondary: #f5f5f5;
+    --color-bg-accent: #e6f0fa;
     
     /* Gölge stilleri */
     --shadow-sm: 0 3px 10px rgba(0,0,0,0.08);
@@ -132,129 +179,262 @@ const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/
   /* Reset ve temel stiller */
   * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+    max-width: 100%;
   }
   
   body {
     font-family: Arial, sans-serif;
-    margin: 0 auto;
-    padding: 20px;
+    margin: 0;
+    padding: 0;
     line-height: 1.6;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
     color: var(--color-text);
     background-color: var(--color-background);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
   }
   
   /* Container stiller */
-  .standard-header, .standard-footer {
+  .site-header {
+    width: 100%;
+    text-align: center;
+    padding: 15px 0 0;
+  }
+  
+  .header-container {
+    max-width: var(--max-width-standard);
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .standard-footer {
     width: 100%;
     max-width: var(--max-width-standard);
     margin: 0 auto;
+    padding: 0 1rem;
+    text-align: center;
   }
   
   .wide-page {
     max-width: var(--max-width-wide);
     width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+    overflow-x: hidden;
   }
   
   .blog-detail-page {
     max-width: var(--max-width-blog-detail);
     width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+    overflow-x: hidden;
   }
   
   /* Header ve footer */
   header {
-    margin-bottom: 20px;
-    /* Header'a sabit yükseklik ekleyelim */
-    min-height: 150px;
-  }
-  
-  header h1 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    /* Başlık boyutunu sınırlayalım */
-    max-height: 2.5em;
-    line-height: 1.2;
-    overflow: hidden;
+    margin-bottom: 0;
+    width: 100%;
   }
   
   footer {
-    margin-top: 30px;
-    border-top: 1px solid var(--color-border-dark);
-    padding-top: 10px;
-    font-size: 0.9em;
-    color: var(--color-text-light);
+    width: 100%;
+    margin-top: auto;
+    padding: 1rem 0;
+  }
+  
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    margin-top: 20px;
+    padding-bottom: 30px;
+  }
+  
+  .page-title {
+    margin: 0;
+    padding: 0 0 15px;
+    margin-top: 1.1rem;
+    line-height: 1.2;
+    font-size: 1.1rem;
     text-align: center;
+    height: 80px; /* Biraz daha küçük yükseklik */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
   }
   
-  /* Link stiller */
-  a {
-    text-decoration: none;
-    color: var(--color-primary);
-    transition: color var(--transition-fast);
-  }
-  
-  a:hover, 
-  a:focus {
-    text-decoration: none;
-    border-bottom: none;
-    color: var(--color-primary-dark);
-  }
-  
-  /* Kart ve liste elemanları için ortak stiller */
-  .card {
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: 15px;
-    background-color: var(--color-background);
-    box-shadow: var(--shadow-sm);
-    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-  }
-  
-  .card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-  }
-  
-  .btn {
-    display: inline-block;
-    text-align: center;
-    padding: 8px 16px;
-    border-radius: var(--radius-sm);
-    font-weight: 500;
-    transition: all var(--transition-fast);
-  }
-  
-  .btn-primary {
-    background-color: var(--color-primary);
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background-color: var(--color-primary-dark);
-  }
-  
-  /* Mobil uyumluluk için */
+  /* Responsive düzenlemeler */
   @media (max-width: 768px) {
-    :root {
-      --card-min-width: 240px;
+    .page-title {
+      font-size: 1.5rem;
+      height: 60px;
+      padding: 0 0 10px;
     }
     
-    body {
-      padding: 15px;
+    .site-header {
+      padding: 10px 0 0;
     }
     
-    .standard-header, .standard-footer,
     .wide-page, .blog-detail-page {
-      width: 95%;
+      padding: 0 1.25rem;
     }
   }
   
-  @media (min-width: 1600px) {
-    :root {
-      --max-width-wide: 1400px;
+  /* Küçük mobil cihazlar için ek düzenlemeler */
+  @media (max-width: 480px) {
+    .page-title {
+      font-size: 1.3rem;
+      height: 50px;
     }
+    
+    .wide-page, .blog-detail-page {
+      padding: 0 1rem;
+    }
+  }
+  
+  /* Globals */
+  pre, code {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  
+  table {
+    max-width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+  
+  /* Card stil tanımları - Tüm site için tekrar kullanılabilir */
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+    
+  .post-card {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: white;
+    height: 100%;
+  }
+    
+  .post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+    
+  .card-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    height: 100%;
+  }
+    
+  .card-image {
+    position: relative;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
+    background-color: var(--color-grey-light);
+    overflow: hidden;
+  }
+    
+  .card-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+    
+  .placeholder-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-light);
+    background-color: var(--color-grey-light);
+  }
+    
+  .card-content {
+    padding: 1rem;
+  }
+    
+  .card-content h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+    line-height: 1.3;
+    color: var(--color-text);
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+    
+  .post-excerpt {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+    -webkit-line-clamp: 3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+    
+  .post-count {
+    font-size: 0.8rem;
+    color: var(--color-text-light);
+    margin-bottom: 0.75rem;
+  }
+    
+  .post-count span {
+    font-weight: bold;
+    color: var(--color-primary);
+  }
+    
+  .read-more {
+    color: var(--color-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  /* Ekran okuyucular için gizli metin */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
   }
 </style> 
