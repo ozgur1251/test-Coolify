@@ -3,16 +3,29 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCategories, getCategoryPostCounts } from '../lib/supabase';
 
-const pageTitle = "İstanbul Bina Güçlendirme - Profesyonel CFRP ve Karbon Fiber Uygulamaları";
+const pageTitle = "İstanbul Bina Güçlendirme - Karbon Fiber elyaf kolon, kiriş güçlendirme";
 const description = "İstanbul ve çevresinde profesyonel bina güçlendirme, kolon, kiriş güçlendirme ve CFRP karbon fiber takviye hizmetleri. Depreme dayanıklı yapılar için bize ulaşın.";
+
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  featured_image?: string;
+}
+
+interface CategoryCount {
+  id: number;
+  post_count: number;
+}
 
 // Kategori bilgilerini getirelim
 const categories = await getCategories();
 const categoryStats = await getCategoryPostCounts();
 
 // Kategori ve post sayılarını birleştirelim
-const categoriesWithCounts = categories.map(category => {
-  const countInfo = categoryStats.find(c => c.id === category.id);
+const categoriesWithCounts = categories.map((category: Category) => {
+  const countInfo = categoryStats.find((c: CategoryCount) => c.id === category.id);
   return {
     ...category,
     postCount: countInfo ? countInfo.post_count : 0
@@ -101,9 +114,8 @@ const schemaData = {
     <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaData.localBusiness)} />
   </slot>
   <div class="home-container">
+    <h1 class="section-title">İstanbul Karbon Güçlendirme - Bölgelere Göre Hizmetlerimiz</h1>
     <p class="lead-text">İstanbul ve çevresinde bina güçlendirme hizmetleri sunuyoruz. CFRP ve Karbon Fiber uygulamalarında uzmanız.</p>
-    
-    <h2 class="section-title">Bölgelere Göre Hizmetlerimiz</h2>
     <div class="post-grid">
       {sortedCategories.map((category, index) => (
         <article class="post-card">
@@ -154,7 +166,7 @@ const schemaData = {
             yapısal takviye hizmetleri sunuyoruz. Uzman ekibimizle, İstanbul'un her bölgesinde hizmet veriyoruz.
           </p>
           <p>
-            <strong>İletişim:</strong> +90-542-748-3855<br>
+            <strong>İletişim:</strong> +90 542 748 3855<br>
             <strong>E-posta:</strong> info@karbonguclendirme.com<br>
             <strong>Adres:</strong> İstanbul, Türkiye
           </p>

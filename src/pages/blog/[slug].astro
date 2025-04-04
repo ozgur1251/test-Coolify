@@ -142,13 +142,13 @@ const faqSchema = hasFaq ? {
     {twitterUsername && <meta name="twitter:creator" content={`@${twitterUsername}`} />}
     
     <!-- Yapısal veri -->
-    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
-    {hasFaq && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+    {hasFaq && <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
   </slot>
 
   <article itemscope itemtype="https://schema.org/BlogPosting">
     <div class="post-header">
-      <div class="post-title main-heading" itemprop="headline">{post.title}</div>
+      <h1 class="post-title main-heading" itemprop="headline">{post.title}</h1>
       <div class="post-meta">
         <div>
           {category && (
@@ -467,12 +467,6 @@ const faqSchema = hasFaq ? {
       font-size: 1rem;
     }
   }
-
-  /* Markdown içeriğindeki h1 etiketlerini gizle */
-  .markdown-content :global(h1) {
-    display: none;
-  }
-  
   .post-content {
     max-width: 100%;
     margin: 2rem auto;
