@@ -114,7 +114,11 @@ const imageSchema = post.featured_image ? {
   "width": imageWidth.toString(),
   "height": imageHeight.toString(),
   "caption": imageAlt,
-  "inLanguage": "tr-TR"
+  "inLanguage": "tr-TR",
+  "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "acquireLicensePage": canonicalURL,
+  "creditText": COMPANY_NAME,
+  "copyrightNotice": `© ${new Date().getFullYear()} ${COMPANY_NAME}`
 } : null;
 
 // BreadcrumbList schema
@@ -184,6 +188,9 @@ const faqSchema = hasFaq ? {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "@id": `${canonicalURL}#faq`,
+  "name": "Sık Sorulan Sorular",
+  "headline": "Sık Sorulan Sorular",
+  "description": `${post.title} hakkında sık sorulan sorular ve cevapları`,
   "mainEntity": processedFaq.map(faq => ({
     "@type": "Question",
     "name": faq.question,
@@ -201,7 +208,6 @@ const fullSchema = JSON.stringify({
   "@graph": [
     // Organization
     {
-      "@context": "https://schema.org",
       "@type": "Organization",
       "@id": `${SITE_URL}/#organization`,
       "name": COMPANY_NAME,
@@ -224,15 +230,16 @@ const fullSchema = JSON.stringify({
       },
       "address": {
         "@type": "PostalAddress",
+        "streetAddress": "Fatih/Aksaray",
         "addressLocality": "İstanbul",
         "addressRegion": "İstanbul",
+        "postalCode": "34093",
         "addressCountry": "TR"
       },
       "sameAs": Object.values(SOCIAL_LINKS)
     },
     // Website
     {
-      "@context": "https://schema.org",
       "@type": "WebSite",
       "@id": `${SITE_URL}/#website`,
       "url": SITE_URL,
@@ -245,7 +252,6 @@ const fullSchema = JSON.stringify({
     },
     // Breadcrumb
     {
-      "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "@id": `${canonicalURL}#breadcrumb`,
       "itemListElement": [
@@ -277,7 +283,6 @@ const fullSchema = JSON.stringify({
     },
     // Article
     {
-      "@context": "https://schema.org",
       "@type": "BlogPosting",
       "@id": `${canonicalURL}#article`,
       "headline": post.title,
@@ -305,20 +310,25 @@ const fullSchema = JSON.stringify({
     },
     // Featured Image (if exists)
     ...(post.featured_image ? [{
-      "@context": "https://schema.org",
       "@type": "ImageObject",
       "@id": `${canonicalURL}#primaryImage`,
       "url": imageUrl,
       "width": imageWidth.toString(),
       "height": imageHeight.toString(),
       "caption": imageAlt,
-      "inLanguage": "tr-TR"
+      "inLanguage": "tr-TR",
+      "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "acquireLicensePage": canonicalURL,
+      "creditText": COMPANY_NAME,
+      "copyrightNotice": `© ${new Date().getFullYear()} ${COMPANY_NAME}`
     }] : []),
     // FAQ (if exists)
     ...(hasFaq ? [{
-      "@context": "https://schema.org",
       "@type": "FAQPage",
       "@id": `${canonicalURL}#faq`,
+      "name": "Sık Sorulan Sorular",
+      "headline": "Sık Sorulan Sorular",
+      "description": `${post.title} hakkında sık sorulan sorular ve cevapları`,
       "mainEntity": processedFaq.map(faq => ({
         "@type": "Question",
         "name": faq.question,
