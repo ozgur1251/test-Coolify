@@ -112,12 +112,12 @@ const fullSchema = JSON.stringify({
   "@graph": [
     // Organization
     {
-      "@type": "Organization",
+      "@type": "https://schema.org/Organization",
       "@id": `${SITE_URL}/#organization`,
       "name": COMPANY_NAME,
       "url": SITE_URL,
       "logo": {
-        "@type": "ImageObject",
+        "@type": "https://schema.org/ImageObject",
         "@id": `${SITE_URL}/#logo`,
         "url": `${SITE_URL}/logo.webp`,
         "width": "512",
@@ -125,7 +125,7 @@ const fullSchema = JSON.stringify({
         "contentUrl": `${SITE_URL}/logo.webp`
       },
       "contactPoint": {
-        "@type": "ContactPoint",
+        "@type": "https://schema.org/ContactPoint",
         "telephone": COMPANY_PHONE,
         "contactType": "customer service",
         "email": COMPANY_EMAIL,
@@ -133,18 +133,21 @@ const fullSchema = JSON.stringify({
         "availableLanguage": "Turkish"
       },
       "address": {
-        "@type": "PostalAddress",
+        "@type": "https://schema.org/PostalAddress",
         "streetAddress": "Fatih/Aksaray",
         "addressLocality": "İstanbul",
         "addressRegion": "İstanbul",
         "postalCode": "34093",
-        "addressCountry": "TR"
+        "addressCountry": {
+          "@type": "Country",
+          "name": "TR"
+        }
       },
       "sameAs": Object.values(SOCIAL_LINKS)
     },
     // Website
     {
-      "@type": "WebSite",
+      "@type": "https://schema.org/WebSite",
       "@id": `${SITE_URL}/#website`,
       "url": SITE_URL,
       "name": COMPANY_NAME,
@@ -156,64 +159,82 @@ const fullSchema = JSON.stringify({
     },
     // Breadcrumb
     {
-      "@type": "BreadcrumbList",
+      "@type": "https://schema.org/BreadcrumbList",
       "@id": `${canonicalURL}#breadcrumb`,
       "name": `${post.title} - Sayfa Gezintisi`,
       "itemListElement": [
         {
-          "@type": "ListItem",
+          "@type": "https://schema.org/ListItem",
           "position": 1,
           "name": "Ana Sayfa",
           "item": SITE_URL
         },
         {
-          "@type": "ListItem",
+          "@type": "https://schema.org/ListItem",
           "position": 2,
           "name": "Blog",
           "item": `${SITE_URL}/blog/`
         },
         ...(category ? [{
-          "@type": "ListItem",
+          "@type": "https://schema.org/ListItem",
           "position": 3,
           "name": category.name,
           "item": `${SITE_URL}/kategori/${category.slug}/`
         }] : []),
         {
-          "@type": "ListItem",
+          "@type": "https://schema.org/ListItem",
           "position": category ? 4 : 3,
           "name": post.title,
           "item": canonicalURL
         }
       ]
     },
+    // Blog
+    {
+      "@type": "https://schema.org/Blog",
+      "@id": `${SITE_URL}/blog/`,
+      "mainEntityOfPage": `${SITE_URL}/blog/`,
+      "name": `${COMPANY_NAME} Blog`,
+      "description": "Bina güçlendirme ve yapısal takviye konusunda faydalı bilgiler",
+      "publisher": {
+        "@id": `${SITE_URL}/#organization`
+      }
+    },
     // Article
     {
-      "@type": "BlogPosting",
-      "@id": `${canonicalURL}#article`,
-      "headline": post.title,
-      "name": post.title,
-      "description": description,
-      "url": canonicalURL,
+      "@type": "https://schema.org/BlogPosting",
+      "@id": `${canonicalURL}#BlogPosting`,
       "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": canonicalURL
       },
+      "headline": post.title,
+      "name": post.title,
+      "description": description,
+      "url": canonicalURL,
       "author": {
-        "@type": "Organization",
+        "@type": "https://schema.org/Organization",
         "@id": `${SITE_URL}/#organization`
       },
       "publisher": {
-        "@type": "Organization",
+        "@type": "https://schema.org/Organization",
         "@id": `${SITE_URL}/#organization`
       },
-      "image": post.featured_image ? { "@id": `${canonicalURL}#primaryImage` } : null,
+      "image": post.featured_image ? { 
+        "@type": "https://schema.org/ImageObject",
+        "@id": `${canonicalURL}#primaryImage` 
+      } : null,
       "datePublished": new Date(publishDate).toISOString(),
       "dateModified": new Date(modifiedDate).toISOString(),
       "keywords": post.keywords || [],
       "articleSection": category?.name || "Blog",
-      "inLanguage": "tr-TR",
       "articleBody": post.excerpt || post.meta_description || post.title,
-      "wordCount": post.content ? post.content.split(/\s+/).length : 0
+      "wordCount": post.content ? post.content.split(/\s+/).length : 0,
+      "inLanguage": "tr-TR",
+      "isPartOf": {
+        "@type": "https://schema.org/Blog",
+        "@id": `${SITE_URL}/blog/`
+      }
     },
     // Featured Image (if exists)
     ...(post.featured_image ? [{
@@ -242,7 +263,7 @@ const fullSchema = JSON.stringify({
     // FAQ (if exists)
     ...(hasFaq ? [{
       "@type": "https://schema.org/FAQPage",
-      "@id": `${canonicalURL}#faq`,
+      "@id": `${canonicalURL}#FAQPage`,
       "name": "Sık Sorulan Sorular",
       "url": `${canonicalURL}#faq`,
       "description": `${post.title} hakkında sık sorulan sorular ve cevapları`,
