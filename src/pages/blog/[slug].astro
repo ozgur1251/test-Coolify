@@ -7,7 +7,7 @@ import { parseMarkdown } from '../../lib/markdown';
 export const prerender = false;
 
 // Site URL'sini çevre değişkeninden alma
-const SITE_URL = import.meta.env.SITE_URL || Astro.url.origin || "https://istanbulbinaguclendirme.com";
+const SITE_URL = import.meta.env.SITE_URL || Astro.url.origin || "https://tr.istanbulbinaguclendirme.com";
 const siteDomain = new URL(SITE_URL).hostname;
 
 // Dinamik rota parametresini al
@@ -21,9 +21,32 @@ if (!post) {
   return Astro.redirect('/404');
 }
 
-// Kategori bilgisini alalım
+// Tüm kategorileri alalım - schema.org için kullanacağız
 const categories = await getCategories();
 const category = categories.find((cat: { id: number | string }) => cat.id === post.category_id);
+
+// Hizmet verilen şehirleri veritabanından veya kategorilerden alalım
+// Burada örnek olarak kategori bilgisinden city alanını alıyoruz
+// Eğer kategoride böyle bir alan yoksa yeni eklemeniz gerekebilir
+const cityName = category?.city || "İstanbul"; // Eğer kategori city alanı yoksa varsayılan olarak İstanbul kullanılır
+
+// Tüm kategorileri OfferCatalog yapısına dönüştür
+const offerCatalogs = categories.map((cat: any) => {
+  return {
+    "@type": "OfferCatalog",
+    "name": cat.name,
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": `${cat.name} Hizmeti`,
+          "description": cat.description || `${cat.name} alanında profesyonel güçlendirme hizmetleri`
+        }
+      }
+    ]
+  };
+});
 
 // FAQ için bir arayüz tanımlayalım
 interface FaqItem {
@@ -133,39 +156,13 @@ const fullSchema = JSON.stringify({
       "priceRange": "₺₺₺",
       "currenciesAccepted": "TRY",
       "paymentAccepted": "Nakit, Kredi Kartı, Banka Havalesi",
-      "areaServed": [
-        {
-          "@type": "City",
-          "name": "İstanbul"
-        },
-        {
-          "@type": "Place",
-          "name": "Kadıköy"
-        },
-        {
-          "@type": "Place",
-          "name": "Beşiktaş"
-        },
-        {
-          "@type": "Place",
-          "name": "Şişli"
-        },
-        {
-          "@type": "Place",
-          "name": "Ataşehir"
-        },
-        {
-          "@type": "Place",
-          "name": "Bakırköy"
-        },
-        {
-          "@type": "Place",
-          "name": "Beylikdüzü"
-        }
-      ],
+      "areaServed": {
+        "@type": "City",
+        "name": cityName
+      },
       "address": {
         "@type": "https://schema.org/PostalAddress",
-        "streetAddress": "Fatih/Aksaray",
+        "streetAddress": COMPANY_ADDRESS,
         "addressLocality": "İstanbul",
         "addressRegion": "İstanbul",
         "postalCode": "34093",
@@ -221,7 +218,12 @@ const fullSchema = JSON.stringify({
           "name": "FRP ile Duvar Güçlendirme",
           "description": "Duvarların depreme karşı dayanıklılığını artırma hizmeti"
         }
-      ]
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Bina Güçlendirme Hizmetleri",
+        "itemListElement": offerCatalogs
+      }
     },
     // Website
     {
@@ -292,15 +294,27 @@ const fullSchema = JSON.stringify({
       "url": canonicalURL,
       "author": {
         "@type": "https://schema.org/Organization",
-        "@id": `${SITE_URL}/#organization`
+        "@id": `${SITE_URL}/#organization`,
+        "name": COMPANY_NAME,
+        "url": SITE_URL
       },
       "publisher": {
         "@type": "https://schema.org/Organization",
-        "@id": `${SITE_URL}/#organization`
+        "@id": `${SITE_URL}/#organization`,
+        "name": COMPANY_NAME,
+        "url": SITE_URL,
+        "logo": {
+          "@type": "https://schema.org/ImageObject",
+          "url": `${SITE_URL}/logo.webp`,
+          "width": "512",
+          "height": "512"
+        }
       },
       "image": post.featured_image ? { 
         "@type": "https://schema.org/ImageObject",
-        "@id": `${canonicalURL}#primaryImage` 
+        "@id": `${canonicalURL}#primaryImage`,
+        "url": imageUrl,
+        "contentUrl": imageUrl
       } : null,
       "datePublished": new Date(publishDate).toISOString(),
       "dateModified": new Date(modifiedDate).toISOString(),
@@ -312,6 +326,36 @@ const fullSchema = JSON.stringify({
       "isPartOf": {
         "@type": "https://schema.org/Blog",
         "@id": `${SITE_URL}/blog/`
+      },
+      "about": {
+        "@type": "Service",
+        "serviceType": category?.name || "Bina Güçlendirme",
+        "provider": {
+          "@type": "https://schema.org/LocalBusiness",
+          "@id": `${SITE_URL}/#localbusiness`
+        },
+        "areaServed": {
+          "@type": "City",
+          "name": cityName
+        },
+        "hasOfferCatalog": category ? {
+          "@type": "OfferCatalog",
+          "name": `${category.name} Hizmetleri`,
+          "itemListElement": [
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": `${category.name}`,
+                "description": category.description || `İstanbul'da profesyonel ${category.name} hizmetleri`
+              }
+            }
+          ]
+        } : {
+          "@type": "OfferCatalog",
+          "name": "Bina Güçlendirme Hizmetleri",
+          "itemListElement": offerCatalogs.slice(0, 3) // İlk 3 kategori
+        }
       }
     },
     // Featured Image (if exists)
@@ -340,9 +384,9 @@ const fullSchema = JSON.stringify({
     }] : []),
     // FAQ (if exists)
     ...(hasFaq ? [{
-      "@context": "https://schema.org",
       "@type": "FAQPage",
       "url": `${canonicalURL}#faq`,
+      "name": "Sık Sorulan Sorular",
       "mainEntity": processedFaq.map(faq => ({
         "@type": "Question",
         "name": faq.question,
