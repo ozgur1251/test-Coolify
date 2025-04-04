@@ -90,15 +90,65 @@ const facebookAppId = socialMedia.facebook_app_id || '';
 // Canonical URL 
 const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
 
-// Yapısal veri (schema.org) oluşturma
+// Organization schema
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${Astro.site || 'https://binaguclendirme.com.tr'}/#organization`,
+  "name": "İstanbul Bina Güçlendirme",
+  "url": Astro.site || 'https://binaguclendirme.com.tr',
+  "logo": {
+    "@type": "ImageObject",
+    "url": `${Astro.site || 'https://binaguclendirme.com.tr'}/logo.webp`,
+    "width": "512",
+    "height": "512"
+  },
+  "sameAs": [
+    "https://www.facebook.com/binaguclendirme",
+    "https://twitter.com/binaguclendirme",
+    "https://www.instagram.com/binaguclendirme"
+  ]
+};
+
+// Image schema
+const imageSchema = post.featured_image ? {
+  "@context": "https://schema.org",
+  "@type": "ImageObject",
+  "@id": `${canonicalURL}#primaryImage`,
+  "url": imageUrl,
+  "width": "1320",
+  "height": "920",
+  "caption": imageAlt,
+  "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "acquireLicensePage": canonicalURL,
+  "creditText": "İstanbul Bina Güçlendirme",
+  "copyrightNotice": `© ${new Date().getFullYear()} İstanbul Bina Güçlendirme`
+} : null;
+
+// Article schema
 const articleSchema = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
+  "@id": canonicalURL,
+  "url": canonicalURL,
   "headline": post.title,
-  "description": socialDescription,
+  "name": post.title,
+  "description": description,
+  "articleBody": post.content,
+  "wordCount": post.content.split(/\s+/).length,
   "author": {
     "@type": "Organization",
-    "name": post.author || "İstanbul Bina Güçlendirme"
+    "@id": `${Astro.site || 'https://binaguclendirme.com.tr'}/#organization`,
+    "name": "İstanbul Bina Güçlendirme"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "@id": `${Astro.site || 'https://binaguclendirme.com.tr'}/#organization`,
+    "name": "İstanbul Bina Güçlendirme",
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${Astro.site || 'https://binaguclendirme.com.tr'}/logo.webp`
+    }
   },
   "datePublished": new Date(publishDate).toISOString(),
   "dateModified": new Date(modifiedDate).toISOString(),
@@ -106,15 +156,44 @@ const articleSchema = {
     "@type": "WebPage",
     "@id": canonicalURL
   },
-  "image": imageUrl || null,
-  "publisher": {
-    "@type": "Organization",
-    "name": "İstanbul Bina Güçlendirme",
-    "logo": {
-      "@type": "ImageObject",
-      "url": Astro.site ? new URL("/favicon.svg", Astro.site).href : "/favicon.svg"
+  "image": {
+    "@id": `${canonicalURL}#primaryImage`
+  },
+  "keywords": post.keywords || [],
+  "articleSection": category?.name || "Bina Güçlendirme",
+  "inLanguage": "tr-TR"
+};
+
+// BreadcrumbList schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Ana Sayfa",
+      "item": Astro.site || 'https://binaguclendirme.com.tr'
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Blog",
+      "item": `${Astro.site || 'https://binaguclendirme.com.tr'}/blog`
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": category?.name || "Bina Güçlendirme",
+      "item": `${Astro.site || 'https://binaguclendirme.com.tr'}/kategori/${category?.slug || 'bina-guclendirme'}`
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": post.title,
+      "item": canonicalURL
     }
-  }
+  ]
 };
 
 // FAQ şeması
@@ -156,7 +235,10 @@ const faqSchema = hasFaq ? {
     {twitterUsername && <meta name="twitter:creator" content={`@${twitterUsername}`} />}
     
     <!-- Yapısal veri -->
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    {imageSchema && <script is:inline type="application/ld+json" set:html={JSON.stringify(imageSchema)} />}
     <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
     {hasFaq && <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
   </slot>
 
