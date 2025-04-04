@@ -3,6 +3,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getBlogPostBySlug, getCategories } from '../../lib/supabase';
 import { parseMarkdown } from '../../lib/markdown';
 
+// Server-side rendering kullan (statik ön-render yerine)
+export const prerender = false;
+
 // Dinamik rota parametresini al
 const { slug } = Astro.params;
 
@@ -16,7 +19,7 @@ if (!post) {
 
 // Kategori bilgisini alalım
 const categories = await getCategories();
-const category = categories.find(cat => cat.id === post.category_id);
+const category = categories.find((cat: { id: number | string }) => cat.id === post.category_id);
 
 // FAQ için bir arayüz tanımlayalım
 interface FaqItem {

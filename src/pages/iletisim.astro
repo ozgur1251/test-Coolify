@@ -1,0 +1,233 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const pageTitle = "İletişim - İstanbul Bina Güçlendirme";
+const description = "İstanbul Bina Güçlendirme ile iletişime geçin. Profesyonel bina güçlendirme, CFRP ve karbon fiber uygulamaları hakkında bilgi alın.";
+
+// Schema.org yapılandırması
+const schemaData = {
+  organization: {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "İstanbul Bina Güçlendirme",
+    "url": Astro.site?.href || import.meta.env.SITE_URL || "",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+90-542-748-3855",
+      "contactType": "customer service"
+    }
+  }
+};
+---
+
+<BaseLayout pageTitle={pageTitle} description={description} noindex={true}>
+  <slot slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaData.organization)} />
+  </slot>
+
+  <div class="contact-container">
+    <h1 class="page-title">İletişim</h1>
+    
+    <div class="contact-content">
+      <div class="contact-info">
+        <h2>İstanbul Bina Güçlendirme</h2>
+        <p>Bina güçlendirme, karbon fiber uygulamaları ve yapısal takviye çözümleri için bize ulaşın.</p>
+        
+        <div class="contact-details">
+          <div class="contact-item">
+            <strong>Telefon:</strong>
+            <a href="tel:+905427483855" target="_blank" rel="noopener noreferrer nofollow">+90 542 748 3855</a>
+          </div>
+          
+          <div class="contact-item">
+            <strong>E-posta:</strong>
+            <a href="mailto:info@karbonguclendirme.com" target="_blank" rel="noopener noreferrer nofollow">info@karbonguclendirme.com</a>
+          </div>
+          
+          <div class="contact-item">
+            <strong>Adres:</strong>
+            <address>İstanbul, Türkiye</address>
+          </div>
+          
+          <div class="contact-item">
+            <strong>Çalışma Saatleri:</strong>
+            <p>Pazartesi - Cuma: 09:00 - 18:00</p>
+          </div>
+          
+          <div class="social-links">
+            <a href="https://www.instagram.com/karbonguclendirme/" target="_blank" rel="noopener noreferrer nofollow">Instagram</a>
+            <a href="https://www.facebook.com/karbonguclendirme/" target="_blank" rel="noopener noreferrer nofollow">Facebook</a>
+            <a href="https://twitter.com/karbonguclendirme" target="_blank" rel="noopener noreferrer nofollow">Twitter</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="contact-message">
+        <h2>Hızlı Bilgi Talebi</h2>
+        <p>Aşağıdaki bilgileri doldurarak bizimle iletişime geçebilirsiniz.</p>
+        
+        <div class="whatsapp-contact">
+          <p><strong>WhatsApp ile hızlı bilgi:</strong></p>
+          <a href="https://wa.me/905427483855" class="whatsapp-button" target="_blank" rel="noopener noreferrer nofollow">
+            WhatsApp ile Mesaj Gönder
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="service-areas">
+      <h2>Hizmet Bölgelerimiz</h2>
+      <p>İstanbul'un tüm ilçelerinde ve çevre illerde hizmet vermekteyiz.</p>
+      <div class="districts">
+        <span>Kadıköy</span>
+        <span>Beşiktaş</span>
+        <span>Şişli</span>
+        <span>Ataşehir</span>
+        <span>Bakırköy</span>
+        <span>Beylikdüzü</span>
+        <span>Büyükçekmece</span>
+        <span>Zeytinburnu</span>
+        <span>Maltepe</span>
+        <span>Üsküdar</span>
+        <span>Eyüp</span>
+        <span>Beyoğlu</span>
+        <span>Kartal</span>
+        <span>Esenyurt</span>
+        <span>Göztepe</span>
+        <span>Küçükçekmece</span>
+        <span>Kadıköy</span>
+        <span>Kadıköy</span>      
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .contact-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 1rem;
+    }
+    
+    .page-title {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--color-heading);
+      text-align: center;
+    }
+    
+    .contact-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    
+    @media (min-width: 768px) {
+      .contact-content {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    .contact-info, .contact-message {
+      background-color: var(--color-bg-secondary);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .contact-info h2, .contact-message h2, .service-areas h2 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--color-heading);
+    }
+    
+    .contact-details {
+      margin-top: 1.5rem;
+    }
+    
+    .contact-item {
+      margin-bottom: 1rem;
+    }
+    
+    .contact-item strong {
+      display: block;
+      margin-bottom: 0.2rem;
+      color: var(--color-primary);
+    }
+    
+    .contact-item a {
+      color: var(--color-text);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    .contact-item a:hover {
+      color: var(--color-primary);
+      text-decoration: underline;
+    }
+    
+    .social-links {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .social-links a {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: var(--color-primary);
+      color: white;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+    
+    .social-links a:hover {
+      background-color: var(--color-primary-dark);
+    }
+    
+    .whatsapp-contact {
+      margin-top: 1.5rem;
+    }
+    
+    .whatsapp-button {
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      background-color: #25D366;
+      color: white;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      transition: background-color 0.3s;
+    }
+    
+    .whatsapp-button:hover {
+      background-color: #128C7E;
+    }
+    
+    .service-areas {
+      background-color: var(--color-bg-secondary);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .districts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    .districts span {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      background-color: var(--color-primary-light);
+      color: var(--color-text-dark);
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+  </style>
+</BaseLayout> 

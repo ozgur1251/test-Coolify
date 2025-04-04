@@ -41,28 +41,16 @@ const schemaData = {
     },
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+90-507-068-2946",
+      "telephone": "+90-542-748-3855",
       "contactType": "customer service"
-    },
-    "sameAs": [
-      "https://www.instagram.com/binaguclendirme/",
-      "https://www.linkedin.com/company/binaguclendirme/"
-    ]
+    }
   },
   
   website: {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "İstanbul Bina Güçlendirme",
-    "url": Astro.site?.href || import.meta.env.SITE_URL || "",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": (Astro.site?.href || import.meta.env.SITE_URL || "") + "/search?q={search_term_string}"
-      },
-      "query-input": "required name=search_term_string"
-    }
+    "url": Astro.site?.href || import.meta.env.SITE_URL || ""
   },
   
   localBusiness: {
@@ -72,11 +60,11 @@ const schemaData = {
     "name": "İstanbul Bina Güçlendirme",
     "image": [
       Astro.site 
-        ? new URL("/images/building-reinforcement.jpg", Astro.site).href 
-        : "/images/building-reinforcement.jpg"
+        ? new URL("/favicon.svg", Astro.site).href 
+        : "/favicon.svg"
     ],
     "priceRange": "₺₺₺",
-    "telephone": "+90-507-068-2946",
+    "telephone": "+90-542-748-3855",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "İstanbul",
@@ -101,10 +89,6 @@ const schemaData = {
         "opens": "09:00",
         "closes": "18:00"
       }
-    ],
-    "sameAs": [
-      "https://www.instagram.com/binaguclendirme/",
-      "https://www.linkedin.com/company/binaguclendirme/"
     ]
   }
 };
@@ -116,36 +100,32 @@ const schemaData = {
     <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaData.website)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaData.localBusiness)} />
   </slot>
-
   <div class="home-container">
     <p class="lead-text">İstanbul ve çevresinde bina güçlendirme hizmetleri sunuyoruz. CFRP ve Karbon Fiber uygulamalarında uzmanız.</p>
     
     <h2 class="section-title">Bölgelere Göre Hizmetlerimiz</h2>
     <div class="post-grid">
-      {sortedCategories.map((category) => (
+      {sortedCategories.map((category, index) => (
         <article class="post-card">
           <a href={`/kategori/${category.slug}`} 
              class="card-link"
-             title={`${category.name} Bölgesi Bina Güçlendirme Hizmeti - ${category.postCount} Makale`}
-             aria-label={`${category.name} bölgesinde bina güçlendirme hizmetlerimizi görüntüleyin - ${category.postCount} makale bulunuyor`}>
-            <span class="visually-hidden">{category.name} bölgesi bina güçlendirme hizmeti</span>
+             title={`${category.name} Bölgesi Bina Güçlendirme Hizmeti`}>
             <div class="card-image">
               {category.featured_image ? (
                 <img 
                   src={category.featured_image} 
-                  alt={category.name}
+                  alt={`${category.name} Bölgesi Bina Güçlendirme`}
                   width="400"
                   height="225"
-                  loading="lazy"
+                  loading={index < 4 ? "eager" : "lazy"}
                   decoding="async"
-                  fetchpriority="high"
-                  sizes="(max-width: 768px) 100vw, 400px"
-                  onerror="this.onerror=null; this.src=this.src.replace(/\.\w+$/, '.jpg');"
+                  fetchpriority={index < 2 ? "high" : "low"}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
                 />
               ) : (
                 <div class="placeholder-image">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64" aria-labelledby="imgTitle" role="img">
-                    <title id="imgTitle">{category.name} Bina Güçlendirme Görseli</title>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64" aria-hidden="true">
+                    <title>{category.name} Bina Güçlendirme Görseli</title>
                     <path fill="currentColor" d="M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z M19,19H5V5h14V19z M13.96,12.29l-2.75,3.54l-1.96-2.36L6.5,17h11L13.96,12.29z"/>
                   </svg>
                 </div>
@@ -157,14 +137,14 @@ const schemaData = {
                 <p class="post-excerpt">{category.description}</p>
               )}
               <p class="post-count"><span>{category.postCount}</span> makale</p>
-              <span class="read-more">{category.name.replace("Bina Güçlendirme", "Karbon Fiber ile Güçlendirme")} →</span>
+              <span class="read-more">Karbon Fiber ile Güçlendirme →</span>
             </div>
           </a>
         </article>
       ))}
     </div>
 
-    <!-- Şirket bilgisi, hizmet veren kişinin/kurumun resmi bilgilerini içermeli -->
+    <!-- Şirket bilgisi -->
     <section class="company-info">
       <h2>İstanbul Bina Güçlendirme</h2>
       <div class="company-content">
@@ -174,13 +154,14 @@ const schemaData = {
             yapısal takviye hizmetleri sunuyoruz. Uzman ekibimizle, İstanbul'un her bölgesinde hizmet veriyoruz.
           </p>
           <p>
-            <strong>İletişim:</strong> +90-507-068-2946<br>
-            <strong>E-posta:</strong> info@binaguclendirme.com<br>
+            <strong>İletişim:</strong> +90-542-748-3855<br>
+            <strong>E-posta:</strong> info@karbonguclendirme.com<br>
             <strong>Adres:</strong> İstanbul, Türkiye
           </p>
           <div class="social-links">
-            <a href="https://www.instagram.com/binaguclendirme/" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <a href="https://www.linkedin.com/company/binaguclendirme/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://www.instagram.com/karbonguclendirme/" target="_blank" rel="noopener noreferrer nofollow" aria-label="Instagram sayfamız">Instagram</a>
+            <a href="https://www.facebook.com/karbonguclendirme/" target="_blank" rel="noopener noreferrer nofollow" aria-label="Facebook sayfamız">Facebook</a>
+            <a href="https://twitter.com/karbonguclendirme" target="_blank" rel="noopener noreferrer nofollow" aria-label="Twitter sayfamız">Twitter</a>
           </div>
         </div>
       </div>
@@ -191,7 +172,9 @@ const schemaData = {
     /* Sayfa başlık stili */
     .home-container {
       width: 100%;
-      padding: 0 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 1rem;
     }
     
     .lead-text {
@@ -203,95 +186,190 @@ const schemaData = {
     }
     
     .section-title {
-      margin-bottom: 2rem;
-      font-size: 1.6rem;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
       color: var(--color-text);
       font-weight: 600;
     }
     
+    /* Kart Grid yapısı */
+    .post-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    /* Kart tasarımı */
+    .post-card {
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease;
+      background: white;
+      height: 100%;
+    }
+    
+    .post-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .card-link {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      height: 100%;
+    }
+    
+    .card-image {
+      position: relative;
+      padding-top: 56.25%; /* 16:9 aspect ratio */
+      background-color: var(--color-grey-light);
+      overflow: hidden;
+    }
+    
+    .card-image img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .placeholder-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-light);
+      background-color: var(--color-grey-light);
+    }
+    
+    .card-content {
+      padding: 1rem;
+    }
+    
+    .card-content h2 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: 1.15rem;
+      line-height: 1.3;
+      color: var(--color-text);
+      -webkit-line-clamp: 2;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .post-excerpt {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--color-text);
+      margin-bottom: 0.75rem;
+      -webkit-line-clamp: 2;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .post-count {
+      font-size: 0.85rem;
+      color: var(--color-text-light);
+      margin-bottom: 0.5rem;
+    }
+    
+    .post-count span {
+      font-weight: bold;
+      color: var(--color-primary);
+    }
+    
+    .read-more {
+      color: var(--color-primary);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
     /* Şirket Bilgisi Bölümü */
     .company-info {
-      margin-top: 4rem;
+      margin-top: 3rem;
       padding: 2rem;
       background-color: var(--color-grey-light);
       border-radius: var(--radius-sm);
     }
     
     .company-info h2 {
-      margin-top: 0;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
       color: var(--color-text);
-      font-size: 1.6rem;
-      font-weight: 600;
     }
     
     .company-content {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+    }
+    
+    .company-text {
+      flex: 1;
     }
     
     .company-text p {
       margin-bottom: 1rem;
-    }
-    
-    .company-text strong {
-      color: var(--color-text);
+      line-height: 1.6;
     }
     
     .social-links {
+      margin-top: 1rem;
       display: flex;
       gap: 1rem;
-      margin-top: 1rem;
     }
     
     .social-links a {
-      display: inline-block;
-      padding: 0.5rem 1rem;
-      background-color: var(--color-primary-light);
       color: var(--color-primary);
       text-decoration: none;
-      border-radius: var(--radius-sm);
-      transition: background-color 0.2s ease;
+      padding: 0.5rem 0;
     }
     
     .social-links a:hover {
-      background-color: var(--color-primary);
-      color: white;
+      text-decoration: underline;
     }
     
-    /* Duyarlı tasarım */
+    /* Responsive düzenlemeler */
+    @media (max-width: 992px) {
+      .post-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+    }
+    
     @media (max-width: 768px) {
       .post-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 1.5rem;
-      }
-      
-      .section-title, .company-info h2 {
-        font-size: 1.4rem;
-      }
-      
-      .home-container {
-        padding: 0 1.25rem;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .post-grid {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 1rem;
       }
       
-      .section-title, .company-info h2 {
+      .company-content {
+        flex-direction: column;
+      }
+      
+      .section-title {
         font-size: 1.3rem;
-      }
-      
-      .lead-text {
-        font-size: 1rem;
+        margin-bottom: 1rem;
       }
       
       .company-info {
         padding: 1.5rem;
+      }
+    }
+    
+    @media (min-width: 768px) and (max-width: 1024px) {
+      .post-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>

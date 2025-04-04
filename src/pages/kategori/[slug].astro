@@ -1,15 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCategories, getBlogPostsByCategory } from '../../lib/supabase';
+import { getCategories, getBlogPostsByCategory, getCategoryBySlug } from '../../lib/supabase';
+
+// Server-side rendering kullan (statik ön-render yerine)
+export const prerender = false;
 
 // Dinamik rota parametresini al
 const { slug } = Astro.params;
 
-// Tüm kategorileri getir
-const categories = await getCategories();
-
 // İlgili kategoriyi bul
-const category = categories.find(cat => cat.slug === slug);
+const category = await getCategoryBySlug(slug);
 
 // Kategori bulunamadıysa hata sayfasına yönlendir
 if (!category) {
@@ -32,7 +32,7 @@ const collectionSchema = {
   "url": Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname,
   "mainEntity": {
     "@type": "ItemList",
-    "itemListElement": posts.map((post, index) => ({
+    "itemListElement": posts.map((post: { slug: string; title: string }, index: number) => ({
       "@type": "ListItem",
       "position": index + 1,
       "url": Astro.site ? new URL(`/blog/${post.slug}`, Astro.site).href : `/blog/${post.slug}`,
@@ -49,7 +49,7 @@ const collectionSchema = {
   type="website"
 >
   <slot slot="head">
-    <script type="application/ld+json" set:html={JSON.stringify(collectionSchema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(collectionSchema)} />
   </slot>
 
   <div class="category-container">
@@ -66,7 +66,7 @@ const collectionSchema = {
     ) : (
       <div class="post-grid" role="feed" aria-labelledby="category-feed">
         <span id="category-feed" class="visually-hidden">{category.name} kategorisindeki makaleler</span>
-        {posts.map((post) => (
+        {posts.map((post: { slug: string; title: string; featured_image?: string; created_at: string; meta_description?: string; excerpt?: string }) => (
           <article class="post-card">
             <a href={`/blog/${post.slug}`} class="card-link">
               <div class="card-image">

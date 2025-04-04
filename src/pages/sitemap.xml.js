@@ -23,6 +23,9 @@ export async function GET({ site }) {
     );
   }
 
+  // Trailing slash olmadan site URL'sini al
+  const baseUrl = siteUrl.replace(/\/$/, '');
+  
   // Kategorileri getir
   const categories = await getCategories();
   
@@ -33,29 +36,30 @@ export async function GET({ site }) {
   // Ana sayfanın bugünün tarihi ile en yüksek öncelik değeri olan sitemap girişi
   const today = new Date().toISOString().split('T')[0];
   
+  // Sadece HTTP yanıtı dön, dosya sistemine yazma
   return new Response(
     `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>${siteUrl}/</loc>
+    <loc>${baseUrl}/</loc>
     <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>${siteUrl}/hakkinda/</loc>
+    <loc>${baseUrl}/hakkinda/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>${siteUrl}/iletisim/</loc>
+    <loc>${baseUrl}/iletisim/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   ${categories
     .map(
       (category) => `  <url>
-    <loc>${siteUrl}/kategori/${category.slug}/</loc>
+    <loc>${baseUrl}/kategori/${category.slug}/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -65,7 +69,7 @@ export async function GET({ site }) {
   ${posts && posts.length > 0 ? posts
     .map(
       (post) => `  <url>
-    <loc>${siteUrl}/blog/${post.slug}/</loc>
+    <loc>${baseUrl}/blog/${post.slug}/</loc>
     <lastmod>${new Date(post.updated_at || post.published_at || post.created_at).toISOString().split('T')[0]}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
