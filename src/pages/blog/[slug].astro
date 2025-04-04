@@ -25,10 +25,9 @@ if (!post) {
 const categories = await getCategories();
 const category = categories.find((cat: { id: number | string }) => cat.id === post.category_id);
 
-// Hizmet verilen şehirleri veritabanından veya kategorilerden alalım
-// Burada örnek olarak kategori bilgisinden city alanını alıyoruz
-// Eğer kategoride böyle bir alan yoksa yeni eklemeniz gerekebilir
-const cityName = category?.city || "İstanbul"; // Eğer kategori city alanı yoksa varsayılan olarak İstanbul kullanılır
+// Kategori adından şehir bilgisini çıkar (örn: "İstanbul Bina Güçlendirme" -> "İstanbul")
+// Eğer kategori adı yoksa veya şehir adı çıkarılamazsa varsayılan olarak "İstanbul" kullanılır
+const cityName = category?.name ? category.name.split(' ')[0] : "İstanbul";
 
 // Tüm kategorileri OfferCatalog yapısına dönüştür
 const offerCatalogs = categories.map((cat: any) => {
