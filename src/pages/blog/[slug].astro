@@ -158,6 +158,7 @@ const fullSchema = JSON.stringify({
     {
       "@type": "BreadcrumbList",
       "@id": `${canonicalURL}#breadcrumb`,
+      "name": `${post.title} - Sayfa Gezintisi`,
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -216,6 +217,7 @@ const fullSchema = JSON.stringify({
     ...(post.featured_image ? [{
       "@type": "ImageObject",
       "@id": `${canonicalURL}#primaryImage`,
+      "name": `${post.title} - Öne Çıkan Görsel`,
       "url": imageUrl,
       "width": imageWidth.toString(),
       "height": imageHeight.toString(),
@@ -277,7 +279,7 @@ const fullSchema = JSON.stringify({
     <script is:inline type="application/ld+json" set:html={fullSchema} />
   </slot>
 
-  <article itemscope itemtype="https://schema.org/BlogPosting" class="article-container">
+  <article class="article-container">
     <header class="post-header">
       {post.featured_image && (
         <div class="featured-image-container">
@@ -291,7 +293,6 @@ const fullSchema = JSON.stringify({
               alt={imageAlt}
               class="featured-image"
               loading="eager"
-              itemprop="image"
               width="1320"
               height="920"
               decoding="async"
@@ -309,13 +310,13 @@ const fullSchema = JSON.stringify({
             </a>
           )}
           <span class="meta-date">
-            <time itemprop="datePublished" datetime={new Date(publishDate).toISOString()}>
+            <time datetime={new Date(publishDate).toISOString()}>
               {new Date(publishDate).toLocaleDateString('tr-TR')}
             </time>
           </span>
           {modifiedDate !== publishDate && 
             <span class="meta-update">
-              Son güncelleme: <time itemprop="dateModified" datetime={new Date(modifiedDate).toISOString()}>
+              Son güncelleme: <time datetime={new Date(modifiedDate).toISOString()}>
                 {new Date(modifiedDate).toLocaleDateString('tr-TR')}
               </time>
             </span>
@@ -324,7 +325,7 @@ const fullSchema = JSON.stringify({
       </div>
     </header>
     
-    <div class="post-content markdown-content" itemprop="articleBody">
+    <div class="post-content markdown-content">
       <div set:html={contentHtml} />
     </div>
     
@@ -332,10 +333,10 @@ const fullSchema = JSON.stringify({
       <div class="faq-section">
         <h2 class="section-title">Sık Sorulan Sorular</h2>
         {processedFaq.map((item: FaqItem) => (
-          <div class="faq-item" itemscope itemtype="https://schema.org/Question">
-            <h3 class="faq-question" itemprop="name">{item.question}</h3>
-            <div class="faq-answer" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
-              <div itemprop="text" set:html={parseMarkdown(item.answer)} />
+          <div class="faq-item">
+            <h3 class="faq-question">{item.question}</h3>
+            <div class="faq-answer">
+              <div set:html={parseMarkdown(item.answer)} />
             </div>
           </div>
         ))}
