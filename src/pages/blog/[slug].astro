@@ -148,7 +148,7 @@ const faqSchema = hasFaq ? {
 
   <article itemscope itemtype="https://schema.org/BlogPosting">
     <div class="post-header">
-      <h1 class="post-title" itemprop="headline">{post.title}</h1>
+      <div class="post-title main-heading" itemprop="headline">{post.title}</div>
       <div class="post-meta">
         <div>
           {category && (
@@ -180,7 +180,7 @@ const faqSchema = hasFaq ? {
       )}
     </div>
     
-    <div class="post-content" itemprop="articleBody">
+    <div class="post-content markdown-content" itemprop="articleBody">
       <div set:html={contentHtml} />
     </div>
     
@@ -466,5 +466,25 @@ const faqSchema = hasFaq ? {
     .faq-question {
       font-size: 1rem;
     }
+  }
+
+  /* Markdown içeriğindeki h1 etiketlerini gizle */
+  .markdown-content :global(h1) {
+    display: none;
+  }
+  
+  .post-content {
+    max-width: 100%;
+    margin: 2rem auto;
+    line-height: 1.6;
+  }
+
+  .main-heading {
+    margin-bottom: 10px;
+    font-size: 2rem;
+    color: var(--color-text);
+    line-height: 1.3;
+    word-wrap: break-word;
+    font-weight: 700;
   }
 </style> 

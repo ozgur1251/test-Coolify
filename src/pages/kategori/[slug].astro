@@ -48,13 +48,13 @@ const collectionSchema = {
   keywords={keywords}
   type="website"
 >
-  <slot slot="head">
+  <Fragment slot="head">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(collectionSchema)} />
-  </slot>
+  </Fragment>
 
   <div class="category-container">
     <header class="category-header">
-      <h1>{category.name}</h1>
+      <span>{category.name}</span>
       {category.description && <p class="category-description">{category.description}</p>}
       <p class="post-count"><span>{posts.length}</span> makale bulundu</p>
     </header>
