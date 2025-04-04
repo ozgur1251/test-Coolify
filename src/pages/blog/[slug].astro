@@ -105,102 +105,6 @@ const SOCIAL_LINKS = {
   twitter: "https://twitter.com/karbonguclendirme/"
 };
 
-// Image schema
-const imageSchema = post.featured_image ? {
-  "@context": "https://schema.org",
-  "@type": "ImageObject",
-  "@id": `${canonicalURL}#primaryImage`,
-  "url": imageUrl,
-  "width": imageWidth.toString(),
-  "height": imageHeight.toString(),
-  "caption": imageAlt,
-  "inLanguage": "tr-TR",
-  "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-  "acquireLicensePage": canonicalURL,
-  "creditText": COMPANY_NAME,
-  "copyrightNotice": `© ${new Date().getFullYear()} ${COMPANY_NAME}`
-} : null;
-
-// BreadcrumbList schema
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "@id": `${canonicalURL}#breadcrumb`,
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Ana Sayfa",
-      "item": SITE_URL
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Blog",
-      "item": `${SITE_URL}/blog/`
-    },
-    ...(category ? [{
-      "@type": "ListItem",
-      "position": 3,
-      "name": category.name,
-      "item": `${SITE_URL}/kategori/${category.slug}/`
-    }] : []),
-    {
-      "@type": "ListItem",
-      "position": category ? 4 : 3,
-      "name": post.title,
-      "item": canonicalURL
-    }
-  ]
-};
-
-// Article schema (BlogPosting)
-const articleSchema = {
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "@id": `${canonicalURL}#article`,
-  "headline": post.title,
-  "name": post.title,
-  "description": description,
-  "url": canonicalURL,
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": canonicalURL
-  },
-  "author": {
-    "@type": "Organization",
-    "@id": `${SITE_URL}/#organization`
-  },
-  "publisher": {
-    "@type": "Organization",
-    "@id": `${SITE_URL}/#organization`
-  },
-  "image": imageSchema ? { "@id": `${canonicalURL}#primaryImage` } : null,
-  "datePublished": new Date(publishDate).toISOString(),
-  "dateModified": new Date(modifiedDate).toISOString(),
-  "keywords": post.keywords || [],
-  "articleSection": category?.name || "Blog",
-  "inLanguage": "tr-TR"
-};
-
-// FAQ schema
-const faqSchema = hasFaq ? {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "@id": `${canonicalURL}#faq`,
-  "name": "Sık Sorulan Sorular",
-  "headline": "Sık Sorulan Sorular",
-  "description": `${post.title} hakkında sık sorulan sorular ve cevapları`,
-  "mainEntity": processedFaq.map(faq => ({
-    "@type": "Question",
-    "name": faq.question,
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": faq.answer
-    }
-  }))
-} : null;
-
 // Final JSON-LD data
 // Schema'ları direkt JSON olarak oluşturup stringfy ile kaçış karakterlerini düzenleme
 const fullSchema = JSON.stringify({
@@ -301,7 +205,7 @@ const fullSchema = JSON.stringify({
         "@type": "Organization",
         "@id": `${SITE_URL}/#organization`
       },
-      "image": imageSchema ? { "@id": `${canonicalURL}#primaryImage` } : null,
+      "image": post.featured_image ? { "@id": `${canonicalURL}#primaryImage` } : null,
       "datePublished": new Date(publishDate).toISOString(),
       "dateModified": new Date(modifiedDate).toISOString(),
       "keywords": post.keywords || [],
@@ -320,7 +224,11 @@ const fullSchema = JSON.stringify({
       "license": "https://creativecommons.org/licenses/by-sa/4.0/",
       "acquireLicensePage": canonicalURL,
       "creditText": COMPANY_NAME,
-      "copyrightNotice": `© ${new Date().getFullYear()} ${COMPANY_NAME}`
+      "copyrightNotice": `© ${new Date().getFullYear()} ${COMPANY_NAME}`,
+      "creator": {
+        "@type": "Organization",
+        "@id": `${SITE_URL}/#organization`
+      }
     }] : []),
     // FAQ (if exists)
     ...(hasFaq ? [{
