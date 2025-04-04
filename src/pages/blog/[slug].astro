@@ -165,8 +165,8 @@ const breadcrumbSchema = {
     {
       "@type": "ListItem",
       "position": 3,
-      "name": category?.name || "Bina Güçlendirme",
-      "item": `${Astro.site}/kategori/${category?.slug || 'bina-guclendirme'}`
+      "name": category?.name,
+      "item": `${Astro.site}/kategori/${category?.slug}`
     },
     {
       "@type": "ListItem",
@@ -204,7 +204,7 @@ const articleSchema = {
   "datePublished": new Date(publishDate).toISOString(),
   "dateModified": new Date(modifiedDate).toISOString(),
   "keywords": post.keywords || [],
-  "articleSection": category?.name || "Bina Güçlendirme",
+  "articleSection": category?.name,
   "inLanguage": "tr-TR"
 };
 
