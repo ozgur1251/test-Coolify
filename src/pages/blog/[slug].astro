@@ -140,7 +140,7 @@ const fullSchema = JSON.stringify({
       "url": SITE_URL,
       "telephone": COMPANY_PHONE,
       "email": COMPANY_EMAIL,
-      "description": "İstanbul ve ilçelerinde karbon fiber bina güçlendirme, kolon, kiriş, zemin, tavan ve duvar güçlendirme hizmetleri sunuyoruz.",
+      "description": description,
       "image": [
         `${SITE_URL}/logo.webp`
       ],
@@ -229,8 +229,8 @@ const fullSchema = JSON.stringify({
       "@type": "https://schema.org/WebSite",
       "@id": `${SITE_URL}/#website`,
       "url": SITE_URL,
-      "name": category.name,
-      "description": category.description,
+      "name": pageTitle,
+      "description": description,
       "publisher": {
         "@id": `${SITE_URL}/#organization`
       },
@@ -240,7 +240,7 @@ const fullSchema = JSON.stringify({
     {
       "@type": "https://schema.org/BreadcrumbList",
       "@id": `${canonicalURL}#breadcrumb`,
-      "name": `${post.title} - Sayfa Gezintisi`,
+      "name": `${category.name} - ${pageTitle}`,
       "itemListElement": [
         {
           "@type": "https://schema.org/ListItem",
@@ -263,7 +263,7 @@ const fullSchema = JSON.stringify({
         {
           "@type": "https://schema.org/ListItem",
           "position": category ? 4 : 3,
-          "name": post.title,
+          "name": pageTitle,
           "item": canonicalURL
         }
       ]
@@ -273,7 +273,7 @@ const fullSchema = JSON.stringify({
       "@type": "https://schema.org/Blog",
       "@id": `${SITE_URL}/blog/`,
       "mainEntityOfPage": `${SITE_URL}/blog/`,
-      "name": `${post.title} Blog`,
+      "name": `${pageTitle} Blog`,
       "description": post.meta_description,
       "publisher": {
         "@id": `${SITE_URL}/#organization`
@@ -287,8 +287,8 @@ const fullSchema = JSON.stringify({
         "@type": "WebPage",
         "@id": canonicalURL
       },
-      "headline": post.title,
-      "name": post.title,
+      "headline": pageTitle,
+      "name": pageTitle,
       "description": post.meta_description,
       "url": canonicalURL,
       "author": {
@@ -300,8 +300,8 @@ const fullSchema = JSON.stringify({
       "publisher": {
         "@type": "https://schema.org/Organization",
         "@id": `${SITE_URL}/#organization`,
-        "name": category.name,
-        "url": SITE_URL,
+        "name": pageTitle,
+        "url": canonicalURL,
         "logo": {
           "@type": "https://schema.org/ImageObject",
           "url": `${SITE_URL}/logo.webp`,
@@ -324,7 +324,7 @@ const fullSchema = JSON.stringify({
       "inLanguage": "tr-TR",
       "isPartOf": {
         "@type": "https://schema.org/Blog",
-        "@id": `${SITE_URL}/blog/`
+        "@id": canonicalURL
       },
       "about": {
         "@type": "Service",
@@ -367,7 +367,7 @@ const fullSchema = JSON.stringify({
       "width": imageWidth.toString(),
       "height": imageHeight.toString(),
       "caption": imageAlt,
-      "description": `${post.title} konusuyla ilgili görselleme`,
+      "description": post.meta_description,
       "datePublished": new Date(publishDate).toISOString(),
       "author": category.name,
       "contentLocation": COMPANY_ADDRESS,
