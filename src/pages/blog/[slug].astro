@@ -112,10 +112,16 @@ const fullSchema = JSON.stringify({
   "@graph": [
     // Organization
     {
-      "@type": "https://schema.org/Organization",
-      "@id": `${SITE_URL}/#organization`,
+      "@type": "https://schema.org/LocalBusiness",
+      "@id": `${SITE_URL}/#localbusiness`,
       "name": COMPANY_NAME,
       "url": SITE_URL,
+      "telephone": COMPANY_PHONE,
+      "email": COMPANY_EMAIL,
+      "description": "İstanbul ve ilçelerinde karbon fiber bina güçlendirme, kolon, kiriş, zemin, tavan ve duvar güçlendirme hizmetleri sunuyoruz.",
+      "image": [
+        `${SITE_URL}/logo.webp`
+      ],
       "logo": {
         "@type": "https://schema.org/ImageObject",
         "@id": `${SITE_URL}/#logo`,
@@ -124,14 +130,39 @@ const fullSchema = JSON.stringify({
         "height": "512",
         "contentUrl": `${SITE_URL}/logo.webp`
       },
-      "contactPoint": {
-        "@type": "https://schema.org/ContactPoint",
-        "telephone": COMPANY_PHONE,
-        "contactType": "customer service",
-        "email": COMPANY_EMAIL,
-        "areaServed": "TR",
-        "availableLanguage": "Turkish"
-      },
+      "priceRange": "₺₺₺",
+      "currenciesAccepted": "TRY",
+      "paymentAccepted": "Nakit, Kredi Kartı, Banka Havalesi",
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "İstanbul"
+        },
+        {
+          "@type": "Place",
+          "name": "Kadıköy"
+        },
+        {
+          "@type": "Place",
+          "name": "Beşiktaş"
+        },
+        {
+          "@type": "Place",
+          "name": "Şişli"
+        },
+        {
+          "@type": "Place",
+          "name": "Ataşehir"
+        },
+        {
+          "@type": "Place",
+          "name": "Bakırköy"
+        },
+        {
+          "@type": "Place",
+          "name": "Beylikdüzü"
+        }
+      ],
       "address": {
         "@type": "https://schema.org/PostalAddress",
         "streetAddress": "Fatih/Aksaray",
@@ -143,7 +174,54 @@ const fullSchema = JSON.stringify({
           "name": "TR"
         }
       },
-      "sameAs": Object.values(SOCIAL_LINKS)
+      "geo": {
+        "@type": "https://schema.org/GeoCoordinates",
+        "latitude": "41.0082",
+        "longitude": "28.9475"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "https://schema.org/OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "opens": "09:00",
+          "closes": "18:00"
+        }
+      ],
+      "sameAs": Object.values(SOCIAL_LINKS),
+      "serviceType": [
+        "Karbon Fiber Güçlendirme",
+        "CFRP Güçlendirme",
+        "Kolon Güçlendirme",
+        "Kiriş Güçlendirme",
+        "Bina Güçlendirme",
+        "Zemin Güçlendirme",
+        "Tavan Güçlendirme",
+        "Duvar Güçlendirme",
+        "FRP Güçlendirme"
+      ],
+      "makesOffer": [
+        {
+          "@type": "Offer",
+          "name": "Karbon Fiber ile Kolon Güçlendirme",
+          "description": "Yapısal dayanımı artırmak için karbon fiber ile kolon güçlendirme hizmeti"
+        },
+        {
+          "@type": "Offer",
+          "name": "CFRP ile Kiriş Güçlendirme",
+          "description": "Bina kirişlerinin dayanımını artırmak için CFRP uygulaması"
+        },
+        {
+          "@type": "Offer",
+          "name": "FRP ile Duvar Güçlendirme",
+          "description": "Duvarların depreme karşı dayanıklılığını artırma hizmeti"
+        }
+      ]
     },
     // Website
     {
@@ -262,22 +340,14 @@ const fullSchema = JSON.stringify({
     }] : []),
     // FAQ (if exists)
     ...(hasFaq ? [{
-      "@type": "https://schema.org/FAQPage",
-      "@id": `${canonicalURL}#FAQPage`,
-      "name": "Sık Sorulan Sorular",
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
       "url": `${canonicalURL}#faq`,
-      "description": `${post.title} hakkında sık sorulan sorular ve cevapları`,
-      "datePublished": new Date(publishDate).toISOString(),
-      "dateModified": new Date(modifiedDate).toISOString(),
-      "author": {
-        "@type": "https://schema.org/Organization",
-        "@id": `${SITE_URL}/#organization`
-      },
       "mainEntity": processedFaq.map(faq => ({
-        "@type": "https://schema.org/Question",
+        "@type": "Question",
         "name": faq.question,
         "acceptedAnswer": {
-          "@type": "https://schema.org/Answer",
+          "@type": "Answer",
           "text": faq.answer
         }
       }))
