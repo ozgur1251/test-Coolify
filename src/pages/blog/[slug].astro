@@ -211,13 +211,17 @@ const fullSchema = JSON.stringify({
       "dateModified": new Date(modifiedDate).toISOString(),
       "keywords": post.keywords || [],
       "articleSection": category?.name || "Blog",
-      "inLanguage": "tr-TR"
+      "inLanguage": "tr-TR",
+      "articleBody": post.excerpt || post.meta_description || post.title,
+      "wordCount": post.content ? post.content.split(/\s+/).length : 0
     },
     // Featured Image (if exists)
     ...(post.featured_image ? [{
       "@type": "ImageObject",
       "@id": `${canonicalURL}#primaryImage`,
-      "name": `${post.title} - Öne Çıkan Görsel`,
+      "name": imageAlt || `${post.title} Görseli`,
+      "headline": imageAlt || `${post.title} Görseli`,
+      "identifier": `image-${post.slug}`,
       "url": imageUrl,
       "width": imageWidth.toString(),
       "height": imageHeight.toString(),
@@ -236,8 +240,9 @@ const fullSchema = JSON.stringify({
     ...(hasFaq ? [{
       "@type": "FAQPage",
       "@id": `${canonicalURL}#faq`,
-      "name": "Sık Sorulan Sorular",
-      "headline": "Sık Sorulan Sorular",
+      "name": `${post.title} - Sık Sorulan Sorular`,
+      "headline": `${post.title} - Sık Sorulan Sorular`,
+      "identifier": `faq-${post.slug}`,
       "description": `${post.title} hakkında sık sorulan sorular ve cevapları`,
       "mainEntity": processedFaq.map(faq => ({
         "@type": "Question",
