@@ -136,7 +136,7 @@ const fullSchema = JSON.stringify({
     {
       "@type": "https://schema.org/LocalBusiness",
       "@id": `${SITE_URL}/#localbusiness`,
-      "name": COMPANY_NAME,
+      "name": category.name,
       "url": SITE_URL,
       "telephone": COMPANY_PHONE,
       "email": COMPANY_EMAIL,
@@ -162,8 +162,8 @@ const fullSchema = JSON.stringify({
       "address": {
         "@type": "https://schema.org/PostalAddress",
         "streetAddress": COMPANY_ADDRESS,
-        "addressLocality": "İstanbul",
-        "addressRegion": "İstanbul",
+        "addressLocality": cityName,
+        "addressRegion": cityName,
         "postalCode": "34093",
         "addressCountry": {
           "@type": "Country",
@@ -229,8 +229,8 @@ const fullSchema = JSON.stringify({
       "@type": "https://schema.org/WebSite",
       "@id": `${SITE_URL}/#website`,
       "url": SITE_URL,
-      "name": COMPANY_NAME,
-      "description": "İstanbul bina güçlendirme ve karbon fiber takviye çözümleri",
+      "name": category.name,
+      "description": category.description,
       "publisher": {
         "@id": `${SITE_URL}/#organization`
       },
@@ -273,8 +273,8 @@ const fullSchema = JSON.stringify({
       "@type": "https://schema.org/Blog",
       "@id": `${SITE_URL}/blog/`,
       "mainEntityOfPage": `${SITE_URL}/blog/`,
-      "name": `${COMPANY_NAME} Blog`,
-      "description": "Bina güçlendirme ve yapısal takviye konusunda faydalı bilgiler",
+      "name": `${post.title} Blog`,
+      "description": post.meta_description,
       "publisher": {
         "@id": `${SITE_URL}/#organization`
       }
@@ -289,18 +289,18 @@ const fullSchema = JSON.stringify({
       },
       "headline": post.title,
       "name": post.title,
-      "description": description,
+      "description": post.meta_description,
       "url": canonicalURL,
       "author": {
         "@type": "https://schema.org/Organization",
         "@id": `${SITE_URL}/#organization`,
-        "name": COMPANY_NAME,
+        "name": category.name,
         "url": SITE_URL
       },
       "publisher": {
         "@type": "https://schema.org/Organization",
         "@id": `${SITE_URL}/#organization`,
-        "name": COMPANY_NAME,
+        "name": category.name,
         "url": SITE_URL,
         "logo": {
           "@type": "https://schema.org/ImageObject",
@@ -352,7 +352,7 @@ const fullSchema = JSON.stringify({
           ]
         } : {
           "@type": "OfferCatalog",
-          "name": "Bina Güçlendirme Hizmetleri",
+          "name": `${category.name} Hizmetleri`,
           "itemListElement": offerCatalogs.slice(0, 3) // İlk 3 kategori
         }
       }
@@ -369,12 +369,12 @@ const fullSchema = JSON.stringify({
       "caption": imageAlt,
       "description": `${post.title} konusuyla ilgili görselleme`,
       "datePublished": new Date(publishDate).toISOString(),
-      "author": COMPANY_NAME,
+      "author": category.name,
       "contentLocation": COMPANY_ADDRESS,
       "inLanguage": "tr-TR",
       "license": "https://creativecommons.org/licenses/by-sa/4.0/",
       "acquireLicensePage": canonicalURL,
-      "creditText": COMPANY_NAME,
+      "creditText": category.name,
       "copyrightNotice": `© ${new Date().getFullYear()} ${COMPANY_NAME}`,
       "creator": {
         "@type": "https://schema.org/Organization",
