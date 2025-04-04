@@ -217,38 +217,46 @@ const fullSchema = JSON.stringify({
     },
     // Featured Image (if exists)
     ...(post.featured_image ? [{
-      "@type": "ImageObject",
+      "@type": "https://schema.org/ImageObject",
       "@id": `${canonicalURL}#primaryImage`,
-      "name": imageAlt || `${post.title} Görseli`,
-      "headline": imageAlt || `${post.title} Görseli`,
-      "identifier": `image-${post.slug}`,
+      "name": imageAlt || post.title,
       "url": imageUrl,
+      "contentUrl": imageUrl,
       "width": imageWidth.toString(),
       "height": imageHeight.toString(),
       "caption": imageAlt,
+      "description": `${post.title} konusuyla ilgili görselleme`,
+      "datePublished": new Date(publishDate).toISOString(),
+      "author": COMPANY_NAME,
+      "contentLocation": "İstanbul, Türkiye",
       "inLanguage": "tr-TR",
       "license": "https://creativecommons.org/licenses/by-sa/4.0/",
       "acquireLicensePage": canonicalURL,
       "creditText": COMPANY_NAME,
       "copyrightNotice": `© ${new Date().getFullYear()} ${COMPANY_NAME}`,
       "creator": {
-        "@type": "Organization",
+        "@type": "https://schema.org/Organization",
         "@id": `${SITE_URL}/#organization`
       }
     }] : []),
     // FAQ (if exists)
     ...(hasFaq ? [{
-      "@type": "FAQPage",
+      "@type": "https://schema.org/FAQPage",
       "@id": `${canonicalURL}#faq`,
-      "name": `${post.title} - Sık Sorulan Sorular`,
-      "headline": `${post.title} - Sık Sorulan Sorular`,
-      "identifier": `faq-${post.slug}`,
+      "name": "Sık Sorulan Sorular",
+      "url": `${canonicalURL}#faq`,
       "description": `${post.title} hakkında sık sorulan sorular ve cevapları`,
+      "datePublished": new Date(publishDate).toISOString(),
+      "dateModified": new Date(modifiedDate).toISOString(),
+      "author": {
+        "@type": "https://schema.org/Organization",
+        "@id": `${SITE_URL}/#organization`
+      },
       "mainEntity": processedFaq.map(faq => ({
-        "@type": "Question",
+        "@type": "https://schema.org/Question",
         "name": faq.question,
         "acceptedAnswer": {
-          "@type": "Answer",
+          "@type": "https://schema.org/Answer",
           "text": faq.answer
         }
       }))
