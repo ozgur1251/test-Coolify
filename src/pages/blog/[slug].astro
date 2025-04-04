@@ -6,6 +6,10 @@ import { parseMarkdown } from '../../lib/markdown';
 // Server-side rendering kullan (statik ön-render yerine)
 export const prerender = false;
 
+// Site URL'sini çevre değişkeninden alma
+const SITE_URL = import.meta.env.SITE_URL || Astro.url.origin || "https://istanbulbinaguclendirme.com";
+const siteDomain = new URL(SITE_URL).hostname;
+
 // Dinamik rota parametresini al
 const { slug } = Astro.params;
 
@@ -84,31 +88,21 @@ let imageHeight = 920;
 const socialTitle = socialMedia.title || post.title;
 const socialDescription = socialMedia.description || post.meta_description || post.excerpt || '';
 const twitterCard = socialMedia.twitter_card || 'summary_large_image';
-const twitterUsername = socialMedia.twitter_username || '';
+const twitterUsername = socialMedia.twitter_username || 'binaguclendirme';
 const facebookAppId = socialMedia.facebook_app_id || '';
 
 // Canonical URL 
-const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL).href;
 
-// Organization schema
-const organizationSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": `${Astro.site}/#organization`,
-  "name": "İstanbul Bina Güçlendirme",
-  "url": Astro.site,
-  "logo": {
-    "@type": "ImageObject",
-    "@id": `${Astro.site}/#logo`,
-    "url": `${Astro.site}/logo.webp`,
-    "width": "512",
-    "height": "512"
-  },
-  "sameAs": [
-    "https://www.facebook.com/binaguclendirme",
-    "https://twitter.com/binaguclendirme",
-    "https://www.instagram.com/binaguclendirme"
-  ]
+// İletişim ve sosyal medya bilgileri
+const COMPANY_NAME = "İstanbul Bina Güçlendirme";
+const COMPANY_PHONE = "+90-542-748-3855";
+const COMPANY_EMAIL = "info@karbonguclendirme.com";
+const COMPANY_ADDRESS = "İstanbul, Türkiye";
+const SOCIAL_LINKS = {
+  instagram: "https://www.instagram.com/karbonguclendirme/",
+  facebook: "https://www.facebook.com/karbonguclendirme/",
+  twitter: "https://twitter.com/karbonguclendirme/"
 };
 
 // Image schema
@@ -117,32 +111,11 @@ const imageSchema = post.featured_image ? {
   "@type": "ImageObject",
   "@id": `${canonicalURL}#primaryImage`,
   "url": imageUrl,
-  "width": "1320",
-  "height": "920",
+  "width": imageWidth.toString(),
+  "height": imageHeight.toString(),
   "caption": imageAlt,
-  "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-  "acquireLicensePage": canonicalURL,
-  "creditText": "İstanbul Bina Güçlendirme",
-  "copyrightNotice": `© ${new Date().getFullYear()} İstanbul Bina Güçlendirme`
+  "inLanguage": "tr-TR"
 } : null;
-
-// WebPage schema
-const webPageSchema = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "@id": canonicalURL,
-  "url": canonicalURL,
-  "name": pageTitle,
-  "description": description,
-  "isPartOf": {
-    "@type": "WebSite",
-    "@id": `${Astro.site}/#website`,
-    "name": "İstanbul Bina Güçlendirme",
-    "url": Astro.site
-  },
-  "primaryImageOfPage": imageSchema ? { "@id": `${canonicalURL}#primaryImage` } : null,
-  "breadcrumb": { "@id": `${canonicalURL}#breadcrumb` }
-};
 
 // BreadcrumbList schema
 const breadcrumbSchema = {
@@ -154,23 +127,23 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       "position": 1,
       "name": "Ana Sayfa",
-      "item": Astro.site
+      "item": SITE_URL
     },
     {
       "@type": "ListItem",
       "position": 2,
       "name": "Blog",
-      "item": `${Astro.site}/blog`
+      "item": `${SITE_URL}/blog/`
     },
-    {
+    ...(category ? [{
       "@type": "ListItem",
       "position": 3,
-      "name": category?.name,
-      "item": `${Astro.site}/kategori/${category?.slug}`
-    },
+      "name": category.name,
+      "item": `${SITE_URL}/kategori/${category.slug}/`
+    }] : []),
     {
       "@type": "ListItem",
-      "position": 4,
+      "position": category ? 4 : 3,
       "name": post.title,
       "item": canonicalURL
     }
@@ -190,21 +163,19 @@ const articleSchema = {
     "@type": "WebPage",
     "@id": canonicalURL
   },
-  "articleBody": post.content,
-  "wordCount": post.content.split(/\s+/).length,
   "author": {
     "@type": "Organization",
-    "@id": `${Astro.site}/#organization`
+    "@id": `${SITE_URL}/#organization`
   },
   "publisher": {
     "@type": "Organization",
-    "@id": `${Astro.site}/#organization`
+    "@id": `${SITE_URL}/#organization`
   },
   "image": imageSchema ? { "@id": `${canonicalURL}#primaryImage` } : null,
   "datePublished": new Date(publishDate).toISOString(),
   "dateModified": new Date(modifiedDate).toISOString(),
   "keywords": post.keywords || [],
-  "articleSection": category?.name,
+  "articleSection": category?.name || "Blog",
   "inLanguage": "tr-TR"
 };
 
@@ -223,18 +194,142 @@ const faqSchema = hasFaq ? {
   }))
 } : null;
 
-// Tüm şemaları birleştir
-const fullSchema = {
+// Final JSON-LD data
+// Schema'ları direkt JSON olarak oluşturup stringfy ile kaçış karakterlerini düzenleme
+const fullSchema = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
-    organizationSchema,
-    webPageSchema,
-    breadcrumbSchema,
-    articleSchema,
-    ...(imageSchema ? [imageSchema] : []),
-    ...(faqSchema ? [faqSchema] : [])
+    // Organization
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      "name": COMPANY_NAME,
+      "url": SITE_URL,
+      "logo": {
+        "@type": "ImageObject",
+        "@id": `${SITE_URL}/#logo`,
+        "url": `${SITE_URL}/logo.webp`,
+        "width": "512",
+        "height": "512",
+        "contentUrl": `${SITE_URL}/logo.webp`
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": COMPANY_PHONE,
+        "contactType": "customer service",
+        "email": COMPANY_EMAIL,
+        "areaServed": "TR",
+        "availableLanguage": "Turkish"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "İstanbul",
+        "addressRegion": "İstanbul",
+        "addressCountry": "TR"
+      },
+      "sameAs": Object.values(SOCIAL_LINKS)
+    },
+    // Website
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      "url": SITE_URL,
+      "name": COMPANY_NAME,
+      "description": "İstanbul bina güçlendirme ve karbon fiber takviye çözümleri",
+      "publisher": {
+        "@id": `${SITE_URL}/#organization`
+      },
+      "inLanguage": "tr-TR"
+    },
+    // Breadcrumb
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "@id": `${canonicalURL}#breadcrumb`,
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Ana Sayfa",
+          "item": SITE_URL
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Blog",
+          "item": `${SITE_URL}/blog/`
+        },
+        ...(category ? [{
+          "@type": "ListItem",
+          "position": 3,
+          "name": category.name,
+          "item": `${SITE_URL}/kategori/${category.slug}/`
+        }] : []),
+        {
+          "@type": "ListItem",
+          "position": category ? 4 : 3,
+          "name": post.title,
+          "item": canonicalURL
+        }
+      ]
+    },
+    // Article
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "@id": `${canonicalURL}#article`,
+      "headline": post.title,
+      "name": post.title,
+      "description": description,
+      "url": canonicalURL,
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": canonicalURL
+      },
+      "author": {
+        "@type": "Organization",
+        "@id": `${SITE_URL}/#organization`
+      },
+      "publisher": {
+        "@type": "Organization",
+        "@id": `${SITE_URL}/#organization`
+      },
+      "image": imageSchema ? { "@id": `${canonicalURL}#primaryImage` } : null,
+      "datePublished": new Date(publishDate).toISOString(),
+      "dateModified": new Date(modifiedDate).toISOString(),
+      "keywords": post.keywords || [],
+      "articleSection": category?.name || "Blog",
+      "inLanguage": "tr-TR"
+    },
+    // Featured Image (if exists)
+    ...(post.featured_image ? [{
+      "@context": "https://schema.org",
+      "@type": "ImageObject",
+      "@id": `${canonicalURL}#primaryImage`,
+      "url": imageUrl,
+      "width": imageWidth.toString(),
+      "height": imageHeight.toString(),
+      "caption": imageAlt,
+      "inLanguage": "tr-TR"
+    }] : []),
+    // FAQ (if exists)
+    ...(hasFaq ? [{
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "@id": `${canonicalURL}#faq`,
+      "mainEntity": processedFaq.map(faq => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer
+        }
+      }))
+    }] : [])
   ]
-};
+});
 ---
 
 <BaseLayout 
@@ -244,7 +339,7 @@ const fullSchema = {
   imageUrl={imageUrl}
   imageAlt={imageAlt}
   type="article"
-  author={post.author || "İstanbul Bina Güçlendirme"}
+  author={post.author || COMPANY_NAME}
   twitterCard={twitterCard}
 >
   <slot slot="head">
@@ -261,7 +356,7 @@ const fullSchema = {
     {twitterUsername && <meta name="twitter:creator" content={`@${twitterUsername}`} />}
     
     <!-- Yapısal veri -->
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(fullSchema)} />
+    <script is:inline type="application/ld+json" set:html={fullSchema} />
   </slot>
 
   <article itemscope itemtype="https://schema.org/BlogPosting" class="article-container">
