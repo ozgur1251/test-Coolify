@@ -59,8 +59,64 @@ function adjustHeadingLevels(content: string): string {
   return content.replace(/^## (.+)$/gm, '# $1');
 }
 
+// Görsel URL'sini optimize et - server side için uygun
+const optimizeImage = (url: string, size: 'small' | 'medium' | 'large' = 'large'): string => {
+  if (!url) return '';
+  
+  // URL'nin güvenli olduğundan emin ol
+  const safeUrl = url.trim();
+  
+  // Boyutlar ve srcset değerleri
+  const dimensions: Record<string, {width: number, height: number}> = {
+    small: { width: 480, height: 336 },
+    medium: { width: 768, height: 530 },
+    large: { width: 1320, height: 920 }
+  };
+  
+  // Görsel URL'sine boyut parametreleri ekle
+  const { width, height } = dimensions[size];
+  
+  // URL'nin zaten parametresi varsa & ile, yoksa ? ile ekle
+  const separator = safeUrl.includes('?') ? '&' : '?';
+  
+  // Zaten bu boyutta ise, yeni parametre ekleme
+  if (safeUrl.includes(`width=${width}`) && safeUrl.includes(`height=${height}`)) {
+    return safeUrl;
+  }
+  
+  return `${safeUrl}${separator}width=${width}&height=${height}`;
+};
+
 // İçeriği markdown'dan HTML'e dönüştür
 const contentHtml = parseMarkdown(adjustHeadingLevels(post.content));
+
+// Server tarafında içerik HTML'ine img taglarına lazy loading ekle
+function enhanceImageTags(html: string): string {
+  if (!html) return '';
+  
+  // <img> etiketlerini bul ve öznitelikleri ekle
+  return html.replace(/<img([^>]*)>/gi, (match: string, attributes: string) => {
+    // Halihazırda öznitelikler varsa kontrol et
+    const hasLoading = /loading=["']lazy["']/i.test(attributes);
+    const hasWidth = /width=["']\d+["']/i.test(attributes);
+    const hasHeight = /height=["']\d+["']/i.test(attributes);
+    const hasDecoding = /decoding=["']async["']/i.test(attributes);
+    
+    // Eksik öznitelikleri ekle
+    let newAttributes = attributes;
+    if (!hasLoading) newAttributes += ' loading="lazy"';
+    if (!hasWidth) newAttributes += ' width="800"';
+    if (!hasHeight) newAttributes += ' height="500"';
+    if (!hasDecoding) newAttributes += ' decoding="async"';
+    
+    return `<img${newAttributes}>`;
+  });
+}
+
+// Server tarafında HTML'i iyileştir - Promise kontrolü ekle
+const enhancedContentHtml = typeof contentHtml === 'string' 
+  ? enhanceImageTags(contentHtml)
+  : contentHtml; // Promise ise olduğu gibi bırak
 
 // FAQ verilerini işleme fonksiyonu
 function processFaqData(faqData: any[]): FaqItem[] {
@@ -86,21 +142,6 @@ const description = post.meta_description || post.excerpt || post.title;
 const keywords = post.keywords ? post.keywords.join(', ') : `bina güçlendirme, ${category?.name || ''}, ${post.title}`;
 
 // Görsel URL'sini optimize et
-const optimizeImage = (url: string, size: 'small' | 'medium' | 'large' = 'large') => {
-  if (!url) return '';
-  
-  // Supabase'den gelen webp formatlı görseller zaten optimize edilmiş
-  if (url.endsWith('.webp')) return url;
-  
-  // Görselin zaten optimize edilmiş olma durumunu kontrol et
-  if (url.includes('format=webp') || url.includes('w=') || url.includes('width=')) {
-    return url;
-  }
-  
-  // Sadece webp olmayan görseller için parametre ekle
-  return url;
-};
-
 const imageUrl = optimizeImage(socialMedia.image || post.featured_image || '');
 const imageAlt = socialMedia.image_alt || post.title || '';
 const publishDate = post.published_at || post.created_at;
@@ -435,8 +476,28 @@ const fullSchema = JSON.stringify({
       {post.featured_image && (
         <div class="featured-image-container">
           <picture>
+            <source
+              srcset={optimizeImage(post.featured_image, 'small')}
+              media="(max-width: 480px)"
+              type="image/webp"
+              width="480" 
+              height="336"
+            />
+            <source
+              srcset={optimizeImage(post.featured_image, 'medium')}
+              media="(max-width: 768px)"
+              type="image/webp"
+              width="768"
+              height="530"
+            />
+            <source
+              srcset={optimizeImage(post.featured_image, 'large')}
+              type="image/webp"
+              width="1320"
+              height="920"
+            />
             <img 
-              src={post.featured_image}
+              src={optimizeImage(post.featured_image, 'large')}
               alt={imageAlt}
               class="featured-image"
               loading="eager"
@@ -473,7 +534,7 @@ const fullSchema = JSON.stringify({
     </header>
     
     <div class="post-content markdown-content">
-      <div set:html={contentHtml} />
+      <div set:html={enhancedContentHtml} />
     </div>
     
     {hasFaq && (
@@ -567,20 +628,19 @@ article{width:100%;max-width:100%;overflow:hidden;contain:content}
 @media(max-width:400px){.article-container{padding:0 .5rem}.featured-image-container{aspect-ratio:4/3;margin:.25rem -.5rem 1rem}.post-content{font-size:.95rem}.markdown-content :global(h1){font-size:1.5rem}.markdown-content :global(h2){font-size:1.3rem}.markdown-content :global(h3){font-size:1.15rem}}
 </style>
 
-<script>
-document.addEventListener('DOMContentLoaded',function(){
-  // İçerikteki tüm görselleri seç
-  const contentImages = document.querySelectorAll('.markdown-content img');
-  
-  // Her görsel için sadece lazy loading ekle, optimization gerekmez
-  contentImages.forEach(img => {
-    const imgElement = img as HTMLImageElement;
+<script is:inline define:vars={{ contentImages: '.markdown-content img' }}>
+  // İçerikteki görselleri optimize et (client tarafında)
+  document.addEventListener('DOMContentLoaded', function() {
+    // İçerikteki tüm görselleri seç
+    const images = document.querySelectorAll(contentImages);
     
-    // Lazy loading ekle
-    if(!imgElement.hasAttribute('loading')) {
-      imgElement.setAttribute('loading', 'lazy');
-      imgElement.setAttribute('decoding', 'async');
-    }
+    // Her görsel için sadece lazy loading ekle (optimization server tarafında yapılıyor)
+    images.forEach(function(img) {
+      // Lazy loading ekle
+      if(!img.hasAttribute('loading')) {
+        img.setAttribute('loading', 'lazy');
+        img.setAttribute('decoding', 'async');
+      }
+    });
   });
-});
 </script> 
