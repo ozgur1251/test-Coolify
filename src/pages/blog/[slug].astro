@@ -77,7 +77,7 @@ const optimizeImage = (url: string, size: 'small' | 'medium' | 'large' = 'large'
   const dimensions: Record<string, {width: number, height: number}> = {
     small: { width: 480, height: 336 },
     medium: { width: 768, height: 530 },
-    large: { width: 1200, height: 800 } // 1320 yerine daha küçük boyut
+    large: { width: 1000, height: 700 } // Daha küçük boyutlu resim (önceden 1200x800)
   };
   
   // WebP formatı ve daha iyi sıkıştırma için parametreler ekle
@@ -91,7 +91,7 @@ const optimizeImage = (url: string, size: 'small' | 'medium' | 'large' = 'large'
     return safeUrl;
   }
   
-  return `${safeUrl}${separator}width=${width}&height=${height}&format=webp&quality=80`;
+  return `${safeUrl}${separator}width=${width}&height=${height}&format=webp&quality=75&fit=cover`;
 };
 
 // İçeriği markdown'dan HTML'e dönüştür
@@ -108,13 +108,30 @@ function enhanceImageTags(html: string): string {
     const hasWidth = /width=["']\d+["']/i.test(attributes);
     const hasHeight = /height=["']\d+["']/i.test(attributes);
     const hasDecoding = /decoding=["']async["']/i.test(attributes);
+    const hasSrc = /src=["'][^"']+["']/i.test(attributes);
     
     // Eksik öznitelikleri ekle
     let newAttributes = attributes;
     if (!hasLoading) newAttributes += ' loading="lazy"';
-    if (!hasWidth) newAttributes += ' width="800"';
-    if (!hasHeight) newAttributes += ' height="500"';
+    if (!hasWidth) newAttributes += ' width="600"';
+    if (!hasHeight) newAttributes += ' height="400"';
     if (!hasDecoding) newAttributes += ' decoding="async"';
+    
+    // Eğer src özniteliği varsa ve optimize edilmemişse
+    if (hasSrc) {
+      // src değerini al
+      const srcMatch = attributes.match(/src=["']([^"']+)["']/i);
+      if (srcMatch && srcMatch[1]) {
+        const originalSrc = srcMatch[1];
+        // URL zaten optimize edilmiş mi kontrol et
+        if (!originalSrc.includes('width=') && !originalSrc.includes('quality=')) {
+          // Optimize edilmemiş görüntüyü optimize et
+          const optimizedSrc = `${originalSrc}${originalSrc.includes('?') ? '&' : '?'}width=600&height=400&format=webp&quality=75&fit=crop`;
+          // src özniteliğini güncelle
+          newAttributes = newAttributes.replace(/src=["'][^"']+["']/i, `src="${optimizedSrc}"`);
+        }
+      }
+    }
     
     return `<img${newAttributes}>`;
   });
@@ -155,8 +172,8 @@ const publishDate = post.published_at || post.created_at;
 const modifiedDate = post.updated_at || publishDate;
 
 // Görsel boyutları
-let imageWidth = 1320;
-let imageHeight = 920;
+let imageWidth = 1000;
+let imageHeight = 700;
 
 // Sosyal medya etiketleri
 const socialTitle = socialMedia.title || post.title;
@@ -504,16 +521,16 @@ const fullSchema = JSON.stringify({
             <source
               srcset={optimizeImage(post.featured_image, 'large')}
               type="image/webp"
-              width="1320"
-              height="920"
+              width="1000"
+              height="700"
             />
             <img 
               src={optimizeImage(post.featured_image, 'large')}
               alt={imageAlt}
               class="featured-image"
               loading="eager"
-              width="1320"
-              height="920"
+              width="1000"
+              height="700"
               decoding="async"
               fetchpriority="high"
             />
@@ -593,7 +610,7 @@ const fullSchema = JSON.stringify({
 <style>
 .article-container{width:100%;max-width:800px;margin:0 auto;padding:0 1rem}
 .post-header{margin-bottom:2rem}
-.featured-image-container{width:100%;max-width:1320px;margin:0 auto 1.5rem;position:relative;aspect-ratio:1320/920;overflow:hidden;border-radius:var(--radius-md);contain:content}
+.featured-image-container{width:100%;max-width:1000px;margin:0 auto 1.5rem;position:relative;aspect-ratio:10/7;overflow:hidden;border-radius:var(--radius-md);contain:content}
 .featured-image{width:100%;height:100%;object-fit:cover;transition:transform .3s ease}
 .post-meta{text-align:center;margin-bottom:2rem}
 .meta-container{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;font-size:.9rem;color:var(--color-text-light)}
@@ -632,7 +649,7 @@ const fullSchema = JSON.stringify({
 .category-link{color:var(--color-primary);text-decoration:none}
 .category-link:hover{text-decoration:underline}
 article{width:100%;max-width:100%;overflow:hidden;contain:content}
-@media(min-width:993px){.post-content,.post-navigation,.faq-section{max-width:800px}.post-header{max-width:1200px}.featured-image-container{max-width:1320px}}
+@media(min-width:993px){.post-content,.post-navigation,.faq-section{max-width:800px}.post-header{max-width:1000px}.featured-image-container{max-width:1000px}}
 @media(max-width:992px){.featured-image-container{max-width:100%}.post-content,.post-navigation,.faq-section{max-width:100%}}
 @media(max-width:768px){.article-container{padding:0 .75rem}.featured-image-container{margin:.5rem -.75rem 1rem;border-radius:0;aspect-ratio:16/9}.post-content{font-size:1rem}.meta-container{flex-direction:column;gap:.5rem}.post-meta{padding:0;margin-bottom:1.5rem}.markdown-content :global(h1){font-size:1.75rem;margin-bottom:1rem}.markdown-content :global(h2){font-size:1.5rem;margin-top:2rem}.markdown-content :global(h3){font-size:1.35rem}.markdown-content :global(p){margin-bottom:1rem}.post-category{padding:.35rem .85rem;font-size:1rem}}
 @media(max-width:576px){.post-title{font-size:1.3rem}.post-meta{flex-direction:column;gap:.5rem}.featured-image-container{aspect-ratio:3/2}.post-content,.post-navigation,.faq-section{padding:0 .75rem}.faq-question{font-size:1.2rem}.post-category,.meta-date,.meta-update{font-size:.85rem}.tag-item{font-size:.8rem}}
@@ -658,8 +675,15 @@ article{width:100%;max-width:100%;overflow:hidden;contain:content}
         
         // Boyut öznitelikleri (yoksa ekle)
         if (!img.hasAttribute('width') && !img.hasAttribute('height')) {
-          img.setAttribute('width', '800');
-          img.setAttribute('height', '500');
+          img.setAttribute('width', '600');
+          img.setAttribute('height', '400');
+        }
+        
+        // Görüntü URL'sini optimize et
+        const src = img.getAttribute('src');
+        if (src && !src.includes('width=') && !src.includes('quality=')) {
+          const optimizedSrc = `${src}${src.includes('?') ? '&' : '?'}width=600&height=400&format=webp&quality=75&fit=crop`;
+          img.setAttribute('src', optimizedSrc);
         }
       });
     }
