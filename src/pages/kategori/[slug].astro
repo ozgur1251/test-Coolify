@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCategories, getBlogPostsByCategory, getCategoryBySlug } from '../../lib/supabase';
+import Image from '../../components/Image.astro';
 
 // Server-side rendering kullan (statik ön-render yerine)
 export const prerender = false;
@@ -71,13 +72,9 @@ const collectionSchema = {
             <a href={`/blog/${post.slug}`} class="card-link">
               <div class="card-image">
                 {post.featured_image ? (
-                  <img 
+                  <Image 
                     src={post.featured_image} 
                     alt={post.title}
-                    width="400"
-                    height="225"
-                    loading="lazy"
-                    decoding="async"
                   />
                 ) : (
                   <div class="placeholder-image" aria-hidden="true">
@@ -174,15 +171,6 @@ const collectionSchema = {
     padding-top: 56.25%; /* 16:9 aspect ratio */
     background-color: var(--color-grey-light);
     overflow: hidden;
-  }
-  
-  .card-image img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
   
   .placeholder-image {

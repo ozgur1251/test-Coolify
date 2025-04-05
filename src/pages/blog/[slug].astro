@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getBlogPostBySlug, getCategories } from '../../lib/supabase';
-import { Image } from 'astro:assets';
+import Image from '../../components/Image.astro';
 import { parseMarkdown } from '../../lib/markdown';
 
 // Server-side rendering kullan (statik ön-render yerine)
@@ -431,14 +431,6 @@ const fullSchema = JSON.stringify({
               src={post.featured_image}
               alt={imageAlt}
               class="featured-image" 
-              width={800}
-              height={570}
-              format="webp"
-              quality={65}
-              densities={[0.5, 1, 1.5, 2]}
-              loading="eager"
-              decoding="async"
-              fetchpriority="high"
             />
           </div>
       )}

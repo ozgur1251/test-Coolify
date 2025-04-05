@@ -2,6 +2,7 @@
 // Server tarafında çalışacak kod buraya
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCategories, getCategoryPostCounts } from '../lib/supabase';
+import Image from '../components/Image.astro';
 
 const pageTitle = "İstanbul Bina Güçlendirme - Karbon Fibe kolon, kiriş güçlendirme";
 const description = "İstanbul ve çevresinde profesyonel bina güçlendirme, kolon, kiriş güçlendirme ve CFRP karbon fiber takviye hizmetleri. Depreme dayanıklı yapılar için bize ulaşın.";
@@ -124,15 +125,9 @@ const schemaData = {
              title={`${category.name} Bölgesi Bina Güçlendirme Hizmeti`}>
             <div class="card-image">
               {category.featured_image ? (
-                <img 
+                <Image 
                   src={category.featured_image} 
                   alt={`${category.name} Bölgesi Bina Güçlendirme`}
-                  width="400"
-                  height="225"
-                  loading={index < 4 ? "eager" : "lazy"}
-                  decoding="async"
-                  fetchpriority={index < 2 ? "high" : "low"}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
                 />
               ) : (
                 <div class="placeholder-image">
