@@ -56,7 +56,13 @@ const socialMedia = post.social_media || {};
 
 // Markdown içeriğini işle
 function adjustHeadingLevels(content: string): string {
-  return content.replace(/^## (.+)$/gm, '# $1');
+  if (!content) return '';
+  
+  // h2 başlıkları h1'e dönüştür
+  content = content.replace(/^## (.+)$/gm, '# $1');
+  // h3 başlıkları h2'ye dönüştür  
+  content = content.replace(/^### (.+)$/gm, '## $1');
+  return content;
 }
 
 // Görsel URL'sini optimize et - server side için uygun
@@ -66,14 +72,14 @@ const optimizeImage = (url: string, size: 'small' | 'medium' | 'large' = 'large'
   // URL'nin güvenli olduğundan emin ol
   const safeUrl = url.trim();
   
-  // Boyutlar ve srcset değerleri
+  // Boyutlar ve srcset değerleri - LCP metrikleri için ideal boyutlar
   const dimensions: Record<string, {width: number, height: number}> = {
     small: { width: 480, height: 336 },
     medium: { width: 768, height: 530 },
-    large: { width: 1320, height: 920 }
+    large: { width: 1200, height: 800 } // 1320 yerine daha küçük boyut
   };
   
-  // Görsel URL'sine boyut parametreleri ekle
+  // WebP formatı ve daha iyi sıkıştırma için parametreler ekle
   const { width, height } = dimensions[size];
   
   // URL'nin zaten parametresi varsa & ile, yoksa ? ile ekle
@@ -84,7 +90,7 @@ const optimizeImage = (url: string, size: 'small' | 'medium' | 'large' = 'large'
     return safeUrl;
   }
   
-  return `${safeUrl}${separator}width=${width}&height=${height}`;
+  return `${safeUrl}${separator}width=${width}&height=${height}&format=webp&quality=80`;
 };
 
 // İçeriği markdown'dan HTML'e dönüştür
@@ -469,6 +475,7 @@ const fullSchema = JSON.stringify({
     <script is:inline type="application/ld+json" set:html={fullSchema} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href={optimizeImage(post.featured_image, 'large')} as="image" />
   </slot>
 
   <article class="article-container">
@@ -643,4 +650,17 @@ article{width:100%;max-width:100%;overflow:hidden;contain:content}
       }
     });
   });
+</script>
+
+<script lang="ts">
+// Markdown içerisindeki başlık düzeylerini düzelt
+function adjustHeadingLevels(content: string): string {
+  if (!content) return '';
+  
+  // h2 başlıkları h1'e dönüştür
+  content = content.replace(/^## (.+)$/gm, '# $1');
+  // h3 başlıkları h2'ye dönüştür  
+  content = content.replace(/^### (.+)$/gm, '## $1');
+  return content;
+}
 </script> 
