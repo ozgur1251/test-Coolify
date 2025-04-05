@@ -58,10 +58,11 @@ const socialMedia = post.social_media || {};
 function adjustHeadingLevels(content: string): string {
   if (!content) return '';
   
-  // h2 başlıkları h1'e dönüştür
+  // Düzenlenmiş başlık hiyerarşisi: h2'leri h1'e ve h3'leri h2'ye dönüştür
+  // Ardından h4'leri h3'e dönüştür - böylece sıralama korunur
   content = content.replace(/^## (.+)$/gm, '# $1');
-  // h3 başlıkları h2'ye dönüştür  
   content = content.replace(/^### (.+)$/gm, '## $1');
+  content = content.replace(/^#### (.+)$/gm, '### $1');
   return content;
 }
 
@@ -165,7 +166,8 @@ const twitterUsername = socialMedia.twitter_username || 'binaguclendirme';
 const facebookAppId = socialMedia.facebook_app_id || '';
 
 // Canonical URL 
-const canonicalURL = new URL(Astro.url.pathname, SITE_URL).href;
+// URL oluşturmada Astro.site kullanarak tam URL garantile
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL || Astro.site || Astro.url.origin).toString();
 
 // İletişim ve sosyal medya bilgileri
 const COMPANY_NAME = "İstanbul Bina Güçlendirme";
@@ -476,6 +478,14 @@ const fullSchema = JSON.stringify({
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href={optimizeImage(post.featured_image, 'large')} as="image" />
+    
+    <!-- CSS Dosyalarını Preload ile iyileştir - render-blocking kaynaklar için -->
+    <link rel="preload" as="style" href="/_slug_.CHDGpdL-.css" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" as="style" href="/_slug_.CuLJPLXA.css" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+      <link rel="stylesheet" href="/_slug_.CHDGpdL-.css">
+      <link rel="stylesheet" href="/_slug_.CuLJPLXA.css">
+    </noscript>
   </slot>
 
   <article class="article-container">
@@ -549,7 +559,7 @@ const fullSchema = JSON.stringify({
         <h2 class="section-title">Sık Sorulan Sorular</h2>
         {processedFaq.map((item: FaqItem) => (
           <div class="faq-item">
-            <h3 class="faq-question">{item.question}</h3>
+            <h2 class="faq-question">{item.question}</h2>
             <div class="faq-answer">
               <div set:html={parseMarkdown(item.answer)} />
             </div>
@@ -615,7 +625,7 @@ const fullSchema = JSON.stringify({
 .faq-section{margin:2rem auto;padding:1.5rem;background-color:var(--color-bg-secondary);border-radius:var(--radius-md);max-width:100%;width:100%}
 .faq-item{margin-bottom:1rem;border-bottom:1px solid var(--color-border);padding-bottom:1rem}
 .faq-item:last-child{border-bottom:none;margin-bottom:0}
-.faq-question{font-size:1.2rem;font-weight:600;margin-bottom:.75rem;color:var(--color-primary);cursor:pointer}
+.faq-question{font-size:1.3rem;font-weight:600;margin-bottom:.75rem;color:var(--color-primary);cursor:pointer}
 .faq-answer{color:var(--color-text-light);overflow-wrap:break-word;word-wrap:break-word}
 .post-navigation{display:flex;flex-wrap:wrap;margin:2rem auto 0;border-top:1px solid var(--color-border);padding-top:1.5rem;max-width:100%;width:100%;padding-left:1rem;padding-right:1rem}
 .post-tags{flex:1;min-width:250px}
@@ -631,23 +641,33 @@ article{width:100%;max-width:100%;overflow:hidden;contain:content}
 @media(min-width:993px){.post-content,.post-navigation,.faq-section{max-width:800px}.post-header{max-width:1200px}.featured-image-container{max-width:1320px}}
 @media(max-width:992px){.featured-image-container{max-width:100%}.post-content,.post-navigation,.faq-section{max-width:100%}}
 @media(max-width:768px){.article-container{padding:0 .75rem}.featured-image-container{margin:.5rem -.75rem 1rem;border-radius:0;aspect-ratio:16/9}.post-content{font-size:1rem}.meta-container{flex-direction:column;gap:.5rem}.post-meta{padding:0;margin-bottom:1.5rem}.markdown-content :global(h1){font-size:1.75rem;margin-bottom:1rem}.markdown-content :global(h2){font-size:1.5rem;margin-top:2rem}.markdown-content :global(h3){font-size:1.35rem}.markdown-content :global(p){margin-bottom:1rem}.post-category{padding:.35rem .85rem;font-size:1rem}}
-@media(max-width:576px){.post-title{font-size:1.3rem}.post-meta{flex-direction:column;gap:.5rem}.featured-image-container{aspect-ratio:3/2}.post-content,.post-navigation,.faq-section{padding:0 .75rem}.faq-question{font-size:1rem}.post-category,.meta-date,.meta-update{font-size:.85rem}.tag-item{font-size:.8rem}}
+@media(max-width:576px){.post-title{font-size:1.3rem}.post-meta{flex-direction:column;gap:.5rem}.featured-image-container{aspect-ratio:3/2}.post-content,.post-navigation,.faq-section{padding:0 .75rem}.faq-question{font-size:1.2rem}.post-category,.meta-date,.meta-update{font-size:.85rem}.tag-item{font-size:.8rem}}
 @media(max-width:400px){.article-container{padding:0 .5rem}.featured-image-container{aspect-ratio:4/3;margin:.25rem -.5rem 1rem}.post-content{font-size:.95rem}.markdown-content :global(h1){font-size:1.5rem}.markdown-content :global(h2){font-size:1.3rem}.markdown-content :global(h3){font-size:1.15rem}}
 </style>
 
-<script is:inline define:vars={{ contentImages: '.markdown-content img' }}>
+<script is:inline>
   // İçerikteki görselleri optimize et (client tarafında)
   document.addEventListener('DOMContentLoaded', function() {
-    // İçerikteki tüm görselleri seç
-    const images = document.querySelectorAll(contentImages);
+    // İçerikteki tüm görselleri seç (optimize edilmiş seçici)
+    const images = document.querySelectorAll('.markdown-content img');
     
-    // Her görsel için sadece lazy loading ekle (optimization server tarafında yapılıyor)
-    images.forEach(function(img) {
-      // Lazy loading ekle
-      if(!img.hasAttribute('loading')) {
-        img.setAttribute('loading', 'lazy');
-        img.setAttribute('decoding', 'async');
-      }
-    });
-  });
+    // Performans için sadece gerekli olanları işle
+    if (images.length > 0) {
+      images.forEach(function(img) {
+        // Lazy loading ve asenkron dekode öznitelikleri
+        if (!img.hasAttribute('loading')) {
+          img.setAttribute('loading', 'lazy');
+        }
+        if (!img.hasAttribute('decoding')) {
+          img.setAttribute('decoding', 'async');
+        }
+        
+        // Boyut öznitelikleri (yoksa ekle)
+        if (!img.hasAttribute('width') && !img.hasAttribute('height')) {
+          img.setAttribute('width', '800');
+          img.setAttribute('height', '500');
+        }
+      });
+    }
+  }, { passive: true });
 </script> 
