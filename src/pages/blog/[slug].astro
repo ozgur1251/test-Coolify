@@ -89,13 +89,21 @@ const description = post.meta_description || post.excerpt || post.title;
 const keywords = post.keywords ? post.keywords.join(', ') : `bina güçlendirme, ${category?.name || ''}, ${post.title}`;
 
 // Görsel URL'sini optimize et
-const optimizeImage = (url: string) => {
+const optimizeImage = (url: string, size = 'large') => {
   if (!url) return '';
   if (url.endsWith('.webp')) return url;
-  // CDN veya görsel işleme servisi entegrasyonu burada yapılabilir
+  
+  // Mobil için farklı boyutlar
+  const sizes = {
+    small: '480',
+    medium: '768',
+    large: '1320'
+  };
+  
   return url;
 };
 
+// Ana görsel için
 const imageUrl = optimizeImage(socialMedia.image || post.featured_image || '');
 const imageAlt = socialMedia.image_alt || post.title || '';
 const publishDate = post.published_at || post.created_at;
@@ -424,6 +432,8 @@ const fullSchema = JSON.stringify({
     
     <!-- Yapısal veri -->
     <script is:inline type="application/ld+json" set:html={fullSchema} />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   </slot>
 
   <article class="article-container">
@@ -431,6 +441,16 @@ const fullSchema = JSON.stringify({
       {post.featured_image && (
         <div class="featured-image-container">
           <picture>
+            <source
+              srcset={optimizeImage(post.featured_image, 'small')}
+              media="(max-width: 480px)"
+              type="image/webp"
+            />
+            <source
+              srcset={optimizeImage(post.featured_image, 'medium')}
+              media="(max-width: 768px)"
+              type="image/webp"
+            />
             <source
               srcset={optimizeImage(post.featured_image)}
               type="image/webp"
@@ -538,6 +558,7 @@ const fullSchema = JSON.stringify({
     aspect-ratio: 1320/920;
     overflow: hidden;
     border-radius: var(--radius-md);
+    contain: content;
   }
 
   .featured-image {
@@ -570,11 +591,19 @@ const fullSchema = JSON.stringify({
     font-weight: 500;
     text-decoration: none;
     transition: background-color 0.2s ease;
+    touch-action: manipulation;
   }
 
   .post-category:hover {
     background-color: var(--color-primary);
     color: white;
+  }
+  
+  @media (max-width: 768px) {
+    .post-category {
+      padding: 0.35rem 0.85rem;
+      font-size: 1rem;
+    }
   }
 
   .meta-date, .meta-update {
@@ -615,6 +644,9 @@ const fullSchema = JSON.stringify({
     font-size: 1.125rem;
     line-height: 1.7;
     color: var(--color-text);
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
   }
   
   .markdown-content {
@@ -664,6 +696,7 @@ const fullSchema = JSON.stringify({
     height: auto;
     border-radius: var(--radius-sm);
     margin: 1.5rem 0;
+    display: block;
   }
 
   .markdown-content :global(ul), 
@@ -791,6 +824,7 @@ const fullSchema = JSON.stringify({
     width: 100%;
     max-width: 100%;
     overflow: hidden;
+    contain: content;
   }
 
   @media (min-width: 993px) {
@@ -819,12 +853,13 @@ const fullSchema = JSON.stringify({
 
   @media (max-width: 768px) {
     .article-container {
-      padding: 0 1rem;
+      padding: 0 0.75rem;
     }
     
     .featured-image-container {
-      margin: 1rem -1rem;
+      margin: 0.5rem -0.75rem 1rem;
       border-radius: 0;
+      aspect-ratio: 16/9;
     }
     
     .post-content {
@@ -838,6 +873,25 @@ const fullSchema = JSON.stringify({
 
     .post-meta {
       padding: 0;
+      margin-bottom: 1.5rem;
+    }
+    
+    .markdown-content :global(h1) {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+    
+    .markdown-content :global(h2) {
+      font-size: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .markdown-content :global(h3) {
+      font-size: 1.35rem;
+    }
+    
+    .markdown-content :global(p) {
+      margin-bottom: 1rem;
     }
   }
   
@@ -852,17 +906,53 @@ const fullSchema = JSON.stringify({
     }
     
     .featured-image-container {
-      aspect-ratio: 1.33/1;
+      aspect-ratio: 3/2;
     }
     
-    .post-content, .post-navigation, .faq-section, .post-header {
-      padding: 0 1.25rem;
+    .post-content, .post-navigation, .faq-section {
+      padding: 0 0.75rem;
     }
     
     .faq-question {
       font-size: 1rem;
     }
+    
+    .post-category, .meta-date, .meta-update {
+      font-size: 0.85rem;
+    }
+    
+    .tag-item {
+      font-size: 0.8rem;
+    }
   }
+  
+  @media (max-width: 400px) {
+    .article-container {
+      padding: 0 0.5rem;
+    }
+    
+    .featured-image-container {
+      aspect-ratio: 4/3;
+      margin: 0.25rem -0.5rem 1rem;
+    }
+    
+    .post-content {
+      font-size: 0.95rem;
+    }
+    
+    .markdown-content :global(h1) {
+      font-size: 1.5rem;
+    }
+    
+    .markdown-content :global(h2) {
+      font-size: 1.3rem;
+    }
+    
+    .markdown-content :global(h3) {
+      font-size: 1.15rem;
+    }
+  }
+
   .post-content {
     max-width: 100%;
     margin: 2rem auto;
@@ -880,17 +970,38 @@ const fullSchema = JSON.stringify({
 </style>
 
 <script>
-  // Görsel optimizasyonu için yardımcı fonksiyon
-  function getOptimizedImageUrl(imageUrl: string): string {
+  // Görsel optimizasyonu için yardımcı fonksiyon 
+  function getOptimizedImageUrl(imageUrl: string, size = 'large'): string {
     if (!imageUrl) return '';
     
     // Eğer görsel zaten webp formatında ise
     if (imageUrl.endsWith('.webp')) return imageUrl;
     
+    // Farklı boyutlardaki görseller için boyut ayarları
+    const sizes = {
+      small: 480,
+      medium: 768,
+      large: 1320
+    };
+    
     // CDN veya görsel işleme servisi kullanıyorsanız
-    // return `https://your-cdn.com/image/optimize/${imageUrl}?format=webp&width=1320&height=920`;
+    // return `https://your-cdn.com/image/optimize/${encodeURIComponent(imageUrl)}?format=webp&width=${sizes[size]}&quality=85`;
     
     // Basit durumda orijinal görseli döndür
     return imageUrl;
   }
+  
+  // Görselleri Lazy Load uygulaması
+  document.addEventListener('DOMContentLoaded', function() {
+    // İçerikteki tüm görselleri seç
+    const contentImages = document.querySelectorAll('.markdown-content img:not([loading])');
+    
+    // Her görsel için lazy loading özelliği ekle
+    contentImages.forEach(img => {
+      if (!img.hasAttribute('loading')) {
+        img.setAttribute('loading', 'lazy');
+        img.setAttribute('decoding', 'async');
+      }
+    });
+  });
 </script> 
