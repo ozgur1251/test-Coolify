@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getBlogPostBySlug, getCategories } from '../../lib/supabase';
 import { parseMarkdown } from '../../lib/markdown';
+import { Image } from 'astro:assets';
 
 // Server-side rendering kullan (statik ön-render yerine)
 export const prerender = false;
@@ -63,8 +64,101 @@ function adjustHeadingLevels(content: string): string {
   content = content.replace(/^## (.+)$/gm, '# $1');
   content = content.replace(/^### (.+)$/gm, '## $1');
   content = content.replace(/^#### (.+)$/gm, '### $1');
+  
+  // Markdown içindeki img etiketlerini optimize etmek için transformasyon
+  // ![alt text](image-url) formatındaki resimleri tespit et ve transform et
+  content = content.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, url) => {
+    // Eğer URL zaten optimize edilmiş bir resimse dokunma
+    if (url.includes('?w=') || url.includes('?format=webp')) {
+      return match;
+    }
+    
+    // Aksi takdirde resim URL'sine webp formatı ekle
+    return `![${alt}](${url}?w=800&format=webp&q=80)`;
+  });
+  
   return content;
 }
+
+// İçerik içindeki resimleri otomatik olarak optimize eden özel bir CSS sınıfı ekleyeceğiz
+const lazyLoadCss = `
+  .post-content img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+    transition: filter 0.5s ease-out, opacity 0.5s ease-out;
+    opacity: 0;
+    filter: blur(10px);
+  }
+  
+  .post-content img.loaded {
+    opacity: 1;
+    filter: blur(0);
+  }
+`;
+
+// İçerik içindeki resimlerin lazy load olması için JavaScript kodu
+const lazyLoadScript = `
+  document.addEventListener('DOMContentLoaded', function() {
+    const images = document.querySelectorAll('.post-content img');
+    
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            
+            // Resmin orijinal URL'sini al ve optimize et
+            let imgSrc = img.getAttribute('data-src') || img.getAttribute('src');
+            
+            // Eğer URL'de optimize parametreleri yoksa ekle
+            if (!imgSrc.includes('?w=') && !imgSrc.includes('?format=')) {
+              imgSrc += '?w=800&format=webp&q=80';
+            }
+            
+            // Yeni bir resim nesnesi oluştur ve ön yükleme yap
+            const tempImg = new Image();
+            tempImg.src = imgSrc;
+            
+            tempImg.onload = function() {
+              img.src = imgSrc;
+              img.classList.add('loaded');
+            };
+            
+            // Observer'ı kaldır
+            observer.unobserve(img);
+          }
+        });
+      });
+      
+      // Tüm resimleri gözlemle
+      images.forEach(img => {
+        // Orijinal src'yi data-src'ye taşı
+        if (!img.hasAttribute('data-src')) {
+          img.setAttribute('data-src', img.src);
+        }
+        
+        // Küçük placeholder göster
+        if (!img.classList.contains('loaded')) {
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNlZWVlZWUiLz48L3N2Zz4=';
+        }
+        
+        imageObserver.observe(img);
+      });
+    } else {
+      // IntersectionObserver desteklenmeyen tarayıcılar için basit fallback
+      images.forEach(img => {
+        if (!img.hasAttribute('data-src')) {
+          img.setAttribute('data-src', img.src);
+        }
+        img.src = img.getAttribute('data-src');
+        img.classList.add('loaded');
+      });
+    }
+  });
+`;
 
 // İçeriği markdown'dan HTML'e dönüştür
 const contentHtml = parseMarkdown(adjustHeadingLevels(post.content));
@@ -415,26 +509,62 @@ const fullSchema = JSON.stringify({
     {twitterUsername && <meta name="twitter:creator" content={`@${twitterUsername}`} />}
     
     <script is:inline type="application/ld+json" set:html={fullSchema} />
+    
+    <!-- Resource Hints -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href={post.featured_image} as="image" />
     
-    <!-- CSS dosyalari yerine style bloğundaki kodlar kullanılıyor -->
+    <!-- DNS preconnect - resimlerin geldiği bir CDN varsa -->
+    <link rel="preconnect" href={new URL(post.featured_image).origin} crossorigin />
+    
+    <!-- Kritik kaynakları preload et -->
+    {post.featured_image && (
+      <link 
+        rel="preload" 
+        href={`${post.featured_image}?w=400&format=webp&q=60`} 
+        as="image" 
+        type="image/webp"
+        fetchpriority="high"
+      />
+    )}
+    
+    <!-- Güvenlik ve performans için CSP -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      img-src 'self' data: https: http:;
+      script-src 'self' 'unsafe-inline';
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      font-src 'self' https://fonts.gstatic.com;
+      connect-src 'self';
+      frame-ancestors 'none';
+      form-action 'self';
+      upgrade-insecure-requests;
+    " />
+    
+    <!-- Lazy loading için CSS -->
+    <style set:html={lazyLoadCss}></style>
+    
+    <!-- Lazy loading için JavaScript -->
+    <script is:inline set:html={lazyLoadScript}></script>
   </slot>
 
   <article class="article-container">
     <header class="post-header">
       {post.featured_image && (
         <div class="featured-image-container">
-          <img 
+          <Image 
             src={post.featured_image}
             alt={imageAlt}
             class="featured-image"
+            width={1320}
+            height={920}
             loading="eager"
-            width="1320"
-            height="920"
             decoding="async"
+            format="webp"
+            quality={80}
             fetchpriority="high"
+            densities={[1, 1.5, 2]}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
           />
         </div>
       )}
@@ -511,6 +641,9 @@ const fullSchema = JSON.stringify({
 <style>
 .article-container{width:100%;max-width:800px;margin:0 auto;padding:0 1rem}
 .post-header{margin-bottom:2rem}
+.featured-image-container{width:100%;margin-bottom:1.5rem;overflow:hidden;border-radius:var(--radius-md);position:relative}
+.featured-image{width:100%;height:auto;object-fit:cover;display:block;transition:transform .3s ease}
+.featured-image:hover{transform:scale(1.02)}
 .post-meta{text-align:center;margin-bottom:2rem}
 .meta-container{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;font-size:.9rem;color:var(--color-text-light)}
 .post-category{background-color:var(--color-primary-light);color:var(--color-primary);padding:.25rem .75rem;border-radius:var(--radius-sm);font-weight:500;text-decoration:none;transition:background-color .2s ease;touch-action:manipulation}
