@@ -12,5 +12,29 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone'
   }),
-  trailingSlash: 'always'
+  trailingSlash: 'always',
+  // Görsel optimizasyonu için yerleşik assets özelliğini etkinleştir
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/sharp',
+      config: {
+        // Sharp yapılandırması
+        jpeg: { quality: 80 },
+        jpg: { quality: 80 },
+        png: { quality: 80 },
+        webp: { quality: 70 },
+        avif: { quality: 70 },
+        defaults: {
+          format: 'webp',
+          quality: 'medium',
+        }
+      }
+    },
+    // LCP optimizasyonu için önbellek ayarları
+    cacheDir: './node_modules/.astro/image',
+    domains: ['blog.istanbulbinaguclendirme.com'],
+    remotePatterns: [
+      { protocol: 'https', hostname: '**.istanbulbinaguclendirme.com', port: '' }
+    ]
+  }
 });

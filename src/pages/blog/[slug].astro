@@ -66,81 +66,8 @@ function adjustHeadingLevels(content: string): string {
   return content;
 }
 
-// Görsel URL'sini optimize et - server side için uygun
-const optimizeImage = (url: string, size: 'small' | 'medium' | 'large' = 'large'): string => {
-  if (!url) return '';
-  
-  // URL'nin güvenli olduğundan emin ol
-  const safeUrl = url.trim();
-  
-  // Boyutlar ve srcset değerleri - LCP metrikleri için ideal boyutlar
-  const dimensions: Record<string, {width: number, height: number}> = {
-    small: { width: 480, height: 336 },
-    medium: { width: 768, height: 530 },
-    large: { width: 1000, height: 700 } // Daha küçük boyutlu resim (önceden 1200x800)
-  };
-  
-  // WebP formatı ve daha iyi sıkıştırma için parametreler ekle
-  const { width, height } = dimensions[size];
-  
-  // URL'nin zaten parametresi varsa & ile, yoksa ? ile ekle
-  const separator = safeUrl.includes('?') ? '&' : '?';
-  
-  // Zaten bu boyutta ise, yeni parametre ekleme
-  if (safeUrl.includes(`width=${width}`) && safeUrl.includes(`height=${height}`)) {
-    return safeUrl;
-  }
-  
-  return `${safeUrl}${separator}width=${width}&height=${height}&format=webp&quality=75&fit=cover`;
-};
-
 // İçeriği markdown'dan HTML'e dönüştür
 const contentHtml = parseMarkdown(adjustHeadingLevels(post.content));
-
-// Server tarafında içerik HTML'ine img taglarına lazy loading ekle
-function enhanceImageTags(html: string): string {
-  if (!html) return '';
-  
-  // <img> etiketlerini bul ve öznitelikleri ekle
-  return html.replace(/<img([^>]*)>/gi, (match: string, attributes: string) => {
-    // Halihazırda öznitelikler varsa kontrol et
-    const hasLoading = /loading=["']lazy["']/i.test(attributes);
-    const hasWidth = /width=["']\d+["']/i.test(attributes);
-    const hasHeight = /height=["']\d+["']/i.test(attributes);
-    const hasDecoding = /decoding=["']async["']/i.test(attributes);
-    const hasSrc = /src=["'][^"']+["']/i.test(attributes);
-    
-    // Eksik öznitelikleri ekle
-    let newAttributes = attributes;
-    if (!hasLoading) newAttributes += ' loading="lazy"';
-    if (!hasWidth) newAttributes += ' width="600"';
-    if (!hasHeight) newAttributes += ' height="400"';
-    if (!hasDecoding) newAttributes += ' decoding="async"';
-    
-    // Eğer src özniteliği varsa ve optimize edilmemişse
-    if (hasSrc) {
-      // src değerini al
-      const srcMatch = attributes.match(/src=["']([^"']+)["']/i);
-      if (srcMatch && srcMatch[1]) {
-        const originalSrc = srcMatch[1];
-        // URL zaten optimize edilmiş mi kontrol et
-        if (!originalSrc.includes('width=') && !originalSrc.includes('quality=')) {
-          // Optimize edilmemiş görüntüyü optimize et
-          const optimizedSrc = `${originalSrc}${originalSrc.includes('?') ? '&' : '?'}width=600&height=400&format=webp&quality=75&fit=crop`;
-          // src özniteliğini güncelle
-          newAttributes = newAttributes.replace(/src=["'][^"']+["']/i, `src="${optimizedSrc}"`);
-        }
-      }
-    }
-    
-    return `<img${newAttributes}>`;
-  });
-}
-
-// Server tarafında HTML'i iyileştir - Promise kontrolü ekle
-const enhancedContentHtml = typeof contentHtml === 'string' 
-  ? enhanceImageTags(contentHtml)
-  : contentHtml; // Promise ise olduğu gibi bırak
 
 // FAQ verilerini işleme fonksiyonu
 function processFaqData(faqData: any[]): FaqItem[] {
@@ -165,15 +92,11 @@ const pageTitle = post.title;
 const description = post.meta_description || post.excerpt || post.title;
 const keywords = post.keywords ? post.keywords.join(', ') : `bina güçlendirme, ${category?.name || ''}, ${post.title}`;
 
-// Görsel URL'sini optimize et
-const imageUrl = optimizeImage(socialMedia.image || post.featured_image || '');
+// Görsel URL'si ve alt metni
+const imageUrl = socialMedia.image || post.featured_image || '';
 const imageAlt = socialMedia.image_alt || post.title || '';
 const publishDate = post.published_at || post.created_at;
 const modifiedDate = post.updated_at || publishDate;
-
-// Görsel boyutları
-let imageWidth = 1000;
-let imageHeight = 700;
 
 // Sosyal medya etiketleri
 const socialTitle = socialMedia.title || post.title;
@@ -433,8 +356,8 @@ const fullSchema = JSON.stringify({
       "name": imageAlt || post.title,
       "url": imageUrl,
       "contentUrl": imageUrl,
-      "width": imageWidth.toString(),
-      "height": imageHeight.toString(),
+      "width": "1320",
+      "height": "920",
       "caption": imageAlt,
       "description": post.meta_description,
       "datePublished": new Date(publishDate).toISOString(),
@@ -494,7 +417,7 @@ const fullSchema = JSON.stringify({
     <script is:inline type="application/ld+json" set:html={fullSchema} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href={optimizeImage(post.featured_image, 'large')} as="image" />
+    <link rel="preload" href={post.featured_image} as="image" />
     
     <!-- CSS dosyalari yerine style bloğundaki kodlar kullanılıyor -->
   </slot>
@@ -503,38 +426,16 @@ const fullSchema = JSON.stringify({
     <header class="post-header">
       {post.featured_image && (
         <div class="featured-image-container">
-          <picture>
-            <source
-              srcset={optimizeImage(post.featured_image, 'small')}
-              media="(max-width: 480px)"
-              type="image/webp"
-              width="480" 
-              height="336"
-            />
-            <source
-              srcset={optimizeImage(post.featured_image, 'medium')}
-              media="(max-width: 768px)"
-              type="image/webp"
-              width="768"
-              height="530"
-            />
-            <source
-              srcset={optimizeImage(post.featured_image, 'large')}
-              type="image/webp"
-              width="1000"
-              height="700"
-            />
-            <img 
-              src={optimizeImage(post.featured_image, 'large')}
-              alt={imageAlt}
-              class="featured-image"
-              loading="eager"
-              width="1000"
-              height="700"
-              decoding="async"
-              fetchpriority="high"
-            />
-          </picture>
+          <img 
+            src={post.featured_image}
+            alt={imageAlt}
+            class="featured-image"
+            loading="eager"
+            width="1320"
+            height="920"
+            decoding="async"
+            fetchpriority="high"
+          />
         </div>
       )}
 
@@ -562,7 +463,7 @@ const fullSchema = JSON.stringify({
     </header>
     
     <div class="post-content markdown-content">
-      <div set:html={enhancedContentHtml} />
+      <div set:html={contentHtml} />
     </div>
     
     {hasFaq && (
@@ -610,8 +511,6 @@ const fullSchema = JSON.stringify({
 <style>
 .article-container{width:100%;max-width:800px;margin:0 auto;padding:0 1rem}
 .post-header{margin-bottom:2rem}
-.featured-image-container{width:100%;max-width:1000px;margin:0 auto 1.5rem;position:relative;aspect-ratio:10/7;overflow:hidden;border-radius:var(--radius-md);contain:content}
-.featured-image{width:100%;height:100%;object-fit:cover;transition:transform .3s ease}
 .post-meta{text-align:center;margin-bottom:2rem}
 .meta-container{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;font-size:.9rem;color:var(--color-text-light)}
 .post-category{background-color:var(--color-primary-light);color:var(--color-primary);padding:.25rem .75rem;border-radius:var(--radius-sm);font-weight:500;text-decoration:none;transition:background-color .2s ease;touch-action:manipulation}
@@ -628,7 +527,6 @@ const fullSchema = JSON.stringify({
 .markdown-content :global(h3){font-size:clamp(1.25rem,3vw,1.5rem);margin-top:2rem;margin-bottom:1rem;font-weight:600;color:var(--color-secondary,#4a90e2)}
 .markdown-content :global(h4){font-size:clamp(1.1rem,2.5vw,1.25rem);margin-top:1.75rem;margin-bottom:.875rem;font-weight:600;color:var(--color-secondary,#4a90e2)}
 .markdown-content :global(p){margin-bottom:1.25rem}
-.markdown-content :global(img){max-width:100%;height:auto;border-radius:var(--radius-sm);margin:1.5rem 0;display:block}
 .markdown-content :global(ul),.markdown-content :global(ol){margin:1.25rem 0;padding-left:1.5rem}
 .markdown-content :global(li){margin-bottom:.5rem}
 .markdown-content :global(blockquote){border-left:4px solid var(--color-primary);padding:.5rem 0 .5rem 1rem;margin:1.5rem 0;background-color:var(--color-bg-secondary);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
@@ -649,43 +547,9 @@ const fullSchema = JSON.stringify({
 .category-link{color:var(--color-primary);text-decoration:none}
 .category-link:hover{text-decoration:underline}
 article{width:100%;max-width:100%;overflow:hidden;contain:content}
-@media(min-width:993px){.post-content,.post-navigation,.faq-section{max-width:800px}.post-header{max-width:1000px}.featured-image-container{max-width:1000px}}
-@media(max-width:992px){.featured-image-container{max-width:100%}.post-content,.post-navigation,.faq-section{max-width:100%}}
-@media(max-width:768px){.article-container{padding:0 .75rem}.featured-image-container{margin:.5rem -.75rem 1rem;border-radius:0;aspect-ratio:16/9}.post-content{font-size:1rem}.meta-container{flex-direction:column;gap:.5rem}.post-meta{padding:0;margin-bottom:1.5rem}.markdown-content :global(h1){font-size:1.75rem;margin-bottom:1rem}.markdown-content :global(h2){font-size:1.5rem;margin-top:2rem}.markdown-content :global(h3){font-size:1.35rem}.markdown-content :global(p){margin-bottom:1rem}.post-category{padding:.35rem .85rem;font-size:1rem}}
-@media(max-width:576px){.post-title{font-size:1.3rem}.post-meta{flex-direction:column;gap:.5rem}.featured-image-container{aspect-ratio:3/2}.post-content,.post-navigation,.faq-section{padding:0 .75rem}.faq-question{font-size:1.2rem}.post-category,.meta-date,.meta-update{font-size:.85rem}.tag-item{font-size:.8rem}}
-@media(max-width:400px){.article-container{padding:0 .5rem}.featured-image-container{aspect-ratio:4/3;margin:.25rem -.5rem 1rem}.post-content{font-size:.95rem}.markdown-content :global(h1){font-size:1.5rem}.markdown-content :global(h2){font-size:1.3rem}.markdown-content :global(h3){font-size:1.15rem}}
-</style>
-
-<script is:inline>
-  // İçerikteki görselleri optimize et (client tarafında)
-  document.addEventListener('DOMContentLoaded', function() {
-    // İçerikteki tüm görselleri seç (optimize edilmiş seçici)
-    const images = document.querySelectorAll('.markdown-content img');
-    
-    // Performans için sadece gerekli olanları işle
-    if (images.length > 0) {
-      images.forEach(function(img) {
-        // Lazy loading ve asenkron dekode öznitelikleri
-        if (!img.hasAttribute('loading')) {
-          img.setAttribute('loading', 'lazy');
-        }
-        if (!img.hasAttribute('decoding')) {
-          img.setAttribute('decoding', 'async');
-        }
-        
-        // Boyut öznitelikleri (yoksa ekle)
-        if (!img.hasAttribute('width') && !img.hasAttribute('height')) {
-          img.setAttribute('width', '600');
-          img.setAttribute('height', '400');
-        }
-        
-        // Görüntü URL'sini optimize et
-        const src = img.getAttribute('src');
-        if (src && !src.includes('width=') && !src.includes('quality=')) {
-          const optimizedSrc = `${src}${src.includes('?') ? '&' : '?'}width=600&height=400&format=webp&quality=75&fit=crop`;
-          img.setAttribute('src', optimizedSrc);
-        }
-      });
-    }
-  }, { passive: true });
-</script> 
+@media(min-width:993px){.post-content,.post-navigation,.faq-section{max-width:800px}.post-header{max-width:1000px}}
+@media(max-width:992px){.post-content,.post-navigation,.faq-section{max-width:100%}}
+@media(max-width:768px){.article-container{padding:0 .75rem}.post-content{font-size:1rem}.meta-container{flex-direction:column;gap:.5rem}.post-meta{padding:0;margin-bottom:1.5rem}.markdown-content :global(h1){font-size:1.75rem;margin-bottom:1rem}.markdown-content :global(h2){font-size:1.5rem;margin-top:2rem}.markdown-content :global(h3){font-size:1.35rem}.markdown-content :global(p){margin-bottom:1rem}.post-category{padding:.35rem .85rem;font-size:1rem}}
+@media(max-width:576px){.post-title{font-size:1.3rem}.post-meta{flex-direction:column;gap:.5rem}.post-content,.post-navigation,.faq-section{padding:0 .75rem}.faq-question{font-size:1.2rem}.post-category,.meta-date,.meta-update{font-size:.85rem}.tag-item{font-size:.8rem}}
+@media(max-width:400px){.article-container{padding:0 .5rem}.post-content{font-size:.95rem}.markdown-content :global(h1){font-size:1.5rem}.markdown-content :global(h2){font-size:1.3rem}.markdown-content :global(h3){font-size:1.15rem}}
+</style> 
