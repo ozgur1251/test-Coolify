@@ -650,17 +650,4 @@ article{width:100%;max-width:100%;overflow:hidden;contain:content}
       }
     });
   });
-</script>
-
-<script lang="ts">
-// Markdown içerisindeki başlık düzeylerini düzelt
-function adjustHeadingLevels(content: string): string {
-  if (!content) return '';
-  
-  // h2 başlıkları h1'e dönüştür
-  content = content.replace(/^## (.+)$/gm, '# $1');
-  // h3 başlıkları h2'ye dönüştür  
-  content = content.replace(/^### (.+)$/gm, '## $1');
-  return content;
-}
 </script> 
