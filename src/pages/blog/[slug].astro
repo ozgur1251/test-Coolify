@@ -63,7 +63,6 @@ function adjustHeadingLevels(content: string): string {
   content = content.replace(/^## (.+)$/gm, '# $1');
   content = content.replace(/^### (.+)$/gm, '## $1');
   content = content.replace(/^#### (.+)$/gm, '### $1');
-  
   return content;
 }
 
@@ -390,10 +389,6 @@ const fullSchema = JSON.stringify({
     }] : [])
   ]
 });
-
-// Thumbnail placeholder generation
-const placeholderColor = "#f5f5f5"; // Light gray background color
-const placeholderSVG = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1320 920' fill='${encodeURIComponent(placeholderColor)}'%3E%3Crect width='1320' height='920'/%3E%3C/svg%3E`;
 ---
 
 <BaseLayout 
@@ -420,38 +415,11 @@ const placeholderSVG = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/
     {twitterUsername && <meta name="twitter:creator" content={`@${twitterUsername}`} />}
     
     <script is:inline type="application/ld+json" set:html={fullSchema} />
-    
-    <!-- Resource Hints -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href={post.featured_image} as="image" />
     
-    <!-- Öne çıkan resim için preload -->
-    {post.featured_image && (
-      <link 
-        rel="preload" 
-        href={post.featured_image} 
-        as="image"
-        fetchpriority="high"
-      />
-    )}
-    
-    <!-- Inline styles for critical rendering path -->
-    <style is:inline>
-      /* Tek seferlik önemli CSS'leri buraya yazarak daha hızlı yükleme sağlayabiliriz */
-      .featured-image-container {
-        width: 100%;
-        margin-bottom: 1.5rem;
-        overflow: hidden;
-        border-radius: var(--radius-md, 8px);
-        background-color: #f5f5f5;
-        position: relative;
-      }
-      .featured-image {
-        width: 100%;
-        height: auto;
-        display: block;
-      }
-    </style>
+    <!-- CSS dosyalari yerine style bloğundaki kodlar kullanılıyor -->
   </slot>
 
   <article class="article-container">
@@ -462,12 +430,11 @@ const placeholderSVG = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/
             src={post.featured_image}
             alt={imageAlt}
             class="featured-image"
-            width="1320" 
-            height="920"
             loading="eager"
+            width="1320"
+            height="920"
             decoding="async"
             fetchpriority="high"
-            style={`background: url("${placeholderSVG}") no-repeat center/cover;`}
           />
         </div>
       )}
@@ -544,8 +511,6 @@ const placeholderSVG = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/
 <style>
 .article-container{width:100%;max-width:800px;margin:0 auto;padding:0 1rem}
 .post-header{margin-bottom:2rem}
-.featured-image-container{width:100%;margin-bottom:1.5rem;overflow:hidden;border-radius:var(--radius-md)}
-.featured-image{width:100%;height:auto;object-fit:cover;display:block}
 .post-meta{text-align:center;margin-bottom:2rem}
 .meta-container{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;font-size:.9rem;color:var(--color-text-light)}
 .post-category{background-color:var(--color-primary-light);color:var(--color-primary);padding:.25rem .75rem;border-radius:var(--radius-sm);font-weight:500;text-decoration:none;transition:background-color .2s ease;touch-action:manipulation}
