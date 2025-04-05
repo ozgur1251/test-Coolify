@@ -128,6 +128,62 @@ const ogImageUrl = imageUrl ? (imageUrl.startsWith('http') ? imageUrl : (Astro.s
 					if (!element.height) element.height = 225;
 				}
 			});
+
+			// Mobil cihazlar için srcset kontrolü
+			function isMobile() {
+				return window.innerWidth <= 768;
+			}
+
+			// Mobil cihazlarda daha düşük kaliteli resimler için
+			if (isMobile()) {
+				document.querySelectorAll('img.featured-image').forEach(function(element) {
+					const img = element;
+					if (img instanceof HTMLImageElement && img.srcset) {
+						// Mobil için en düşük densities'i seç
+						const srcsetParts = img.srcset.split(',');
+						if (srcsetParts.length > 0) {
+							// En düşük densities'i seç (ilk öğe genellikle)
+							const lowestDensity = srcsetParts[0].trim().split(' ')[0];
+							img.src = lowestDensity;
+							// Yüksek pikselli cihazlar için srcset'i sınırla
+							if (window.devicePixelRatio <= 1.5) {
+								img.srcset = srcsetParts.slice(0, 2).join(',');
+							}
+							
+							// WebP performansını artırmak için ekstra optimizasyonlar
+							// Caching işlemini destekle
+							img.setAttribute('fetchpriority', 'high');
+							img.setAttribute('importance', 'high');
+							
+							// Düşük çözünürlüklü görsel kullan
+							const lowResSrc = srcsetParts[0].trim().split(' ')[0];
+							if (lowResSrc) {
+							  // Tarayıcı bağlantı hızını ve veri tasarrufu durumunu kontrol etme
+							  try {
+								// @ts-ignore
+								const conn = navigator.connection;
+								if (conn) {
+								  // Düşük bağlantı hızında veya veri tasarrufu modunda en küçük görseli kullan
+								  // @ts-ignore
+								  if (conn.saveData || (conn.effectiveType && 
+								  (conn.effectiveType === '2g' || conn.effectiveType === '3g' || conn.effectiveType === 'slow-2g'))) {
+									img.src = lowResSrc;
+									// Veri tasarrufu modunda tüm srcset'i devre dışı bırak
+									// @ts-ignore
+									if (conn.saveData) {
+									  img.srcset = '';
+									}
+								  }
+								}
+							  } catch (e) {
+								// Bağlantı API'si desteklenmiyorsa hata yönetimi
+								console.warn('Connection API not supported');
+							  }
+							}
+						}
+					}
+				});
+			}
 		});
 	</script>
 </html>
