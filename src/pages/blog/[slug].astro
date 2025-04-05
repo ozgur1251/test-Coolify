@@ -90,11 +90,21 @@ const optimizeImage = (url: string, size: 'small' | 'medium' | 'large' = 'large'
   if (!url) return '';
   if (url.endsWith('.webp')) return url;
   
-  // Basit bir yaklaşım - gerekirse CDN entegrasyonu için burası değiştirilebilir
-  if (size !== 'large') {
-    return `${url}?w=${size === 'small' ? '480' : '768'}`;
-  }
-  return url;
+  // Boyutlar ve srcset değerleri
+  const dimensions = {
+    small: { width: 480, height: 336 },
+    medium: { width: 768, height: 530 },
+    large: { width: 1320, height: 920 }
+  };
+  
+  // CDN veya görsel işleme servisi entegrasyonu için
+  // WebP dönüşümü ve gerçek boyutlandırma
+  const { width, height } = dimensions[size];
+  
+  // Google PageSpeed uyarılarını çözmek için boyutlandırma
+  // Gerçek bir CDN kullanılırsa bu URL yapısı değiştirilmeli
+  const formattedUrl = url.includes('?') ? `${url}&` : `${url}?`;
+  return `${formattedUrl}w=${width}&h=${height}&format=webp&fit=crop&q=80`;
 };
 
 const imageUrl = optimizeImage(socialMedia.image || post.featured_image || '');
@@ -435,18 +445,24 @@ const fullSchema = JSON.stringify({
               srcset={optimizeImage(post.featured_image, 'small')}
               media="(max-width: 480px)"
               type="image/webp"
+              width="480"
+              height="336"
             />
             <source
               srcset={optimizeImage(post.featured_image, 'medium')}
               media="(max-width: 768px)"
               type="image/webp"
+              width="768"
+              height="530"
             />
             <source
               srcset={optimizeImage(post.featured_image, 'large')}
               type="image/webp"
+              width="1320"
+              height="920"
             />
             <img 
-              src={post.featured_image}
+              src={optimizeImage(post.featured_image, 'large')}
               alt={imageAlt}
               class="featured-image"
               loading="eager"
@@ -579,7 +595,39 @@ article{width:100%;max-width:100%;overflow:hidden;contain:content}
 
 <script>
 document.addEventListener('DOMContentLoaded',function(){
-  const contentImages=document.querySelectorAll('.markdown-content img:not([loading])');
-  contentImages.forEach(img=>{if(!img.hasAttribute('loading')){img.setAttribute('loading','lazy');img.setAttribute('decoding','async')}});
+  // İçerikteki tüm görselleri seç
+  const contentImages = document.querySelectorAll('.markdown-content img');
+  
+  // Her görsel için lazy loading ve boyut optimizasyonu uygula
+  contentImages.forEach(img => {
+    // Element'i HTMLImageElement olarak dönüştür
+    const imgElement = img as HTMLImageElement;
+    
+    // Lazy loading ekle
+    if(!imgElement.hasAttribute('loading')) {
+      imgElement.setAttribute('loading', 'lazy');
+      imgElement.setAttribute('decoding', 'async');
+    }
+    
+    // Görsel URL'sini optimize et
+    if(imgElement.src && !imgElement.src.includes('format=webp')) {
+      const originalSrc = imgElement.src;
+      // Orijinal URL'yi sakla
+      imgElement.setAttribute('data-original-src', originalSrc);
+      
+      // Mobil için daha küçük boyutları kullan
+      const isMobile = window.innerWidth <= 768;
+      const width = isMobile ? 768 : 1320;
+      const height = isMobile ? 530 : 920;
+      
+      // Boyutları oranlarını koru
+      let imgWidth = imgElement.width || width;
+      let imgHeight = imgElement.height || height;
+      
+      // Boyut parametreleri ekle
+      const separator = originalSrc.includes('?') ? '&' : '?';
+      imgElement.src = `${originalSrc}${separator}w=${imgWidth}&h=${imgHeight}&format=webp&q=80`;
+    }
+  });
 });
 </script> 
