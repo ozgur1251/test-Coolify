@@ -100,90 +100,46 @@ const ogImageUrl = imageUrl ? (imageUrl.startsWith('http') ? imageUrl : (Astro.s
 		</footer>
 	</body>
 	<!-- JavaScript yükleme optimizasyonu -->
-	<script>
+	<script is:inline defer>
 		// LCP (Largest Contentful Paint) performansını iyileştirme
-		document.addEventListener('DOMContentLoaded', () => {
-			// Görsel yükleme optimizasyonu
-			if ('loading' in HTMLImageElement.prototype) {
-				// Tarayıcı native lazy-loading destekliyorsa
-				document.querySelectorAll('img[loading="lazy"]').forEach(function(element) {
-					// JavaScript uyumlu kod, TypeScript sözdizimi yok
-					const img = element;
-					if (img instanceof HTMLImageElement) {
-						// Görsel zaten viewport içindeyse hemen yükle
-						if (img.getBoundingClientRect().top < window.innerHeight) {
-							img.loading = 'eager';
-							img.setAttribute('fetchpriority', 'high');
-						}
-					}
-				});
+		window.addEventListener('load', () => {
+			// Görsel yükleme optimizasyonu - önemli görüntüler için
+			const images = document.querySelectorAll('img.featured-image');
+			if (images.length > 0) {
+				const mainImage = images[0];
+				if (mainImage instanceof HTMLImageElement) {
+					mainImage.loading = 'eager';
+					mainImage.setAttribute('fetchpriority', 'high');
+				}
 			}
 			
-			// Genişlik/Yükseklik değerlerini eksik olan görsellere ekle
-			document.querySelectorAll('img:not([width]):not([height])').forEach(function(element) {
-				// JavaScript uyumlu kod, TypeScript sözdizimi yok
-				if (element instanceof HTMLImageElement) {
-					// Eksik boyut değerlerini varsayılan olarak ekle
-					if (!element.width) element.width = 400;
-					if (!element.height) element.height = 225;
-				}
-			});
-
-			// Mobil cihazlar için srcset kontrolü
-			function isMobile() {
-				return window.innerWidth <= 768;
-			}
-
-			// Mobil cihazlarda daha düşük kaliteli resimler için
-			if (isMobile()) {
-				document.querySelectorAll('img.featured-image').forEach(function(element) {
-					const img = element;
-					if (img instanceof HTMLImageElement && img.srcset) {
-						// Mobil için en düşük densities'i seç
-						const srcsetParts = img.srcset.split(',');
-						if (srcsetParts.length > 0) {
-							// En düşük densities'i seç (ilk öğe genellikle)
-							const lowestDensity = srcsetParts[0].trim().split(' ')[0];
-							img.src = lowestDensity;
-							// Yüksek pikselli cihazlar için srcset'i sınırla
-							if (window.devicePixelRatio <= 1.5) {
-								img.srcset = srcsetParts.slice(0, 2).join(',');
-							}
-							
-							// WebP performansını artırmak için ekstra optimizasyonlar
-							// Caching işlemini destekle
-							img.setAttribute('fetchpriority', 'high');
-							img.setAttribute('importance', 'high');
-							
-							// Düşük çözünürlüklü görsel kullan
-							const lowResSrc = srcsetParts[0].trim().split(' ')[0];
-							if (lowResSrc) {
-							  // Tarayıcı bağlantı hızını ve veri tasarrufu durumunu kontrol etme
-							  try {
-								// @ts-ignore
-								const conn = navigator.connection;
-								if (conn) {
-								  // Düşük bağlantı hızında veya veri tasarrufu modunda en küçük görseli kullan
-								  // @ts-ignore
-								  if (conn.saveData || (conn.effectiveType && 
-								  (conn.effectiveType === '2g' || conn.effectiveType === '3g' || conn.effectiveType === 'slow-2g'))) {
-									img.src = lowResSrc;
-									// Veri tasarrufu modunda tüm srcset'i devre dışı bırak
-									// @ts-ignore
-									if (conn.saveData) {
-									  img.srcset = '';
-									}
-								  }
-								}
-							  } catch (e) {
-								// Bağlantı API'si desteklenmiyorsa hata yönetimi
-								console.warn('Connection API not supported');
-							  }
-							}
-						}
+			// Lazily diğer görselleri optimize et
+			setTimeout(() => {
+				// Genişlik/Yükseklik değerlerini eksik olan görsellere ekle
+				document.querySelectorAll('img:not([width]):not([height])').forEach(function(element) {
+					if (element instanceof HTMLImageElement) {
+						// Eksik boyut değerlerini varsayılan olarak ekle
+						if (!element.width) element.width = 400;
+						if (!element.height) element.height = 225;
 					}
 				});
-			}
+
+				// Mobil cihazlar için srcset kontrolü - yükleme sonrası yapılacak
+				if (window.innerWidth <= 768) {
+					document.querySelectorAll('img.featured-image').forEach(function(element) {
+						const img = element;
+						if (img instanceof HTMLImageElement && img.srcset) {
+							const srcsetParts = img.srcset.split(',');
+							if (srcsetParts.length > 0) {
+								// En küçük resmi kullan
+								if (window.devicePixelRatio <= 1.5) {
+									img.srcset = srcsetParts.slice(0, 2).join(',');
+								}
+							}
+						}
+					});
+				}
+			}, 50); // Küçük bir gecikme ile ana yüklemeyi engellemez
 		});
 	</script>
 </html>
