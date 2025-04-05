@@ -13,5 +13,9 @@ export default defineConfig({
     mode: 'standalone'
   }),
   trailingSlash: 'always',
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/sharp'
+    }
+  }
 });
-
