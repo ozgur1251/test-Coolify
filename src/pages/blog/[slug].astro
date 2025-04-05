@@ -8,7 +8,6 @@ export const prerender = false;
 
 // Site URL'sini çevre değişkeninden alma
 const SITE_URL = import.meta.env.SITE_URL || Astro.url.origin || "https://tr.istanbulbinaguclendirme.com";
-const siteDomain = new URL(SITE_URL).hostname;
 
 // Dinamik rota parametresini al
 const { slug } = Astro.params;
@@ -25,8 +24,7 @@ if (!post) {
 const categories = await getCategories();
 const category = categories.find((cat: { id: number | string }) => cat.id === post.category_id);
 
-// Kategori adından şehir bilgisini çıkar (örn: "İstanbul Bina Güçlendirme" -> "İstanbul")
-// Eğer kategori adı yoksa veya şehir adı çıkarılamazsa varsayılan olarak "İstanbul" kullanılır
+// Kategori adından şehir bilgisini çıkar
 const cityName = category?.name ? category.name.split(' ')[0] : "İstanbul";
 
 // Tüm kategorileri OfferCatalog yapısına dönüştür
@@ -53,12 +51,11 @@ interface FaqItem {
   answer: string;
 }
 
-// Sosyal medya değerlerini işle (varsayılan değerler atama)
+// Sosyal medya değerlerini işle
 const socialMedia = post.social_media || {};
 
-// Markdown içeriğini işle ve başlık seviyelerini düzenle
+// Markdown içeriğini işle
 function adjustHeadingLevels(content: string): string {
-  // h2 başlıkları h1'e dönüştür (## -> #)
   return content.replace(/^## (.+)$/gm, '# $1');
 }
 
@@ -89,30 +86,25 @@ const description = post.meta_description || post.excerpt || post.title;
 const keywords = post.keywords ? post.keywords.join(', ') : `bina güçlendirme, ${category?.name || ''}, ${post.title}`;
 
 // Görsel URL'sini optimize et
-const optimizeImage = (url: string, size = 'large') => {
+const optimizeImage = (url: string, size: 'small' | 'medium' | 'large' = 'large') => {
   if (!url) return '';
   if (url.endsWith('.webp')) return url;
   
-  // Mobil için farklı boyutlar
-  const sizes = {
-    small: '480',
-    medium: '768',
-    large: '1320'
-  };
-  
+  // Basit bir yaklaşım - gerekirse CDN entegrasyonu için burası değiştirilebilir
+  if (size !== 'large') {
+    return `${url}?w=${size === 'small' ? '480' : '768'}`;
+  }
   return url;
 };
 
-// Ana görsel için
 const imageUrl = optimizeImage(socialMedia.image || post.featured_image || '');
 const imageAlt = socialMedia.image_alt || post.title || '';
 const publishDate = post.published_at || post.created_at;
 const modifiedDate = post.updated_at || publishDate;
 
-// Görsel boyutları için (yatay veya dikey kontrolü)
+// Görsel boyutları
 let imageWidth = 1320;
 let imageHeight = 920;
-// Görsel dikey mi kontrolü yapılabilir - varsayılan olarak yatay kabul ediyoruz
 
 // Sosyal medya etiketleri
 const socialTitle = socialMedia.title || post.title;
@@ -135,8 +127,7 @@ const SOCIAL_LINKS = {
   twitter: "https://twitter.com/karbonguclendirme/"
 };
 
-// Final JSON-LD data
-// Schema'ları direkt JSON olarak oluşturup stringfy ile kaçış karakterlerini düzenleme
+// Schema.org JSON-LD
 const fullSchema = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
@@ -361,11 +352,11 @@ const fullSchema = JSON.stringify({
         } : {
           "@type": "OfferCatalog",
           "name": `${category.name} Hizmetleri`,
-          "itemListElement": offerCatalogs.slice(0, 3) // İlk 3 kategori
+          "itemListElement": offerCatalogs.slice(0, 3)
         }
       }
     },
-    // Featured Image (if exists)
+    // Featured Image
     ...(post.featured_image ? [{
       "@type": "https://schema.org/ImageObject",
       "@id": `${canonicalURL}#primaryImage`,
@@ -389,7 +380,7 @@ const fullSchema = JSON.stringify({
         "@id": `${SITE_URL}/#organization`
       }
     }] : []),
-    // FAQ (if exists)
+    // FAQ
     ...(hasFaq ? [{
       "@type": "FAQPage",
       "url": `${canonicalURL}#faq`,
@@ -430,7 +421,6 @@ const fullSchema = JSON.stringify({
     {twitterUsername && <meta name="twitter:site" content={`@${twitterUsername}`} />}
     {twitterUsername && <meta name="twitter:creator" content={`@${twitterUsername}`} />}
     
-    <!-- Yapısal veri -->
     <script is:inline type="application/ld+json" set:html={fullSchema} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -452,7 +442,7 @@ const fullSchema = JSON.stringify({
               type="image/webp"
             />
             <source
-              srcset={optimizeImage(post.featured_image)}
+              srcset={optimizeImage(post.featured_image, 'large')}
               type="image/webp"
             />
             <img 
@@ -539,469 +529,57 @@ const fullSchema = JSON.stringify({
 </BaseLayout>
 
 <style>
-  .article-container {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-
-  .post-header {
-    margin-bottom: 2rem;
-  }
-
-  .featured-image-container {
-    width: 100%;
-    max-width: 1320px;
-    margin: 0 auto 1.5rem;
-    position: relative;
-    aspect-ratio: 1320/920;
-    overflow: hidden;
-    border-radius: var(--radius-md);
-    contain: content;
-  }
-
-  .featured-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-
-  .post-meta {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .meta-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    font-size: 0.9rem;
-    color: var(--color-text-light);
-  }
-
-  .post-category {
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-sm);
-    font-weight: 500;
-    text-decoration: none;
-    transition: background-color 0.2s ease;
-    touch-action: manipulation;
-  }
-
-  .post-category:hover {
-    background-color: var(--color-primary);
-    color: white;
-  }
-  
-  @media (max-width: 768px) {
-    .post-category {
-      padding: 0.35rem 0.85rem;
-      font-size: 1rem;
-    }
-  }
-
-  .meta-date, .meta-update {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .meta-date::before {
-    content: "📅";
-  }
-
-  .meta-update::before {
-    content: "🔄";
-  }
-
-  .section-title {
-    font-size: 1.75rem;
-    font-weight: 600;
-    margin: 2rem 0 1.5rem;
-    color: var(--color-primary);
-    position: relative;
-    padding-bottom: 0.5rem;
-  }
-
-  .section-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background: var(--color-primary);
-    border-radius: 3px;
-  }
-  
-  .post-content {
-    font-size: 1.125rem;
-    line-height: 1.7;
-    color: var(--color-text);
-    overflow-wrap: break-word;
-    word-break: break-word;
-    hyphens: auto;
-  }
-  
-  .markdown-content {
-    font-size: 1.125rem;
-    line-height: 1.7;
-    color: var(--color-text);
-  }
-
-  .markdown-content :global(h1) {
-    font-size: clamp(1.75rem, 5vw, 2.5rem);
-    line-height: 1.2;
-    font-weight: 700;
-    margin: 0 0 1.5rem;
-    color: var(--color-primary);
-  }
-
-  .markdown-content :global(h2) {
-    font-size: clamp(1.5rem, 4vw, 1.75rem);
-    margin-top: 2.5rem;
-    margin-bottom: 1.25rem;
-    font-weight: 600;
-    color: var(--color-secondary, #4a90e2);
-  }
-
-  .markdown-content :global(h3) {
-    font-size: clamp(1.25rem, 3vw, 1.5rem);
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
-    color: var(--color-secondary, #4a90e2);
-  }
-
-  .markdown-content :global(h4) {
-    font-size: clamp(1.1rem, 2.5vw, 1.25rem);
-    margin-top: 1.75rem;
-    margin-bottom: 0.875rem;
-    font-weight: 600;
-    color: var(--color-secondary, #4a90e2);
-  }
-
-  .markdown-content :global(p) {
-    margin-bottom: 1.25rem;
-  }
-
-  .markdown-content :global(img) {
-    max-width: 100%;
-    height: auto;
-    border-radius: var(--radius-sm);
-    margin: 1.5rem 0;
-    display: block;
-  }
-
-  .markdown-content :global(ul), 
-  .markdown-content :global(ol) {
-    margin: 1.25rem 0;
-    padding-left: 1.5rem;
-  }
-
-  .markdown-content :global(li) {
-    margin-bottom: 0.5rem;
-  }
-
-  .markdown-content :global(blockquote) {
-    border-left: 4px solid var(--color-primary);
-    padding: 0.5rem 0 0.5rem 1rem;
-    margin: 1.5rem 0;
-    background-color: var(--color-bg-secondary);
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  }
-
-  .markdown-content :global(blockquote p) {
-    margin: 0;
-    color: var(--color-text-light);
-    font-style: italic;
-  }
-  
-  .faq-section {
-    margin: 2rem auto;
-    padding: 1.5rem;
-    background-color: var(--color-bg-secondary);
-    border-radius: var(--radius-md);
-    max-width: 100%;
-    width: 100%;
-  }
-  
-  .faq-item {
-    margin-bottom: 1rem;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 1rem;
-  }
-  
-  .faq-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-  }
-  
-  .faq-question {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: var(--color-primary);
-    cursor: pointer;
-  }
-  
-  .faq-answer {
-    color: var(--color-text-light);
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-  }
-  
-  .post-navigation {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 2rem auto 0;
-    border-top: 1px solid var(--color-border);
-    padding-top: 1.5rem;
-    max-width: 100%;
-    width: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  .post-tags {
-    flex: 1;
-    min-width: 250px;
-  }
-  
-  .tags-container {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-  }
-  
-  .tags-label {
-    font-weight: 600;
-    margin-right: 0.5rem;
-  }
-  
-  .tag-list {
-    display: flex;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    flex-wrap: wrap;
-  }
-  
-  .tag-item {
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-    background-color: var(--color-bg-accent);
-    padding: 0.2rem 0.5rem;
-    border-radius: var(--radius-sm);
-    font-size: 0.9rem;
-  }
-  
-  .related-category {
-    margin-top: 1rem;
-  }
-  
-  .category-label {
-    font-weight: 600;
-    margin-right: 0.5rem;
-  }
-  
-  .category-link {
-    color: var(--color-primary);
-    text-decoration: none;
-  }
-  
-  .category-link:hover {
-    text-decoration: underline;
-  }
-
-  article {
-    width: 100%;
-    max-width: 100%;
-    overflow: hidden;
-    contain: content;
-  }
-
-  @media (min-width: 993px) {
-    .post-content, .post-navigation, .faq-section {
-      max-width: 800px;
-    }
-    
-    .post-header {
-      max-width: 1200px;
-    }
-    
-    .featured-image-container {
-      max-width: 1320px;
-    }
-  }
-  
-  @media (max-width: 992px) {
-    .featured-image-container {
-      max-width: 100%;
-    }
-    
-    .post-content, .post-navigation, .faq-section {
-      max-width: 100%;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .article-container {
-      padding: 0 0.75rem;
-    }
-    
-    .featured-image-container {
-      margin: 0.5rem -0.75rem 1rem;
-      border-radius: 0;
-      aspect-ratio: 16/9;
-    }
-    
-    .post-content {
-      font-size: 1rem;
-    }
-
-    .meta-container {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .post-meta {
-      padding: 0;
-      margin-bottom: 1.5rem;
-    }
-    
-    .markdown-content :global(h1) {
-      font-size: 1.75rem;
-      margin-bottom: 1rem;
-    }
-    
-    .markdown-content :global(h2) {
-      font-size: 1.5rem;
-      margin-top: 2rem;
-    }
-    
-    .markdown-content :global(h3) {
-      font-size: 1.35rem;
-    }
-    
-    .markdown-content :global(p) {
-      margin-bottom: 1rem;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .post-title {
-      font-size: 1.3rem;
-    }
-    
-    .post-meta {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    
-    .featured-image-container {
-      aspect-ratio: 3/2;
-    }
-    
-    .post-content, .post-navigation, .faq-section {
-      padding: 0 0.75rem;
-    }
-    
-    .faq-question {
-      font-size: 1rem;
-    }
-    
-    .post-category, .meta-date, .meta-update {
-      font-size: 0.85rem;
-    }
-    
-    .tag-item {
-      font-size: 0.8rem;
-    }
-  }
-  
-  @media (max-width: 400px) {
-    .article-container {
-      padding: 0 0.5rem;
-    }
-    
-    .featured-image-container {
-      aspect-ratio: 4/3;
-      margin: 0.25rem -0.5rem 1rem;
-    }
-    
-    .post-content {
-      font-size: 0.95rem;
-    }
-    
-    .markdown-content :global(h1) {
-      font-size: 1.5rem;
-    }
-    
-    .markdown-content :global(h2) {
-      font-size: 1.3rem;
-    }
-    
-    .markdown-content :global(h3) {
-      font-size: 1.15rem;
-    }
-  }
-
-  .post-content {
-    max-width: 100%;
-    margin: 2rem auto;
-    line-height: 1.6;
-  }
-
-  .main-heading {
-    margin-bottom: 10px;
-    font-size: 2rem;
-    color: var(--color-text);
-    line-height: 1.3;
-    word-wrap: break-word;
-    font-weight: 700;
-  }
+.article-container{width:100%;max-width:800px;margin:0 auto;padding:0 1rem}
+.post-header{margin-bottom:2rem}
+.featured-image-container{width:100%;max-width:1320px;margin:0 auto 1.5rem;position:relative;aspect-ratio:1320/920;overflow:hidden;border-radius:var(--radius-md);contain:content}
+.featured-image{width:100%;height:100%;object-fit:cover;transition:transform .3s ease}
+.post-meta{text-align:center;margin-bottom:2rem}
+.meta-container{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;font-size:.9rem;color:var(--color-text-light)}
+.post-category{background-color:var(--color-primary-light);color:var(--color-primary);padding:.25rem .75rem;border-radius:var(--radius-sm);font-weight:500;text-decoration:none;transition:background-color .2s ease;touch-action:manipulation}
+.post-category:hover{background-color:var(--color-primary);color:#fff}
+.meta-date,.meta-update{display:inline-flex;align-items:center;gap:.5rem}
+.meta-date::before{content:"📅"}
+.meta-update::before{content:"🔄"}
+.section-title{font-size:1.75rem;font-weight:600;margin:2rem 0 1.5rem;color:var(--color-primary);position:relative;padding-bottom:.5rem}
+.section-title::after{content:'';position:absolute;bottom:0;left:0;width:60px;height:3px;background:var(--color-primary);border-radius:3px}
+.post-content{font-size:1.125rem;line-height:1.7;color:var(--color-text);overflow-wrap:break-word;word-break:break-word;hyphens:auto;max-width:100%;margin:2rem auto;line-height:1.6}
+.markdown-content{font-size:1.125rem;line-height:1.7;color:var(--color-text)}
+.markdown-content :global(h1){font-size:clamp(1.75rem,5vw,2.5rem);line-height:1.2;font-weight:700;margin:0 0 1.5rem;color:var(--color-primary)}
+.markdown-content :global(h2){font-size:clamp(1.5rem,4vw,1.75rem);margin-top:2.5rem;margin-bottom:1.25rem;font-weight:600;color:var(--color-secondary,#4a90e2)}
+.markdown-content :global(h3){font-size:clamp(1.25rem,3vw,1.5rem);margin-top:2rem;margin-bottom:1rem;font-weight:600;color:var(--color-secondary,#4a90e2)}
+.markdown-content :global(h4){font-size:clamp(1.1rem,2.5vw,1.25rem);margin-top:1.75rem;margin-bottom:.875rem;font-weight:600;color:var(--color-secondary,#4a90e2)}
+.markdown-content :global(p){margin-bottom:1.25rem}
+.markdown-content :global(img){max-width:100%;height:auto;border-radius:var(--radius-sm);margin:1.5rem 0;display:block}
+.markdown-content :global(ul),.markdown-content :global(ol){margin:1.25rem 0;padding-left:1.5rem}
+.markdown-content :global(li){margin-bottom:.5rem}
+.markdown-content :global(blockquote){border-left:4px solid var(--color-primary);padding:.5rem 0 .5rem 1rem;margin:1.5rem 0;background-color:var(--color-bg-secondary);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.markdown-content :global(blockquote p){margin:0;color:var(--color-text-light);font-style:italic}
+.faq-section{margin:2rem auto;padding:1.5rem;background-color:var(--color-bg-secondary);border-radius:var(--radius-md);max-width:100%;width:100%}
+.faq-item{margin-bottom:1rem;border-bottom:1px solid var(--color-border);padding-bottom:1rem}
+.faq-item:last-child{border-bottom:none;margin-bottom:0}
+.faq-question{font-size:1.2rem;font-weight:600;margin-bottom:.75rem;color:var(--color-primary);cursor:pointer}
+.faq-answer{color:var(--color-text-light);overflow-wrap:break-word;word-wrap:break-word}
+.post-navigation{display:flex;flex-wrap:wrap;margin:2rem auto 0;border-top:1px solid var(--color-border);padding-top:1.5rem;max-width:100%;width:100%;padding-left:1rem;padding-right:1rem}
+.post-tags{flex:1;min-width:250px}
+.tags-container{display:flex;align-items:baseline;flex-wrap:wrap}
+.tags-label{font-weight:600;margin-right:.5rem}
+.tag-list{display:flex;list-style:none;padding:0;margin:0;flex-wrap:wrap}
+.tag-item{margin-right:.5rem;margin-bottom:.5rem;background-color:var(--color-bg-accent);padding:.2rem .5rem;border-radius:var(--radius-sm);font-size:.9rem}
+.related-category{margin-top:1rem}
+.category-label{font-weight:600;margin-right:.5rem}
+.category-link{color:var(--color-primary);text-decoration:none}
+.category-link:hover{text-decoration:underline}
+article{width:100%;max-width:100%;overflow:hidden;contain:content}
+@media(min-width:993px){.post-content,.post-navigation,.faq-section{max-width:800px}.post-header{max-width:1200px}.featured-image-container{max-width:1320px}}
+@media(max-width:992px){.featured-image-container{max-width:100%}.post-content,.post-navigation,.faq-section{max-width:100%}}
+@media(max-width:768px){.article-container{padding:0 .75rem}.featured-image-container{margin:.5rem -.75rem 1rem;border-radius:0;aspect-ratio:16/9}.post-content{font-size:1rem}.meta-container{flex-direction:column;gap:.5rem}.post-meta{padding:0;margin-bottom:1.5rem}.markdown-content :global(h1){font-size:1.75rem;margin-bottom:1rem}.markdown-content :global(h2){font-size:1.5rem;margin-top:2rem}.markdown-content :global(h3){font-size:1.35rem}.markdown-content :global(p){margin-bottom:1rem}.post-category{padding:.35rem .85rem;font-size:1rem}}
+@media(max-width:576px){.post-title{font-size:1.3rem}.post-meta{flex-direction:column;gap:.5rem}.featured-image-container{aspect-ratio:3/2}.post-content,.post-navigation,.faq-section{padding:0 .75rem}.faq-question{font-size:1rem}.post-category,.meta-date,.meta-update{font-size:.85rem}.tag-item{font-size:.8rem}}
+@media(max-width:400px){.article-container{padding:0 .5rem}.featured-image-container{aspect-ratio:4/3;margin:.25rem -.5rem 1rem}.post-content{font-size:.95rem}.markdown-content :global(h1){font-size:1.5rem}.markdown-content :global(h2){font-size:1.3rem}.markdown-content :global(h3){font-size:1.15rem}}
 </style>
 
 <script>
-  // Görsel optimizasyonu için yardımcı fonksiyon 
-  function getOptimizedImageUrl(imageUrl: string, size = 'large'): string {
-    if (!imageUrl) return '';
-    
-    // Eğer görsel zaten webp formatında ise
-    if (imageUrl.endsWith('.webp')) return imageUrl;
-    
-    // Farklı boyutlardaki görseller için boyut ayarları
-    const sizes = {
-      small: 480,
-      medium: 768,
-      large: 1320
-    };
-    
-    // CDN veya görsel işleme servisi kullanıyorsanız
-    // return `https://your-cdn.com/image/optimize/${encodeURIComponent(imageUrl)}?format=webp&width=${sizes[size]}&quality=85`;
-    
-    // Basit durumda orijinal görseli döndür
-    return imageUrl;
-  }
-  
-  // Görselleri Lazy Load uygulaması
-  document.addEventListener('DOMContentLoaded', function() {
-    // İçerikteki tüm görselleri seç
-    const contentImages = document.querySelectorAll('.markdown-content img:not([loading])');
-    
-    // Her görsel için lazy loading özelliği ekle
-    contentImages.forEach(img => {
-      if (!img.hasAttribute('loading')) {
-        img.setAttribute('loading', 'lazy');
-        img.setAttribute('decoding', 'async');
-      }
-    });
-  });
+document.addEventListener('DOMContentLoaded',function(){
+  const contentImages=document.querySelectorAll('.markdown-content img:not([loading])');
+  contentImages.forEach(img=>{if(!img.hasAttribute('loading')){img.setAttribute('loading','lazy');img.setAttribute('decoding','async')}});
+});
 </script> 
