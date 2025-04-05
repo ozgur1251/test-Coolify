@@ -418,20 +418,7 @@ const fullSchema = JSON.stringify({
     <script is:inline type="application/ld+json" set:html={fullSchema} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Mobil performans optimizasyonu -->
-    <link rel="preload" href={post.featured_image} as="image" media="(min-width: 769px)" />
-    <link rel="preload" fetchpriority="high" as="image" href={post.featured_image} imagesizes="800px" imagesrcset={`${post.featured_image}?w=400 400w, ${post.featured_image}?w=800 800w`} />
-    
-    <!-- Kritik CSS -->
-    <style is:inline>
-      .featured-image-container{position:relative;overflow:hidden;margin-bottom:1.5rem;border-radius:var(--radius-sm);max-width:100%}
-      .featured-image{display:block;width:100%;height:auto;margin:0 auto;border-radius:var(--radius-sm)}
-      @media(max-width:768px){.featured-image-container{max-width:100%}.featured-image{max-width:100%;height:auto}}
-    </style>
-    
-    <!-- Küçük ekranlar için viewport-based media özelliği -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link rel="preload" href={post.featured_image} as="image" />
     
     <!-- CSS dosyalari yerine style bloğundaki kodlar kullanılıyor -->
   </slot>
@@ -447,7 +434,7 @@ const fullSchema = JSON.stringify({
               width={800}
               height={570}
               format="webp"
-              quality={55}
+              quality={65}
               densities={[0.5, 1, 1.5, 2]}
               loading="eager"
               decoding="async"

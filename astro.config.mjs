@@ -22,13 +22,12 @@ export default defineConfig({
     service: {
       entrypoint: 'astro/assets/services/sharp',
       config: {
-        // Sharp yapılandırma seçenekleri - WebP'ye odaklanıyoruz
+        // Sharp yapılandırma seçenekleri - WebP optimize edildi
         webp: { 
-          quality: 55, // Daha agresif sıkıştırma
-          effort: 6,   // Maksimum sıkıştırma çabası
-          smartSubsample: true, // Chroma alt örnekleme
-          reductionEffort: 6, // Maksimum boyut azaltma çabası
-          nearLossless: false // Kayıplı sıkıştırma kullan
+          quality: 65, 
+          effort: 6,
+          smartSubsample: true,
+          reductionEffort: 4
         }
       }
     },
