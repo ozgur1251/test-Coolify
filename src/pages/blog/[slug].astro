@@ -7,8 +7,9 @@ import { parseMarkdown } from '../../lib/markdown';
 // Server-side rendering kullan (statik ön-render yerine)
 export const prerender = false;
 
-// Site URL'sini çevre değişkeninden alma
+// Site URL'sini ve Şirket adını çevre değişkeninden alma
 const SITE_URL = import.meta.env.SITE_URL || Astro.url.origin || "https://tr.istanbulbinaguclendirme.com";
+const COMPANY_NAME = import.meta.env.COMPANY_NAME || "İstanbul Bina Güçlendirme";
 
 // Dinamik rota parametresini al
 const { slug } = Astro.params;
@@ -111,7 +112,6 @@ const facebookAppId = socialMedia.facebook_app_id || '';
 const canonicalURL = new URL(Astro.url.pathname, SITE_URL || Astro.site || 'https://tr.istanbulbinaguclendirme.com').toString();
 
 // İletişim ve sosyal medya bilgileri
-const COMPANY_NAME = "İstanbul Bina Güçlendirme";
 const COMPANY_PHONE = "+90-542-748-3855";
 const COMPANY_EMAIL = "info@karbonguclendirme.com";
 const COMPANY_ADDRESS = "İstanbul, Türkiye";
@@ -434,7 +434,8 @@ const fullSchema = JSON.stringify({
               width={800}
               height={570}
               format="webp"
-              quality={80}
+              quality={65}
+              densities={[1, 1.5, 2]}
               loading="eager"
               decoding="async"
               fetchpriority="high"
