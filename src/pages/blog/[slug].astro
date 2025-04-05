@@ -167,7 +167,7 @@ const facebookAppId = socialMedia.facebook_app_id || '';
 
 // Canonical URL 
 // URL oluşturmada Astro.site kullanarak tam URL garantile
-const canonicalURL = new URL(Astro.url.pathname, SITE_URL || Astro.site || Astro.url.origin).toString();
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL || Astro.site || 'https://tr.istanbulbinaguclendirme.com').toString();
 
 // İletişim ve sosyal medya bilgileri
 const COMPANY_NAME = "İstanbul Bina Güçlendirme";
@@ -479,13 +479,9 @@ const fullSchema = JSON.stringify({
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href={optimizeImage(post.featured_image, 'large')} as="image" />
     
-    <!-- CSS Dosyalarını Preload ile iyileştir - render-blocking kaynaklar için -->
-    <link rel="preload" as="style" href="/_slug_.CHDGpdL-.css" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" as="style" href="/_slug_.CuLJPLXA.css" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-      <link rel="stylesheet" href="/_slug_.CHDGpdL-.css">
-      <link rel="stylesheet" href="/_slug_.CuLJPLXA.css">
-    </noscript>
+    <!-- CSS Dosyaları -->
+    <link rel="stylesheet" href="/_slug_.CHDGpdL-.css">
+    <link rel="stylesheet" href="/_slug_.CuLJPLXA.css">
   </slot>
 
   <article class="article-container">

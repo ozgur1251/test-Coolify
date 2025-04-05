@@ -45,11 +45,6 @@ const ogImageUrl = imageUrl ? (imageUrl.startsWith('http') ? imageUrl : (Astro.s
 		<meta http-equiv="x-content-type-options" content="nosniff" />
 		
 		<!-- SEO iyileştirmeleri -->
-		{Astro.site ? 
-			<link rel="canonical" href={new URL(Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`, Astro.site).href} />
-		:
-			<link rel="canonical" href={Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`} />
-		}
 		{!noindex && <meta name="robots" content="index, follow" />}
 		
 		<!-- Open Graph / Facebook -->
