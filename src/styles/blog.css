@@ -24,12 +24,12 @@
 
 /* Basit görsel stilleri */
 .featured-image-container {
-  width: 100%;
+  width: 99%;
   margin: 0 auto 1rem;
 }
 
 .featured-image {
-  width: 100%;
+  width: 99%;
   height: auto;
   display: block;
 }
