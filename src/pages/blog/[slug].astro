@@ -16,7 +16,7 @@ const COMPANY_NAME = import.meta.env.COMPANY_NAME || "İstanbul Bina Güçlendir
 const { slug } = Astro.params;
 
 // İlgili blog yazısını getir
-const post = await getBlogPostBySlug(slug);
+const post = await getBlogPostBySlug(slug as string);
 
 // Blog yazısı bulunamadıysa hata sayfasına yönlendir
 if (!post) {
@@ -419,7 +419,54 @@ const fullSchema = JSON.stringify({
     <script is:inline type="application/ld+json" set:html={fullSchema} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href={post.featured_image} as="image" />
+    {post.featured_image && (
+      <link rel="preload" href={post.featured_image || ''} as="image" fetchpriority="high" />
+    )}
+    
+    <style is:inline>
+      /* Temel görünüm ve CLS önleme için kritik CSS */
+      .featured-image-container {
+        width: 100%;
+        max-width: 1320px;
+        margin: 0 auto 1rem;
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+        aspect-ratio: 16 / 9;
+        background-color: #f0f0f0;
+        min-height: 150px;
+        contain: layout paint;
+      }
+      .featured-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      .img-container {
+        position: relative;
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        background-color: #f0f0f0;
+        min-height: 100px;
+        margin: 1rem 0;
+        contain: layout paint;
+      }
+      .img-container img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+    </style>
   </slot>
 
   <article class="article-container">
@@ -436,6 +483,7 @@ const fullSchema = JSON.stringify({
               quality={80}
               loading="eager"
               fetchpriority="high"
+              decoding="async"
             />
             <noscript>
               <img 
@@ -443,7 +491,7 @@ const fullSchema = JSON.stringify({
                 alt={imageAlt} 
                 width="1320" 
                 height="920"
-                style="width:100%;height:auto;"
+                style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;"
               />
             </noscript>
           </div>

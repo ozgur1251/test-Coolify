@@ -32,14 +32,42 @@
   position: relative;
   aspect-ratio: 16 / 9; /* 1320x920 için uygun oran */
   background-color: var(--color-grey-light); /* Görsel yüklenene kadar renk göster */
+  min-height: 150px; /* Minimum yükseklik belirterek CLS önleme */
+  contain: layout paint; /* İçeriğin dışa taşmasını kontrol et */
 }
 
 .featured-image {
   width: 100%;
-  height: auto;
+  height: 100%; /* Yüksekliği 100% yaparak aspect-ratio'ya uymasını sağla */
   object-fit: cover;
   display: block;
   transform: translateZ(0); /* Hardware acceleration */
+  position: absolute; /* Absolute position to prevent layout shifts */
+  top: 0;
+  left: 0;
+}
+
+/* Görüntü optimizasyonu için eklenen stil */
+.img-container {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  background-color: var(--color-grey-light); 
+  min-height: 100px;
+  margin: 1rem 0;
+  contain: layout paint;
+}
+
+.img-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .post-meta {
@@ -323,8 +351,8 @@
 
 @media (max-width: 768px) {
   .meta-container {
-    flex-direction: column;
-    gap: 0.5rem;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
   }
   
   .post-content {font-size: 1rem;}
@@ -332,15 +360,12 @@
   .category-header h1 {font-size: 1.5rem;}
   
   .featured-image-container {
-    max-width: 100%;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 4 / 3; /* Mobil için daha uygun 4:3 oran */
   }
-  
+
   .post-content img, .markdown-content img {
-    max-width: 100%;
-    width: auto;
+    width: 100%;
     height: auto;
-    margin: 1rem auto;
   }
 }
 
@@ -350,17 +375,14 @@
   .post-content {font-size: 0.95rem;}
   
   .featured-image-container {
-    margin-bottom: 1rem;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 1 / 1; /* Küçük ekranlarda kare format */
   }
 }
 
 .post-content img, .markdown-content img {
   max-width: 100%;
-  width: auto;
   height: auto;
   border-radius: var(--radius-sm);
-  margin: 1.5rem auto;
-  object-fit: contain;
-  transform: translateZ(0); /* Hardware acceleration */
+  margin: 1.5rem 0;
+  display: block;
 } 
