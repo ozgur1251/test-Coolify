@@ -8,6 +8,8 @@
 
 .blog-detail-page .article-container, .post-content {
   max-width: var(--max-width-narrow);
+  width: 100%;
+  margin: 0 auto;
 }
 
 .article-container {
@@ -15,6 +17,7 @@
   width: 100%;
   margin: 2rem auto;
   padding: 0 1rem;
+  box-sizing: border-box;
 }
 
 .post-header {margin-bottom: 2rem;}
@@ -22,15 +25,12 @@
 /* Öne çıkan resim için stiller */
 .featured-image-container {
   width: 100%;
-  margin: 0 0 2rem 0;
+  max-width: 1320px; /* Tam görüntü genişliği */
+  margin: 0 auto 2rem;
   border-radius: var(--radius-sm);
   overflow: hidden;
   position: relative;
   aspect-ratio: 16 / 9;
-  max-width: 100%;
-  height: auto;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .featured-image {
@@ -354,7 +354,8 @@
 }
 
 .post-content img, .markdown-content img {
-  width: 100%;
+  max-width: 100%;
+  width: auto;
   height: auto;
   border-radius: var(--radius-sm);
   margin: 1.5rem auto;

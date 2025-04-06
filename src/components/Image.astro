@@ -19,11 +19,11 @@ interface Props {
 const { 
   src, 
   alt,
-  width = 1316,
-  height = 916,
+  width = 1320,
+  height = 920,
   class: className,
   format = 'webp',
-  quality = 80, // Kaliteyi artırdık
+  quality = 90, // Kaliteyi artırdık
   densities = [0.5, 1, 1.5, 2],
   loading = 'lazy',
   decoding = 'async',
@@ -40,7 +40,7 @@ const isMobile = Astro.request.headers.get('user-agent')?.toLowerCase().includes
 const mobileDensities = [0.5, 1]; // Mobil cihazlar için daha az yoğunluk
 
 // Görsel boyutunu sayfaya göre optimize et
-const optimizeWidth = Math.min(width, 1316); // Maksimum genişlik güncellendi
+const optimizeWidth = Math.min(width, 1320); // Maksimum genişlik 1320px
 const optimizeHeight = Math.round((height / width) * optimizeWidth);
 ---
 
