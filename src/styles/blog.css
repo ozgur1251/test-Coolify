@@ -27,6 +27,10 @@
   overflow: hidden;
   position: relative;
   aspect-ratio: 16 / 9;
+  max-width: 1320px;
+  max-height: 920px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .featured-image {
@@ -330,4 +334,13 @@
   .post-category, .meta-date, .meta-update {font-size: 0.85rem;}
   
   .post-content {font-size: 0.95rem;}
+}
+
+.post-content img, .markdown-content img {
+  max-width: 1320px;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  margin: 1.5rem auto;
+  object-fit: contain;
 } 

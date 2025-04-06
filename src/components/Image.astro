@@ -19,28 +19,32 @@ interface Props {
 const { 
   src, 
   alt,
-  width = 800,
-  height = 570,
+  width = 1320,
+  height = 920,
   class: className,
   format = 'webp',
-  quality = 80, // Daha iyi kalite
-  densities = [0.5, 1, 1.5, 2],
+  quality = 80, // Kaliteyi artırdık
+  densities = [0.5, 1, 1.5],
   loading = 'lazy',
   decoding = 'async',
   fetchpriority = 'auto'
 } = Astro.props;
 
 // Hero görseli için (üst bölüm) yüksek öncelik
-const isHero = className?.includes('hero');
+const isHero = className?.includes('hero') || className?.includes('featured-image');
 const calculatedFetchPriority = isHero ? 'high' : fetchpriority;
 const calculatedLoading = isHero ? 'eager' : loading;
+
+// Görsel boyutunu sayfaya göre optimize et
+const optimizeWidth = Math.min(width, 1320); // Maksimum genişlik 1320px olarak güncellendi
+const optimizeHeight = Math.round((height / width) * optimizeWidth);
 ---
 
 <AstroImage
   src={src}
   alt={alt}
-  width={width}
-  height={height}
+  width={optimizeWidth}
+  height={optimizeHeight}
   class={className}
   format={format}
   quality={quality}

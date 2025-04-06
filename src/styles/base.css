@@ -45,7 +45,13 @@ body {
   min-height: 100vh;
 }
 
-img {max-width: 100%; height: auto; display: block;}
+img {
+  max-width: 100%; 
+  height: auto; 
+  display: block;
+  width: auto;
+  object-fit: contain;
+}
 
 /* Temel konteynır stiller */
 .site-header, .standard-footer, main {width: 100%;}
