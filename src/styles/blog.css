@@ -22,51 +22,15 @@
 
 .post-header {margin-bottom: 1rem;}
 
-/* Öne çıkan resim için stiller */
+/* Basit görsel stilleri */
 .featured-image-container {
   width: 100%;
-  max-width: 1320px; /* Daha büyük görüntü genişliği */
   margin: 0 auto 1rem;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  position: relative;
-  aspect-ratio: 16 / 9; /* 1320x920 için uygun oran */
-  background-color: var(--color-grey-light); /* Görsel yüklenene kadar renk göster */
-  min-height: 150px; /* Minimum yükseklik belirterek CLS önleme */
-  contain: layout paint; /* İçeriğin dışa taşmasını kontrol et */
 }
 
 .featured-image {
   width: 100%;
-  height: 100%; /* Yüksekliği 100% yaparak aspect-ratio'ya uymasını sağla */
-  object-fit: cover;
-  display: block;
-  transform: translateZ(0); /* Hardware acceleration */
-  position: absolute; /* Absolute position to prevent layout shifts */
-  top: 0;
-  left: 0;
-}
-
-/* Görüntü optimizasyonu için eklenen stil */
-.img-container {
-  position: relative;
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  background-color: var(--color-grey-light); 
-  min-height: 100px;
-  margin: 1rem 0;
-  contain: layout paint;
-}
-
-.img-container img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
   display: block;
 }
 
@@ -158,6 +122,13 @@
 
 .markdown-content p {
   margin-bottom: 1.25rem;
+}
+
+.markdown-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1rem 0;
 }
 
 .markdown-content ul,

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCategories, getBlogPostsByCategory, getCategoryBySlug } from '../../lib/supabase';
-import Image from '../../components/Image.astro';
 import '../../styles/blog.css';
 import '../../styles/cards.css';
 // kategori sayfasına özel stiller Base Layout'ta bundle edilecek
@@ -13,7 +12,7 @@ export const prerender = false;
 const { slug } = Astro.params;
 
 // İlgili kategoriyi bul
-const category = await getCategoryBySlug(slug);
+const category = await getCategoryBySlug(slug as string);
 
 // Kategori bulunamadıysa hata sayfasına yönlendir
 if (!category) {
@@ -75,7 +74,7 @@ const collectionSchema = {
             <a href={`/blog/${post.slug}`} class="card-link">
               <div class="card-image">
                 {post.featured_image ? (
-                  <Image 
+                  <img 
                     src={post.featured_image} 
                     alt={post.title}
                   />

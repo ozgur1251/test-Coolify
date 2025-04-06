@@ -2,7 +2,6 @@
 // Server tarafında çalışacak kod buraya
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCategories, getCategoryPostCounts } from '../lib/supabase';
-import Image from '../components/Image.astro';
 import '../styles/cards.css';
 
 const pageTitle = "İstanbul Bina Güçlendirme - Karbon Fiber kolon, kiriş güçlendirme";
@@ -126,7 +125,7 @@ const schemaData = {
              title={`${category.name} Bölgesi Bina Güçlendirme Hizmeti`}>
             <div class="card-image">
               {category.featured_image ? (
-                <Image 
+                <img 
                   src={category.featured_image} 
                   alt={`${category.name} Bölgesi Bina Güçlendirme`}
                 />
