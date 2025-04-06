@@ -358,8 +358,8 @@ const fullSchema = JSON.stringify({
       "name": imageAlt || post.title,
       "url": imageUrl,
       "contentUrl": imageUrl,
-      "width": "800",
-      "height": "600",
+      "width": "1320",
+      "height": "920",
       "caption": imageAlt,
       "description": post.meta_description,
       "datePublished": new Date(publishDate).toISOString(),
@@ -424,38 +424,14 @@ const fullSchema = JSON.stringify({
 
   <article class="article-container">
     <header class="post-header">
-      <div class="post-meta">
-        <div class="meta-container">
-          {category && (
-            <a href={`/kategori/${category.slug}`} class="post-category">
-              {category.name}
-            </a>
-          )}
-          <span class="meta-date">
-            <time datetime={new Date(publishDate).toISOString()}>
-              {new Date(publishDate).toLocaleDateString('tr-TR')}
-            </time>
-          </span>
-          {modifiedDate !== publishDate && 
-            <span class="meta-update">
-              Son güncelleme: <time datetime={new Date(modifiedDate).toISOString()}>
-                {new Date(modifiedDate).toLocaleDateString('tr-TR')}
-              </time>
-            </span>
-          }
-        </div>
-      </div>
-
-      <h1 class="post-title">{pageTitle}</h1>
-      
       {post.featured_image && (
         <div class="featured-image-container">
             <Image 
               src={post.featured_image}
               alt={imageAlt}
               class="featured-image"
-              width={800}
-              height={600}
+              width={1320}
+              height={920}
               format="webp"
               quality={80}
               loading="eager"
@@ -465,8 +441,8 @@ const fullSchema = JSON.stringify({
               <img 
                 src={post.featured_image} 
                 alt={imageAlt} 
-                width="800" 
-                height="600"
+                width="1320" 
+                height="920"
                 style="width:100%;height:auto;"
               />
             </noscript>
@@ -494,6 +470,23 @@ const fullSchema = JSON.stringify({
     
     <footer class="post-footer">
       <div class="post-navigation">
+        <div class="post-meta">
+          <div class="meta-container">
+            <span class="meta-date">
+              <time datetime={new Date(publishDate).toISOString()}>
+                {new Date(publishDate).toLocaleDateString('tr-TR')}
+              </time>
+            </span>
+            {modifiedDate !== publishDate && 
+              <span class="meta-update">
+                Son güncelleme: <time datetime={new Date(modifiedDate).toISOString()}>
+                  {new Date(modifiedDate).toLocaleDateString('tr-TR')}
+                </time>
+              </span>
+            }
+          </div>
+        </div>
+
         <div class="post-tags">
           {post.keywords && post.keywords.length > 0 && (
             <div class="tags-container">

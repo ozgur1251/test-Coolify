@@ -7,7 +7,7 @@ if (typeof window !== 'undefined') { // Yalnızca istemci tarafında çalıştı
       // Görsel yüklenmeden önce konteynırı ayarla
       const container = img.closest('.featured-image-container');
       if (container) {
-        container.style.minHeight = '300px'; // Minimum yükseklik ver
+        container.style.minHeight = '400px'; // Minimum yükseklik ver
       }
       
       // Yükleme tamamlandığında

@@ -1,6 +1,10 @@
 import { marked } from 'marked';
 
-// Markdown içeriğini HTML'e dönüştüren optimize edilmiş fonksiyon
+/**
+ * Markdown içeriğini HTML'e dönüştüren optimize edilmiş fonksiyon
+ * @param {string} markdownText - İşlenecek markdown metni
+ * @returns {string|Promise<string>} Dönüştürülmüş HTML veya HTML sözü
+ */
 export function parseMarkdown(markdownText) {
   if (!markdownText) {
     return '';
@@ -9,9 +13,7 @@ export function parseMarkdown(markdownText) {
   // Marked ayarlarını güvenlik ve performans için optimize et
   marked.setOptions({
     gfm: true, // GitHub Flavored Markdown desteği
-    breaks: true, // Satır sonlarını <br> olarak işle
-    smartLists: true, // Akıllı liste işleme
-    xhtml: true, // XHTML uyumlu çıktı
+    breaks: true // Satır sonlarını <br> olarak işle
   });
   
   // Markdown içeriğini HTML'e dönüştür ve döndür

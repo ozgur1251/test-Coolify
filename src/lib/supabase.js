@@ -11,7 +11,11 @@ const cache = {
   timestamp: new Map(),
   ttl: 60 * 1000, // 1 dakika önbellek süresi (millisaniye)
   
-  // Önbellekten veri alma
+  /**
+   * Önbellekten veri alma
+   * @param {string} key - Önbellek anahtarı
+   * @returns {*} Önbellekteki veri veya null
+   */
   get(key) {
     const now = Date.now();
     const timestamp = this.timestamp.get(key) || 0;
@@ -24,7 +28,12 @@ const cache = {
     return this.data.get(key);
   },
   
-  // Önbelleğe veri ekleme
+  /**
+   * Önbelleğe veri ekleme
+   * @param {string} key - Önbellek anahtarı
+   * @param {*} data - Kaydedilecek veri
+   * @returns {*} Kaydedilen veri
+   */
   set(key, data) {
     this.data.set(key, data);
     this.timestamp.set(key, Date.now());
@@ -38,7 +47,13 @@ const cache = {
   }
 };
 
-// Hata işleme yardımcı fonksiyonu
+/**
+ * Hata işleme yardımcı fonksiyonu
+ * @param {Error|null} error - Oluşan hata
+ * @param {string} errorMessage - Hata mesajı
+ * @param {*} defaultValue - Hata durumunda döndürülecek varsayılan değer
+ * @returns {*} Varsayılan değer
+ */
 function handleError(error, errorMessage, defaultValue) {
   if (error) {
     console.error(errorMessage, error);
@@ -46,7 +61,11 @@ function handleError(error, errorMessage, defaultValue) {
   }
 }
 
-// JSON alanlarını parse eden yardımcı fonksiyon
+/**
+ * JSON alanlarını parse eden yardımcı fonksiyon
+ * @param {any} post - İşlenecek blog yazısı
+ * @returns {any|null} İşlenmiş blog yazısı
+ */
 function parsePostJsonFields(post) {
   if (!post) return null;
   
@@ -91,13 +110,22 @@ function parsePostJsonFields(post) {
   return post;
 }
 
-// Birden çok postu işleyen yardımcı fonksiyon
+/**
+ * Birden çok postu işleyen yardımcı fonksiyon
+ * @param {any[]} posts - İşlenecek blog yazıları
+ * @returns {any[]} İşlenmiş blog yazıları
+ */
 function parsePostsJsonFields(posts) {
   if (!posts || !posts.length) return [];
   return posts.map(post => parsePostJsonFields(post));
 }
 
-// Önbellekli veri çeken yardımcı fonksiyon
+/**
+ * Önbellekli veri çeken yardımcı fonksiyon
+ * @param {string} cacheKey - Önbellek anahtarı
+ * @param {Function} fetchFunction - Veri çekme fonksiyonu
+ * @returns {Promise<any>} Veri
+ */
 async function fetchWithCache(cacheKey, fetchFunction) {
   // Önbellekten veri kontrolü
   const cachedData = cache.get(cacheKey);
@@ -128,7 +156,11 @@ export async function getCategories() {
   });
 }
 
-// Belirli bir kategoriye ait blog yazılarını getir
+/**
+ * Belirli bir kategoriye ait blog yazılarını getir
+ * @param {number|string} categoryId - Kategori ID'si
+ * @returns {Promise<any[]>} Blog yazıları
+ */
 export async function getBlogPostsByCategory(categoryId) {
   return fetchWithCache(`category_posts_${categoryId}`, async () => {
     const { data, error } = await supabase
@@ -173,7 +205,11 @@ export async function getAllBlogPosts(limit = null) {
   });
 }
 
-// URL slug'ına göre blog yazısını getir
+/**
+ * URL slug'ına göre blog yazısını getir
+ * @param {string} slug - Blog yazısı URL slug'ı
+ * @returns {Promise<any|null>} Blog yazısı
+ */
 export async function getBlogPostBySlug(slug) {
   return fetchWithCache(`post_${slug}`, async () => {
     const { data, error } = await supabase
@@ -190,7 +226,11 @@ export async function getBlogPostBySlug(slug) {
   });
 }
 
-// Kategori slug'ına göre kategori bilgisini getir
+/**
+ * Kategori slug'ına göre kategori bilgisini getir
+ * @param {string} slug - Kategori URL slug'ı
+ * @returns {Promise<any|null>} Kategori bilgisi
+ */
 export async function getCategoryBySlug(slug) {
   return fetchWithCache(`category_${slug}`, async () => {
     const { data, error } = await supabase
@@ -223,7 +263,23 @@ export async function getCategoryPostCounts() {
   });
 }
 
-// Limitle blog yazılarını getir (ana sayfa veya listeleme sayfaları için)
+/**
+ * Limitle blog yazılarını getir (ana sayfa veya listeleme sayfaları için)
+ * @param {number} [limit=50] - Maksimum blog yazısı sayısı
+ * @param {{
+ *   selectFields?: string,
+ *   withCategories?: boolean,
+ *   orderBy?: string,
+ *   ascending?: boolean,
+ *   filters?: {
+ *     categoryId?: number|string,
+ *     publishedOnly?: boolean,
+ *     fromDate?: string,
+ *     searchTerm?: string
+ *   }
+ * }} [options={}] - Sorgulama seçenekleri
+ * @returns {Promise<any[]>} Blog yazıları
+ */
 export async function getBlogPosts(limit = 50, options = {}) {
   // Önbellek anahtarı oluştur (farklı parametreler için farklı anahtarlar)
   const filterKey = options.filters 

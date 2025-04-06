@@ -1,5 +1,11 @@
 import { getBlogPosts, getCategories, getAllBlogPosts } from '../lib/supabase';
 
+/**
+ * @param {Object} context - Astro context
+ * @param {Object} context.site - Site information
+ * @param {string} context.site.origin - Base URL of the site
+ * @returns {Promise<Response>} Response containing the XML sitemap
+ */
 export async function GET({ site }) {
   // Site nesnesinden veya ortam değişkeninden URL al
   const siteUrl = site ? site.origin : process.env.SITE_URL || '';
@@ -58,6 +64,7 @@ export async function GET({ site }) {
   </url>
   ${categories
     .map(
+      /** @param {{ slug: string }} category - Kategori verisi */
       (category) => `  <url>
     <loc>${baseUrl}/kategori/${category.slug}/</loc>
     <changefreq>weekly</changefreq>
@@ -68,6 +75,7 @@ export async function GET({ site }) {
     .join('')}
   ${posts && posts.length > 0 ? posts
     .map(
+      /** @param {{ slug: string, updated_at?: string, published_at?: string, created_at: string }} post - Blog yazısı verisi */
       (post) => `  <url>
     <loc>${baseUrl}/blog/${post.slug}/</loc>
     <lastmod>${new Date(post.updated_at || post.published_at || post.created_at).toISOString().split('T')[0]}</lastmod>
@@ -76,7 +84,8 @@ export async function GET({ site }) {
   </url>
 `
     )
-    .join('') : ''}
+    .join('')
+    : ''}
 </urlset>`,
     {
       headers: {

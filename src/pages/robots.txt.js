@@ -1,3 +1,9 @@
+/**
+ * @param {Object} context - Astro context
+ * @param {Object} context.site - Site information
+ * @param {string} context.site.origin - Base URL of the site
+ * @returns {Promise<Response>} Response containing the robots.txt file
+ */
 export async function GET({ site }) {
   // Site nesnesinden veya ortam değişkeninden URL al
   const siteUrl = site ? site.origin : process.env.SITE_URL || '';

@@ -2,7 +2,7 @@
 :root {
   /* Boyut değişkenleri */
   --max-width: 1200px;
-  --max-width-narrow: 800px;
+  --max-width-narrow: 1320px;
   
   /* Renk paleti */
   --color-primary: #0066cc;
