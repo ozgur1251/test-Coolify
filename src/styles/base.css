@@ -51,6 +51,7 @@ img {
   display: block;
   width: auto;
   object-fit: contain;
+  transform: translateZ(0); /* Hardware acceleration */
 }
 
 /* Temel konteynır stiller */
