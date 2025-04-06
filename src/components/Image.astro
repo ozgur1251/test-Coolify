@@ -24,7 +24,7 @@ const {
   class: className,
   format = 'webp',
   quality = 80, // Kaliteyi artırdık
-  densities = [0.5, 1, 1.5],
+  densities = [0.5, 1, 1.5, 2],
   loading = 'lazy',
   decoding = 'async',
   fetchpriority = 'auto'
@@ -34,6 +34,10 @@ const {
 const isHero = className?.includes('hero') || className?.includes('featured-image');
 const calculatedFetchPriority = isHero ? 'high' : fetchpriority;
 const calculatedLoading = isHero ? 'eager' : loading;
+
+// Mobil cihazlar için daha az yoğunluk (density) kullanarak mobil deneyimi optimize et
+const isMobile = Astro.request.headers.get('user-agent')?.toLowerCase().includes('mobile');
+const mobileDensities = [0.5, 1]; // Mobil cihazlar için daha az yoğunluk
 
 // Görsel boyutunu sayfaya göre optimize et
 const optimizeWidth = Math.min(width, 1320); // Maksimum genişlik 1320px olarak güncellendi
@@ -48,7 +52,7 @@ const optimizeHeight = Math.round((height / width) * optimizeWidth);
   class={className}
   format={format}
   quality={quality}
-  densities={densities}
+  densities={isMobile ? mobileDensities : densities}
   loading={calculatedLoading}
   decoding={decoding}
   fetchpriority={calculatedFetchPriority}
