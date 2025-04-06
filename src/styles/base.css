@@ -1,11 +1,7 @@
 /* Renk paleti ve global değişkenler */
-:root {
-  /* Boyut değişkenleri */
-  --max-width: 1200px;
-  --max-width-narrow: 1320px;
-  
+:root { 
   /* Renk paleti */
-  --color-primary: #0066cc;
+  --color-primary:rgb(71, 0, 204);
   --color-primary-dark: #004d99;
   --color-primary-light: #e6f0fa;
   --color-text: #333;
@@ -43,15 +39,6 @@ body {
   color: var(--color-text);
   background-color: var(--color-background);
   min-height: 100vh;
-}
-
-img {
-  max-width: 100%; 
-  height: auto; 
-  display: block;
-  width: auto;
-  object-fit: contain;
-  transform: translateZ(0); /* Hardware acceleration */
 }
 
 /* Temel konteynır stiller */

@@ -2,7 +2,7 @@
 
 /* Temel değişkenler */
 :root {
-  --color-primary: #0066cc;
+  --color-primary:rgb(44, 0, 204);
   --color-primary-light: #e6f0fa;
   --color-text: #333;
   --color-background: #fff;
@@ -16,12 +16,6 @@ body {
   color: var(--color-text);
   background: var(--color-background);
   overflow-x: hidden;
-}
-
-/* Görsel optimizasyonu */
-img {
-  max-width: 100%;
-  height: auto;
 }
 
 /* Temel yerleşim */
