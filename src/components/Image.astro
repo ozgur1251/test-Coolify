@@ -1,5 +1,5 @@
 ---
-// Re-export Astro's built-in Image component with our default settings
+// SEO ve performans odaklı optimize edilmiş görsel bileşeni
 import { Image as AstroImage } from 'astro:assets';
 
 interface Props {
@@ -23,12 +23,17 @@ const {
   height = 570,
   class: className,
   format = 'webp',
-  quality = 65,
+  quality = 80, // Daha iyi kalite
   densities = [0.5, 1, 1.5, 2],
   loading = 'lazy',
   decoding = 'async',
   fetchpriority = 'auto'
 } = Astro.props;
+
+// Hero görseli için (üst bölüm) yüksek öncelik
+const isHero = className?.includes('hero');
+const calculatedFetchPriority = isHero ? 'high' : fetchpriority;
+const calculatedLoading = isHero ? 'eager' : loading;
 ---
 
 <AstroImage
@@ -40,7 +45,30 @@ const {
   format={format}
   quality={quality}
   densities={densities}
-  loading={loading}
+  loading={calculatedLoading}
   decoding={decoding}
-  fetchpriority={fetchpriority}
-/> 
+  fetchpriority={calculatedFetchPriority}
+/>
+
+<script>
+  // Görünür görselleri yüksek önceliğe çekme
+  document.addEventListener('DOMContentLoaded', () => {
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img instanceof HTMLImageElement && img.loading === 'lazy') {
+              img.setAttribute('fetchpriority', 'high');
+            }
+            observer.unobserve(img);
+          }
+        });
+      });
+
+      document.querySelectorAll('img[loading="lazy"]:not([fetchpriority="high"])').forEach(img => {
+        observer.observe(img);
+      });
+    }
+  });
+</script> 

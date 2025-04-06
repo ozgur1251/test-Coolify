@@ -18,6 +18,17 @@ export default defineConfig({
   }),
   site: siteUrl,
   trailingSlash: 'always',
+  // CSS işleme için build optimizasyonları
+  build: {
+    assets: '_astro',
+    inlineStylesheets: 'auto' // Eşik değerinden küçük CSS'leri otomatik olarak inline yap
+  },
+  vite: {
+    build: {
+      cssCodeSplit: true, // CSS modüllerini sayfa başına böl
+      cssMinify: true // CSS'i minimize et
+    }
+  },
   image: {
     service: {
       entrypoint: 'astro/assets/services/sharp',

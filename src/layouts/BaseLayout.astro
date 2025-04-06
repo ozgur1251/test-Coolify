@@ -1,7 +1,8 @@
 ---
 // BaseLayout.astro - Tüm sayfalarda kullanılacak ortak temel düzen
 import Navigation from '../components/Navigation.astro';
-import '../styles/base.css';
+// CSS import - build sırasında işlenecek
+import '../styles/base.css'; // Bu dosya Astro tarafından bundle edilecek
 
 const { 
 	pageTitle, 
@@ -41,12 +42,19 @@ const ogImageUrl = imageUrl ? (imageUrl.startsWith('http') ? imageUrl : (Astro.s
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		
+		<!-- Güvenlik başlıkları -->
+		<meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+		<meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
+		<meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload" />
+		<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+		
 		<!-- Compresyon ve cache kullanımını belirt -->
 		<meta http-equiv="Cache-Control" content="max-age=604800" />
 		<meta http-equiv="x-content-type-options" content="nosniff" />
 		
 		<!-- SEO iyileştirmeleri -->
-		{!noindex && <meta name="robots" content="index, follow" />}
+		{!noindex && <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />}
+		<link rel="canonical" href={Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname} />
 		
 		<!-- Open Graph / Facebook -->
 		<meta property="og:locale" content="tr_TR" />
@@ -72,9 +80,44 @@ const ogImageUrl = imageUrl ? (imageUrl.startsWith('http') ? imageUrl : (Astro.s
 		<!-- Yapısal veri ekle -->
 		{structuredData && <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
 		
-		<!-- Kritik CSS inline olarak eklenmiş -->
+		<!-- Kritik CSS doğrudan yerleştirilmiş olarak kalacak -->
 		<style is:inline>
-			@import '../styles/critical.css';
+			/* Kritik CSS - Sayfanın ilk yüklenmesinde gerekli temel CSS */
+			/* Temel değişkenler */
+			:root {
+				--color-primary: #0066cc;
+				--color-primary-light: #e6f0fa;
+				--color-text: #333;
+				--color-background: #fff;
+			}
+
+			/* Temel sıfırlama ve görünüm */
+			body {
+				margin: 0;
+				font-family: Arial, sans-serif;
+				line-height: 1.6;
+				color: var(--color-text);
+				background: var(--color-background);
+				overflow-x: hidden;
+			}
+
+			/* Görsel optimizasyonu */
+			img {
+				max-width: 100%;
+				height: auto;
+			}
+
+			/* Temel yerleşim */
+			.site-header, main, footer {
+				width: 100%;
+			}
+
+			/* Tepkisel görünüm için temel düzen */
+			@media (max-width: 768px) {
+				body {
+					font-size: 16px;
+				}
+			}
 		</style>
 		
 		<!-- Image optimization script -->
