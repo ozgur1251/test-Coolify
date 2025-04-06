@@ -22,18 +22,6 @@
 
 .post-header {margin-bottom: 1rem;}
 
-/* Basit görsel stilleri */
-.featured-image-container {
-  width: 99%;
-  margin: 0 auto 1rem;
-}
-
-.featured-image {
-  width: 99%;
-  height: auto;
-  display: block;
-}
-
 .post-meta {
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -70,8 +58,6 @@
   gap: 0.5rem;
 }
 
-.meta-date::before {content: "📅";}
-.meta-update::before {content: "🔄";}
 
 .post-content {
   font-size: 1.125rem;
@@ -93,7 +79,7 @@
   line-height: 1.2;
   font-weight: 700;
   margin: 0 0 1rem;
-  color: var(--color-secondary, #4a90e2);
+  color: var(--color-secondary,rgb(76, 74, 226));
 }
 
 .markdown-content h2 {
@@ -101,7 +87,7 @@
   margin-top: 1.5rem;
   margin-bottom: 0.8rem;
   font-weight: 600;
-  color: var(--color-secondary, #4a90e2);
+  color: var(--color-secondary,rgb(74, 76, 226));
 }
 
 .markdown-content h3 {
@@ -109,7 +95,7 @@
   margin-top: 2rem;
   margin-bottom: 0.7rem;
   font-weight: 600;
-  color: var(--color-secondary, #4a90e2);
+  color: var(--color-secondary, rgb(74, 76, 226));
 }
 
 .markdown-content h4 {
@@ -117,18 +103,11 @@
   margin-top: 1.75rem;
   margin-bottom: 0.6rem;
   font-weight: 600;
-  color: var(--color-secondary, #4a90e2);
+  color: var(--color-secondary, rgb(74, 76, 226));
 }
 
 .markdown-content p {
   margin-bottom: 1.25rem;
-}
-
-.markdown-content img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 1rem 0;
 }
 
 .markdown-content ul,
@@ -329,15 +308,6 @@
   .post-content {font-size: 1rem;}
   
   .category-header h1 {font-size: 1.5rem;}
-  
-  .featured-image-container {
-    aspect-ratio: 4 / 3; /* Mobil için daha uygun 4:3 oran */
-  }
-
-  .post-content img, .markdown-content img {
-    width: 100%;
-    height: auto;
-  }
 }
 
 @media (max-width: 480px) {
@@ -345,15 +315,4 @@
   
   .post-content {font-size: 0.95rem;}
   
-  .featured-image-container {
-    aspect-ratio: 1 / 1; /* Küçük ekranlarda kare format */
-  }
 }
-
-.post-content img, .markdown-content img {
-  max-width: 100%;
-  height: auto;
-  border-radius: var(--radius-sm);
-  margin: 1.5rem 0;
-  display: block;
-} 
