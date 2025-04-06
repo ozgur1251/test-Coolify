@@ -56,27 +56,4 @@ const optimizeHeight = Math.round((height / width) * optimizeWidth);
   loading={calculatedLoading}
   decoding={decoding}
   fetchpriority={calculatedFetchPriority}
-/>
-
-<script>
-  // Görünür görselleri yüksek önceliğe çekme
-  document.addEventListener('DOMContentLoaded', () => {
-    if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const img = entry.target;
-            if (img instanceof HTMLImageElement && img.loading === 'lazy') {
-              img.setAttribute('fetchpriority', 'high');
-            }
-            observer.unobserve(img);
-          }
-        });
-      });
-
-      document.querySelectorAll('img[loading="lazy"]:not([fetchpriority="high"])').forEach(img => {
-        observer.observe(img);
-      });
-    }
-  });
-</script> 
+/> 

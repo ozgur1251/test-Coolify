@@ -119,27 +119,8 @@ const ogImageUrl = imageUrl ? (imageUrl.startsWith('http') ? imageUrl : (Astro.s
 			}
 		</style>
 		
-		<!-- Image optimization script -->
-		<script is:inline>
-			// Client-side görsel optimizasyonu
-			document.addEventListener('DOMContentLoaded', () => {
-				// Lazy loading optimizasyonu
-				if ('loading' in HTMLImageElement.prototype) {
-					document.querySelectorAll('img[loading="lazy"]').forEach(function(img) {
-						if (img.getBoundingClientRect().top < window.innerHeight) {
-							img.loading = 'eager';
-							img.setAttribute('fetchpriority', 'high');
-						}
-					});
-				}
-				
-				// Eksik boyutları tamamla
-				document.querySelectorAll('img:not([width]):not([height])').forEach(function(img) {
-					if (!img.width) img.width = 400;
-					if (!img.height) img.height = 225;
-				});
-			});
-		</script>
+		<!-- Görsel optimizasyonu için harici script -->
+		<script src="/scripts/image-optimizer.js" defer></script>
 		
 		<slot name="head" />
 	</head>
