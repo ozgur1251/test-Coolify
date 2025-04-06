@@ -1,0 +1,159 @@
+/* İletişim sayfası için CSS */
+
+.contact-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.contact-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .contact-content {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.contact-info, .contact-message {
+  background-color: var(--color-grey-light);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.contact-info h2, .contact-message h2, .service-areas h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+}
+
+.contact-details {
+  margin-top: 1.5rem;
+}
+
+.contact-item {
+  margin-bottom: 1rem;
+}
+
+.contact-item strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--color-primary);
+}
+
+.contact-item a {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.contact-item a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.social-links {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.social-links a {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--color-primary);
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.social-links a:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.whatsapp-contact {
+  margin-top: 1.5rem;
+}
+
+.whatsapp-button {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  background-color: #25D366;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.whatsapp-button:hover {
+  background-color: #128C7E;
+}
+
+.service-areas {
+  background-color: var(--color-grey-light);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.districts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.districts h3 {
+  font-size: 1.1rem;
+  margin: 0;
+  padding: 0.5rem 0;
+  color: var(--color-text-light);
+}
+
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.6rem;
+  }
+  
+  .contact-info h2, .contact-message h2, .service-areas h2 {
+    font-size: 1.3rem;
+  }
+  
+  .districts {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.4rem;
+  }
+  
+  .contact-info h2, .contact-message h2, .service-areas h2 {
+    font-size: 1.2rem;
+  }
+  
+  .districts {
+    grid-template-columns: 1fr;
+  }
+  
+  .social-links {
+    flex-direction: column;
+  }
+} 

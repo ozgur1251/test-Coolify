@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getBlogPostBySlug, getCategories } from '../../lib/supabase';
 import Image from '../../components/Image.astro';
 import { parseMarkdown } from '../../lib/markdown';
+import '../../styles/blog.css';
 
 // Server-side rendering kullan (statik ön-render yerine)
 export const prerender = false;
@@ -419,8 +420,6 @@ const fullSchema = JSON.stringify({
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href={post.featured_image} as="image" />
-    
-    <!-- CSS dosyalari yerine style bloğundaki kodlar kullanılıyor -->
   </slot>
 
   <article class="article-container">
@@ -502,50 +501,4 @@ const fullSchema = JSON.stringify({
       </div>
     </footer>
   </article>
-</BaseLayout>
-
-<style>
-.article-container{width:100%;max-width:800px;margin:0 auto;padding:0 1rem}
-.post-header{margin-bottom:2rem}
-.post-meta{text-align:center;margin-bottom:2rem}
-.meta-container{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;font-size:.9rem;color:var(--color-text-light)}
-.post-category{background-color:var(--color-primary-light);color:var(--color-primary);padding:.25rem .75rem;border-radius:var(--radius-sm);font-weight:500;text-decoration:none;transition:background-color .2s ease;touch-action:manipulation}
-.post-category:hover{background-color:var(--color-primary);color:#fff}
-.meta-date,.meta-update{display:inline-flex;align-items:center;gap:.5rem}
-.meta-date::before{content:"📅"}
-.meta-update::before{content:"🔄"}
-.section-title{font-size:1.75rem;font-weight:600;margin:2rem 0 1.5rem;color:var(--color-primary);position:relative;padding-bottom:.5rem}
-.section-title::after{content:'';position:absolute;bottom:0;left:0;width:60px;height:3px;background:var(--color-primary);border-radius:3px}
-.post-content{font-size:1.125rem;line-height:1.7;color:var(--color-text);overflow-wrap:break-word;word-break:break-word;hyphens:auto;max-width:100%;margin:2rem auto;line-height:1.6}
-.markdown-content{font-size:1.125rem;line-height:1.7;color:var(--color-text)}
-.markdown-content :global(h1){font-size:clamp(1.75rem,5vw,2.5rem);line-height:1.2;font-weight:700;margin:0 0 1.5rem;color:var(--color-primary)}
-.markdown-content :global(h2){font-size:clamp(1.5rem,4vw,1.75rem);margin-top:2.5rem;margin-bottom:1.25rem;font-weight:600;color:var(--color-secondary,#4a90e2)}
-.markdown-content :global(h3){font-size:clamp(1.25rem,3vw,1.5rem);margin-top:2rem;margin-bottom:1rem;font-weight:600;color:var(--color-secondary,#4a90e2)}
-.markdown-content :global(h4){font-size:clamp(1.1rem,2.5vw,1.25rem);margin-top:1.75rem;margin-bottom:.875rem;font-weight:600;color:var(--color-secondary,#4a90e2)}
-.markdown-content :global(p){margin-bottom:1.25rem}
-.markdown-content :global(ul),.markdown-content :global(ol){margin:1.25rem 0;padding-left:1.5rem}
-.markdown-content :global(li){margin-bottom:.5rem}
-.markdown-content :global(blockquote){border-left:4px solid var(--color-primary);padding:.5rem 0 .5rem 1rem;margin:1.5rem 0;background-color:var(--color-bg-secondary);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
-.markdown-content :global(blockquote p){margin:0;color:var(--color-text-light);font-style:italic}
-.faq-section{margin:2rem auto;padding:1.5rem;background-color:var(--color-bg-secondary);border-radius:var(--radius-md);max-width:100%;width:100%}
-.faq-item{margin-bottom:1rem;border-bottom:1px solid var(--color-border);padding-bottom:1rem}
-.faq-item:last-child{border-bottom:none;margin-bottom:0}
-.faq-question{font-size:1.3rem;font-weight:600;margin-bottom:.75rem;color:var(--color-primary);cursor:pointer}
-.faq-answer{color:var(--color-text-light);overflow-wrap:break-word;word-wrap:break-word}
-.post-navigation{display:flex;flex-wrap:wrap;margin:2rem auto 0;border-top:1px solid var(--color-border);padding-top:1.5rem;max-width:100%;width:100%;padding-left:1rem;padding-right:1rem}
-.post-tags{flex:1;min-width:250px}
-.tags-container{display:flex;align-items:baseline;flex-wrap:wrap}
-.tags-label{font-weight:600;margin-right:.5rem}
-.tag-list{display:flex;list-style:none;padding:0;margin:0;flex-wrap:wrap}
-.tag-item{margin-right:.5rem;margin-bottom:.5rem;background-color:var(--color-bg-accent);padding:.2rem .5rem;border-radius:var(--radius-sm);font-size:.9rem}
-.related-category{margin-top:1rem}
-.category-label{font-weight:600;margin-right:.5rem}
-.category-link{color:var(--color-primary);text-decoration:none}
-.category-link:hover{text-decoration:underline}
-article{width:100%;max-width:100%;overflow:hidden;contain:content}
-@media(min-width:993px){.post-content,.post-navigation,.faq-section{max-width:800px}.post-header{max-width:1000px}}
-@media(max-width:992px){.post-content,.post-navigation,.faq-section{max-width:100%}}
-@media(max-width:768px){.article-container{padding:0 .75rem}.post-content{font-size:1rem}.meta-container{flex-direction:column;gap:.5rem}.post-meta{padding:0;margin-bottom:1.5rem}.markdown-content :global(h1){font-size:1.75rem;margin-bottom:1rem}.markdown-content :global(h2){font-size:1.5rem;margin-top:2rem}.markdown-content :global(h3){font-size:1.35rem}.markdown-content :global(p){margin-bottom:1rem}.post-category{padding:.35rem .85rem;font-size:1rem}}
-@media(max-width:576px){.post-title{font-size:1.3rem}.post-meta{flex-direction:column;gap:.5rem}.post-content,.post-navigation,.faq-section{padding:0 .75rem}.faq-question{font-size:1.2rem}.post-category,.meta-date,.meta-update{font-size:.85rem}.tag-item{font-size:.8rem}}
-@media(max-width:400px){.article-container{padding:0 .5rem}.post-content{font-size:.95rem}.markdown-content :global(h1){font-size:1.5rem}.markdown-content :global(h2){font-size:1.3rem}.markdown-content :global(h3){font-size:1.15rem}}
-</style> 
+</BaseLayout> 

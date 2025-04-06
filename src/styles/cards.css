@@ -1,0 +1,168 @@
+/* Kart ve Ana Sayfa Bileşenleri için stiller */
+
+/* Metin stilleri */
+.lead-text {
+  font-size: 1.15rem;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  margin: 1.5rem 0;
+}
+
+.section-title {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+/* Kart bileşenleri için stiller */
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.post-card {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+  background: white;
+  height: 100%;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  height: 100%;
+}
+
+.card-image {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+  background-color: var(--color-grey-light);
+  overflow: hidden;
+}
+
+.card-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-light);
+  background-color: var(--color-grey-light);
+}
+
+.card-content {padding: 1rem;}
+
+.card-content h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  color: var(--color-text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-excerpt {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-count, .post-date {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.5rem;
+}
+
+.post-count span {
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.read-more {
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Şirket Bilgisi */
+.company-info {
+  margin-top: 3rem;
+  padding: 2rem;
+  background-color: var(--color-grey-light);
+  border-radius: var(--radius-sm);
+}
+
+.company-info h2 {
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+.company-content {display: flex; flex-direction: column;}
+
+.company-text p {margin-bottom: 1rem;}
+
+.social-links {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.social-links a {
+  color: var(--color-primary);
+  text-decoration: none;
+  padding: 0.5rem 0;
+}
+
+.social-links a:hover {text-decoration: underline;}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .post-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .post-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .section-title {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .company-info {padding: 1.5rem;}
+} 

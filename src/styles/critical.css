@@ -1,0 +1,37 @@
+/* Kritik CSS - Sayfanın ilk yüklenmesinde gerekli temel CSS */
+
+/* Temel değişkenler */
+:root {
+  --color-primary: #0066cc;
+  --color-primary-light: #e6f0fa;
+  --color-text: #333;
+  --color-background: #fff;
+}
+
+/* Temel sıfırlama ve görünüm */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--color-text);
+  background: var(--color-background);
+  overflow-x: hidden;
+}
+
+/* Görsel optimizasyonu */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Temel yerleşim */
+.site-header, main, footer {
+  width: 100%;
+}
+
+/* Tepkisel görünüm için temel düzen */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+} 
