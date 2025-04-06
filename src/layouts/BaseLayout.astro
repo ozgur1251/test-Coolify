@@ -100,11 +100,6 @@ const ogImageUrl = imageUrl ? (imageUrl.startsWith('http') ? imageUrl : (Astro.s
 				overflow-x: hidden;
 			}
 
-			/* Görsel optimizasyonu */
-			img {
-				max-width: 100%;
-				height: auto;
-			}
 
 			/* Temel yerleşim */
 			.site-header, main, footer {
@@ -118,9 +113,6 @@ const ogImageUrl = imageUrl ? (imageUrl.startsWith('http') ? imageUrl : (Astro.s
 				}
 			}
 		</style>
-		
-		<!-- Görsel optimizasyonu için harici script -->
-		<script src="/scripts/image-optimizer.js" defer></script>
 		
 		<slot name="head" />
 	</head>
