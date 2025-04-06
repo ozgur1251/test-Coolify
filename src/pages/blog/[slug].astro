@@ -358,8 +358,8 @@ const fullSchema = JSON.stringify({
       "name": imageAlt || post.title,
       "url": imageUrl,
       "contentUrl": imageUrl,
-      "width": "1320",
-      "height": "920",
+      "width": "800",
+      "height": "600",
       "caption": imageAlt,
       "description": post.meta_description,
       "datePublished": new Date(publishDate).toISOString(),
@@ -424,22 +424,6 @@ const fullSchema = JSON.stringify({
 
   <article class="article-container">
     <header class="post-header">
-      {post.featured_image && (
-        <div class="featured-image-container">
-            <Image 
-              src={post.featured_image}
-              alt={imageAlt}
-              class="featured-image"
-              width={1320}
-              height={920}
-              format="webp"
-              quality={90}
-              loading="eager"
-              fetchpriority="high"
-            />
-          </div>
-      )}
-
       <div class="post-meta">
         <div class="meta-container">
           {category && (
@@ -461,6 +445,33 @@ const fullSchema = JSON.stringify({
           }
         </div>
       </div>
+
+      <h1 class="post-title">{pageTitle}</h1>
+      
+      {post.featured_image && (
+        <div class="featured-image-container">
+            <Image 
+              src={post.featured_image}
+              alt={imageAlt}
+              class="featured-image"
+              width={800}
+              height={600}
+              format="webp"
+              quality={80}
+              loading="eager"
+              fetchpriority="high"
+            />
+            <noscript>
+              <img 
+                src={post.featured_image} 
+                alt={imageAlt} 
+                width="800" 
+                height="600"
+                style="width:100%;height:auto;"
+              />
+            </noscript>
+          </div>
+      )}
     </header>
     
     <div class="post-content markdown-content">
