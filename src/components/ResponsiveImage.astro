@@ -25,13 +25,13 @@ const width = props.width || 1320;
 const height = props.height || 920;
 const className = props.class || "";
 const lazy = props.lazy !== false;
-const sizes = props.sizes || "(max-width: 480px) 100vw, 1320px";
+const sizes = props.sizes || "(max-width: 768px) calc(100vw - 2rem), 768px";
 
 // En-boy oranını hesapla
 const aspectRatio = width / height;
 
 // Farklı ekran boyutları için srcset oluştur
-const breakpoints = [480, 1320];
+const breakpoints = [320, 360, 480, 640, 660, 720, 768, 1024, 1320];
 let srcset = "";
 try {
   srcset = generateSrcsetString(src, width, height, breakpoints);

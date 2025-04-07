@@ -40,7 +40,7 @@
 /* Blog görselleri için özel stiller */
 .blog-featured-image {
   overflow: hidden;
-  max-width: 1320px; /* Maksimum genişlik belirtelim */
+  /* max-width: 1320px; - Test için kaldırıldı */
   width: 100%;
   margin-left: auto;
   margin-right: auto;
@@ -53,33 +53,30 @@
 }
 
 /* PageSpeed için optimizasyon - sadece gerekli kadar alana izin ver */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .blog-featured-image {
-    max-width: 768px; /* Tablet boyutu */
+    max-width: 768px; 
   }
-}
+} */
 
 /* Mobil boyutları */
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
   .blog-featured-image {
-    max-width: 480px; /* Mobil boyutu */
+    max-width: 480px; 
     margin-bottom: 1.5rem;
   }
-}
+} */
 
 /* Daha küçük mobil boyutları */
-@media (max-width: 360px) {
+/* @media (max-width: 360px) {
   .blog-featured-image {
     max-width: 360px; 
   }
-}
+} */
 
 /* En küçük mobil boyutları */
-@media (max-width: 320px) {
+/* @media (max-width: 320px) {
   .blog-featured-image {
-    /* Burada 100vw yerine belki biraz padding bırakmak daha iyi olabilir,
-       ancak sizes'daki 100vw ile tutarlılık için şimdilik böyle bırakalım.
-       Eğer görsel kenarlara yapışıyorsa padding eklenebilir. */
-    max-width: 100%; /* 320px ve altında tam genişlik */
+    max-width: 100%; 
   }
-} 
+} */ 

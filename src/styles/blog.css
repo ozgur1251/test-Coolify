@@ -1,22 +1,17 @@
 /* Blog Post Stilleri */
 .article-container, .category-container {
   width: 100%;
-  max-width: var(--max-width);
   margin: 0 auto;
-  /* padding: 0 1rem; - Görsel boyutlandırma testi için kaldırıldı */
 }
 
 .blog-detail-page .article-container, .post-content {
-  max-width: var(--max-width-narrow);
   width: 100%;
   margin: 0 auto;
 }
 
 .article-container {
-  max-width: var(--max-width-narrow);
   width: 100%;
   margin: 2rem auto;
-  /* padding: 0 1rem; - Görsel boyutlandırma testi için kaldırıldı */
   box-sizing: border-box;
 }
 
