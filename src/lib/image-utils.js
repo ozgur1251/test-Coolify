@@ -185,7 +185,6 @@ export function getOptimizedImageUrl(imageUrl, width = 800, height, format = 'we
     // Sunucu tarafı (SSR) veya istemci tarafı (CSR) kontrolü
     if (typeof window === 'undefined') {
       // SSR: Astro.site burada kullanılamaz, bu nedenle doğrudan göreli yol kullanıyoruz
-      const apiUrl = new URL('/api/image', 'http://localhost');
       apiUrl.searchParams.set('url', encodeURIComponent(imageUrl));
       if (width) apiUrl.searchParams.set('width', width.toString());
       if (height) apiUrl.searchParams.set('height', height.toString());
@@ -196,7 +195,6 @@ export function getOptimizedImageUrl(imageUrl, width = 800, height, format = 'we
       return apiUrl.pathname + apiUrl.search;
     } else {
       // CSR: Tarayıcı tarafında tam URL oluştur
-      const apiUrl = new URL('/api/image', window.location.origin);
       apiUrl.searchParams.set('url', encodeURIComponent(imageUrl));
       if (width) apiUrl.searchParams.set('width', width.toString());
       if (height) apiUrl.searchParams.set('height', height.toString());
@@ -221,43 +219,43 @@ export function getOptimizedImageUrl(imageUrl, width = 800, height, format = 'we
  */
 export function generateSrcsetString(imageUrl, originalWidth = 1320, originalHeight = 920, breakpoints = [480, 768, 1024, 1320]) {
   if (!imageUrl) return '';
-  
+
+  // URL'yi ayrıştırarak Supabase projesi, bucket ve path bilgilerini al
+  let urlParts;
+  try {
+    // Supabase'in standart /object/public/ URL formatını varsayalım
+    // Örnek: https://<id>.supabase.co/storage/v1/object/public/<bucket>/<path>
+    urlParts = imageUrl.match(/^(https:\/\/[^/]+\/storage\/v1)\/object\/public\/([^/]+)\/(.+)$/);
+    if (!urlParts || urlParts.length < 4) {
+      console.warn(`Beklenmeyen Supabase URL formatı: ${imageUrl}. Dönüşüm uygulanamadı.`);
+      return ''; // Geçersiz formatta dönüşüm yapma
+    }
+  } catch (e) {
+    console.error(`URL ayrıştırma hatası: ${imageUrl}`, e);
+    return '';
+  }
+
+  const baseUrl = urlParts[1]; // https://<id>.supabase.co/storage/v1
+  const bucketName = urlParts[2];
+  const imagePath = urlParts[3];
+
   const aspectRatio = originalWidth / originalHeight;
   const srcsetParts = [];
-  
-  // Her bir kırılma noktası için URL oluştur
-  breakpoints.sort((a, b) => a - b).forEach(width => {
+
+  // Her bir kırılma noktası için dönüşüm URL'si oluştur
+  breakpoints.sort((a, b) => a - b).forEach(targetWidth => {
     // Orijinal boyuttan büyük boyutlar için orijinal genişliği kullan
-    if (width > originalWidth) {
-      width = originalWidth;
-    }
-    
-    // Yüksekliği hesapla
+    let width = targetWidth > originalWidth ? originalWidth : targetWidth;
+
+    // Yüksekliği en-boy oranına göre hesapla
     const height = Math.round(width / aspectRatio);
-    
-    // Supabase URL'sine boyut parametrelerini ekle
-    // Örnek: https://supabase-url.com/storage/v1/object/public/images/image.jpg?width=480&height=335
-    let url = imageUrl;
-    
-    // URL nesnesini oluştur
-    try {
-      // URL'de zaten parametreler var mı kontrol et
-      if (url.includes('?')) {
-        // Zaten parametre varsa & ile ekle
-        url = `${url}&width=${width}&height=${height}`;
-      } else {
-        // Parametre yoksa ? ile ekle
-        url = `${url}?width=${width}&height=${height}`;
-      }
-      
-      // Görsel formatını ve kalitesini ekle (daha küçük dosya boyutu için)
-      url += '&format=webp&quality=80';
-    } catch (error) {
-      console.error('URL oluşturma hatası:', error);
-    }
-    
-    srcsetParts.push(`${url} ${width}w`);
+
+    // Supabase dönüşüm URL'sini oluştur
+    // Format: https://<id>.supabase.co/storage/v1/render/image/public/<bucket>/<path>?width=...&height=...&resize=contain
+    const transformationUrl = `${baseUrl}/render/image/public/${bucketName}/${imagePath}?width=${width}&height=${height}&resize=contain&quality=80`; // quality=80 varsayılan
+
+    srcsetParts.push(`${transformationUrl} ${width}w`);
   });
-  
+
   return srcsetParts.join(', ');
 } 
