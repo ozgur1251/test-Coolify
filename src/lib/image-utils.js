@@ -217,7 +217,7 @@ export function getOptimizedImageUrl(imageUrl, width = 800, height, format = 'we
  * @param {Array<number>} breakpoints - Farklı genişlikler için kırılma noktaları
  * @returns {string} - srcset string
  */
-export function generateSrcsetString(imageUrl, originalWidth = 1320, originalHeight = 920, breakpoints = [480, 768, 1024, 1320]) {
+export function generateSrcsetString(imageUrl, originalWidth = 1320, originalHeight = 920, breakpoints = [360, 480, 768, 1024, 1320]) {
   if (!imageUrl) return '';
 
   // URL'yi ayrıştırarak Supabase projesi, bucket ve path bilgilerini al
