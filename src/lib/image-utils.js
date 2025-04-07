@@ -235,13 +235,11 @@ export function generateSrcsetString(imageUrl, originalWidth = 1320, originalHei
     // Yüksekliği hesapla
     const height = Math.round(width / aspectRatio);
     
-    // Resim optimize etmek için fonksiyon varsa kullan, yoksa normal URL'yi kullan
-    // Not: getOptimizedImageUrl fonksiyonu varsa burada kullanılabilir
+    // Direkt olarak URL'yi kullan, optimize fonksiyonu şu an çalışmıyor olabilir
+    // Supabase URL'lerinde direkt boyut parametreleri eklenebilir mi kontrol et
     let url = imageUrl;
-    if (typeof getOptimizedImageUrl === 'function') {
-      url = getOptimizedImageUrl(imageUrl, width, height, 'webp', 80);
-    }
     
+    // Boyutu URL'ye ekle - basit bir şekilde
     srcsetParts.push(`${url} ${width}w`);
   });
   

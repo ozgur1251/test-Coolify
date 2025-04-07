@@ -9,8 +9,19 @@
   max-width: 100%;
   line-height: 0;
   margin: 0 auto;
-  height: auto;
-  /* aspect-ratio artık dinamik olarak bileşenden geliyor */
+  /* Modern tarayıcılar için aspect-ratio özelliği (inline olarak) */
+  /* Eski tarayıcılar için padding-bottom hesaplaması */
+  height: 0;
+  padding-bottom: calc(100% / var(--aspect-ratio)); 
+}
+
+/* @supports özelliği ile modern tarayıcılarda padding kullanmayı engelleyelim */
+@supports (aspect-ratio: 1 / 1) {
+  .responsive-image-container {
+    height: auto;
+    padding-bottom: 0;
+    /* aspect-ratio inline olarak style içinde tanımlanıyor */
+  }
 }
 
 .responsive-image {
@@ -18,20 +29,22 @@
   height: 100%;
   display: block;
   max-width: 100%;
-  object-fit: cover; /* Görüntüyü tam olarak kaplamak için */
+  object-fit: contain; /* Görüntünün tamamını göstermek için contain kullanıyoruz */
   position: absolute;
   top: 0;
   left: 0;
-  bottom: 0;
   right: 0;
+  bottom: 0;
 }
 
 /* Blog görselleri için özel stiller */
 .blog-featured-image {
   overflow: hidden;
-  max-width: 100%;
+  max-width: 1320px; /* Maksimum genişlik belirtelim */
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 2rem;
 }
 
 /* Kart görselleri */
@@ -41,33 +54,15 @@
 
 /* PageSpeed için optimizasyon - sadece gerekli kadar alana izin ver */
 @media (max-width: 768px) {
-  .responsive-image-container {
-    max-width: 100%;
-    width: 100%;
-    height: auto;
-  }
-  
-  .responsive-image {
-    position: relative;
-    height: auto;
+  .blog-featured-image {
+    max-width: 768px; /* Tablet boyutu */
   }
 }
 
 /* Mobil boyutları */
 @media (max-width: 480px) {
   .blog-featured-image {
-    width: 100%;
-    max-width: 480px;
-    margin: 0 auto;
-  }
-  
-  .responsive-image-container {
-    max-width: 100%;
-    width: 100%;
-  }
-  
-  .responsive-image {
-    position: relative;
-    height: auto;
+    max-width: 480px; /* Mobil boyutu */
+    margin-bottom: 1.5rem;
   }
 } 
