@@ -1,9 +1,9 @@
 /* Blog Post Stilleri */
 .article-container, .category-container {
   width: 100%;
-  max-width: var(--max-width);
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 1rem 1rem;
 }
 
 .blog-detail-page .article-container, .post-content {
