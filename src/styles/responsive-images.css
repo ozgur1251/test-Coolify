@@ -9,15 +9,21 @@
   max-width: 100%;
   line-height: 0;
   margin: 0 auto;
+  height: auto;
   /* aspect-ratio artık dinamik olarak bileşenden geliyor */
 }
 
 .responsive-image {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
   max-width: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Görüntüyü tam olarak kaplamak için */
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 
 /* Blog görselleri için özel stiller */
@@ -40,6 +46,13 @@
 @media (max-width: 768px) {
   .responsive-image-container {
     max-width: 100%;
+    width: 100%;
+    height: auto;
+  }
+  
+  .responsive-image {
+    position: relative;
+    height: auto;
   }
   
   .blog-featured-image {

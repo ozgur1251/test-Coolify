@@ -13,6 +13,7 @@ export interface Props {
   height?: number;
   class?: string;
   lazy?: boolean;
+  sizes?: string;
 }
 
 // TypeScript tipleriyle doğru şekilde çalışması için
@@ -23,6 +24,7 @@ const width = props.width || 1320;
 const height = props.height || 920;
 const className = props.class || "";
 const lazy = props.lazy !== false;
+const sizes = props.sizes || "(max-width: 768px) 100vw, 1320px";
 
 // En-boy oranını hesapla
 const aspectRatio = width / height;
@@ -37,5 +39,6 @@ const aspectRatio = width / height;
     loading={lazy ? "lazy" : "eager"}
     decoding="async"
     class="responsive-image"
+    sizes={sizes}
   />
 </div> 
