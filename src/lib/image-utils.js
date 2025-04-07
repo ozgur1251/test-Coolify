@@ -217,7 +217,7 @@ export function getOptimizedImageUrl(imageUrl, width = 800, height, format = 'we
  * @param {Array<number>} breakpoints - Farklı genişlikler için kırılma noktaları
  * @returns {string} - srcset string
  */
-export function generateSrcsetString(imageUrl, originalWidth = 1320, originalHeight = 920, breakpoints = [360, 480, 768, 1024, 1320]) {
+export function generateSrcsetString(imageUrl, originalWidth = 1320, originalHeight = 920, breakpoints = [320, 360, 480, 768, 1024, 1320]) {
   if (!imageUrl) return '';
 
   // URL'yi ayrıştırarak Supabase projesi, bucket ve path bilgilerini al
@@ -250,9 +250,12 @@ export function generateSrcsetString(imageUrl, originalWidth = 1320, originalHei
     // Yüksekliği en-boy oranına göre hesapla
     const height = Math.round(width / aspectRatio);
 
+    // Küçük boyutlar için kaliteyi biraz düşür
+    const quality = width <= 360 ? 75 : 80;
+
     // Supabase dönüşüm URL'sini oluştur
     // Format: https://<id>.supabase.co/storage/v1/render/image/public/<bucket>/<path>?width=...&height=...&resize=contain
-    const transformationUrl = `${baseUrl}/render/image/public/${bucketName}/${imagePath}?width=${width}&height=${height}&resize=contain&quality=80`; // quality=80 varsayılan
+    const transformationUrl = `${baseUrl}/render/image/public/${bucketName}/${imagePath}?width=${width}&height=${height}&resize=contain&quality=${quality}`;
 
     srcsetParts.push(`${transformationUrl} ${width}w`);
   });
