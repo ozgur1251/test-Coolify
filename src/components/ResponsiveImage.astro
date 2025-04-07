@@ -25,7 +25,7 @@ const width = props.width || 1320;
 const height = props.height || 920;
 const className = props.class || "";
 const lazy = props.lazy !== false;
-const sizes = props.sizes || "(max-width: 768px) 100vw, 768px";
+const sizes = props.sizes || "(max-width: 320px) 100vw, (max-width: 360px) 360px, (max-width: 480px) 480px, (max-width: 768px) 768px, 1320px";
 
 // En-boy oranını hesapla
 const aspectRatio = width / height;
