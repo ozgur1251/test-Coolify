@@ -251,7 +251,7 @@ export function generateSrcsetString(imageUrl, originalWidth = 1320, originalHei
     const height = Math.round(width / aspectRatio);
 
     // Küçük boyutlar için kaliteyi biraz düşür (örn. 480px ve altı)
-    const quality = width <= 480 ? 70 : 80;
+    const quality = width <= 480 ? 65 : 80;
 
     // Supabase dönüşüm URL'sini oluştur
     // Format: https://<id>.supabase.co/storage/v1/render/image/public/<bucket>/<path>?width=...&height=...&resize=contain
