@@ -16,7 +16,7 @@
   max-width: var(--max-width-narrow);
   width: 100%;
   margin: 2rem auto;
-  padding: 0 1rem;
+  padding: 0 0rem;
   box-sizing: border-box;
 }
 
