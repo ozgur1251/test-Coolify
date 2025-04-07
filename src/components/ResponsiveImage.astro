@@ -5,6 +5,7 @@
  */
 
 import "../styles/responsive-images.css";
+import { generateSrcsetString } from "../lib/image-utils.js";
 
 export interface Props {
   src: string;
@@ -24,10 +25,22 @@ const width = props.width || 1320;
 const height = props.height || 920;
 const className = props.class || "";
 const lazy = props.lazy !== false;
-const sizes = props.sizes || "(max-width: 768px) 100vw, 1320px";
+const sizes = props.sizes || "(max-width: 480px) 100vw, (max-width: 768px) 100vw, 1320px";
 
 // En-boy oranını hesapla
 const aspectRatio = width / height;
+
+// Farklı ekran boyutları için görsel URL'leri
+// Breakpoints için değerler
+const breakpoints = [480, 768, 1024, 1320];
+
+// srcset oluştur
+let srcset = "";
+try {
+  srcset = generateSrcsetString(src, width, height, breakpoints);
+} catch (error) {
+  console.error("srcset oluşturma hatası:", error);
+}
 ---
 
 <div class={`responsive-image-container ${className}`} style={`aspect-ratio: ${aspectRatio};`}>
@@ -40,5 +53,6 @@ const aspectRatio = width / height;
     decoding="async"
     class="responsive-image"
     sizes={sizes}
+    srcset={srcset || null}
   />
 </div> 

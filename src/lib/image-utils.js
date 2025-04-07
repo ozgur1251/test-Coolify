@@ -209,4 +209,41 @@ export function getOptimizedImageUrl(imageUrl, width = 800, height, format = 'we
     console.error('URL oluşturma hatası:', error);
     return imageUrl; // Hata durumunda orijinal URL'yi döndür
   }
+}
+
+/**
+ * Responsive srcset oluşturmak için yardımcı fonksiyon
+ * @param {string} imageUrl - Orijinal görsel URL'si
+ * @param {number} originalWidth - Orijinal görsel genişliği
+ * @param {number} originalHeight - Orijinal görsel yüksekliği
+ * @param {Array<number>} breakpoints - Farklı genişlikler için kırılma noktaları
+ * @returns {string} - srcset string
+ */
+export function generateSrcsetString(imageUrl, originalWidth = 1320, originalHeight = 920, breakpoints = [480, 768, 1024, 1320]) {
+  if (!imageUrl) return '';
+  
+  const aspectRatio = originalWidth / originalHeight;
+  const srcsetParts = [];
+  
+  // Her bir kırılma noktası için URL oluştur
+  breakpoints.sort((a, b) => a - b).forEach(width => {
+    // Orijinal boyuttan büyük boyutlar için orijinal genişliği kullan
+    if (width > originalWidth) {
+      width = originalWidth;
+    }
+    
+    // Yüksekliği hesapla
+    const height = Math.round(width / aspectRatio);
+    
+    // Resim optimize etmek için fonksiyon varsa kullan, yoksa normal URL'yi kullan
+    // Not: getOptimizedImageUrl fonksiyonu varsa burada kullanılabilir
+    let url = imageUrl;
+    if (typeof getOptimizedImageUrl === 'function') {
+      url = getOptimizedImageUrl(imageUrl, width, height, 'webp', 80);
+    }
+    
+    srcsetParts.push(`${url} ${width}w`);
+  });
+  
+  return srcsetParts.join(', ');
 } 

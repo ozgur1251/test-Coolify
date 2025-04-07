@@ -56,5 +56,18 @@
 /* Mobil boyutları */
 @media (max-width: 480px) {
   .blog-featured-image {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  
+  .responsive-image-container {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .responsive-image {
+    position: relative;
+    height: auto;
   }
 } 
