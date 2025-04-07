@@ -23,9 +23,12 @@ const width = props.width || 1320;
 const height = props.height || 920;
 const className = props.class || "";
 const lazy = props.lazy !== false;
+
+// En-boy oranını hesapla
+const aspectRatio = width / height;
 ---
 
-<div class={`responsive-image-container ${className}`}>
+<div class={`responsive-image-container ${className}`} style={`aspect-ratio: ${aspectRatio};`}>
   <img
     src={src}
     alt={alt}
