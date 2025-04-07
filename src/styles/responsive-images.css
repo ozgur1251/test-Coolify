@@ -28,9 +28,7 @@
 
 /* Blog görselleri için özel stiller */
 .blog-featured-image {
-  border-radius: 8px;
   overflow: hidden;
-  margin-bottom: 2rem;
   max-width: 100%;
   margin-left: auto;
   margin-right: auto;
@@ -38,7 +36,6 @@
 
 /* Kart görselleri */
 .card-image-container {
-  border-radius: 4px;
   overflow: hidden;
 }
 
@@ -54,15 +51,10 @@
     position: relative;
     height: auto;
   }
-  
-  .blog-featured-image {
-    margin-bottom: 1.5rem;
-  }
 }
 
 /* Mobil boyutları */
 @media (max-width: 480px) {
   .blog-featured-image {
-    margin-bottom: 1rem;
   }
 } 
