@@ -65,4 +65,21 @@
     max-width: 480px; /* Mobil boyutu */
     margin-bottom: 1.5rem;
   }
+}
+
+/* Daha küçük mobil boyutları */
+@media (max-width: 360px) {
+  .blog-featured-image {
+    max-width: 360px; 
+  }
+}
+
+/* En küçük mobil boyutları */
+@media (max-width: 320px) {
+  .blog-featured-image {
+    /* Burada 100vw yerine belki biraz padding bırakmak daha iyi olabilir,
+       ancak sizes'daki 100vw ile tutarlılık için şimdilik böyle bırakalım.
+       Eğer görsel kenarlara yapışıyorsa padding eklenebilir. */
+    max-width: 100%; /* 320px ve altında tam genişlik */
+  }
 } 
