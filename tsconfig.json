@@ -9,7 +9,9 @@
     ".astro/types.d.ts",
     "src/pages/**/*.astro",
     "src/layouts/**/*.astro",
+    "src/components/**/*.astro",
     "src/**/*.ts",
-    "src/**/*.js"
+    "src/**/*.js",
+    "types.d.ts"
   ]
 }

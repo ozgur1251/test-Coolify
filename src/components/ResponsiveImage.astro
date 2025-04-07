@@ -1,0 +1,41 @@
+---
+// @ts-nocheck
+/**
+ * ResponsiveImage.astro - Boyutları ayarlanabilir responsive görsel bileşeni
+ */
+
+import "../styles/responsive-images.css";
+
+export interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  lazy?: boolean;
+}
+
+// TypeScript tipleriyle doğru şekilde çalışması için
+const props = Astro.props as Props;
+const src = props.src;
+const alt = props.alt;
+const width = props.width || 1320;
+const height = props.height || 920;
+const className = props.class || "";
+const lazy = props.lazy !== false;
+
+// En-boy oranını hesapla
+const aspectRatio = width / height;
+---
+
+<div class={`responsive-image-container ${className}`} style={`aspect-ratio: ${aspectRatio};`}>
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={lazy ? "lazy" : "eager"}
+    decoding="async"
+    class="responsive-image"
+  />
+</div> 

@@ -1,0 +1,55 @@
+/* Responsive Görsel Stilleri - Farklı boyutları destekler */
+
+/* Tüm görseller için temel stiller */
+.responsive-image-container {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  line-height: 0;
+  margin: 0 auto;
+  /* aspect-ratio artık dinamik olarak bileşenden geliyor */
+}
+
+.responsive-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-width: 100%;
+  object-fit: cover;
+}
+
+/* Blog görselleri için özel stiller */
+.blog-featured-image {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Kart görselleri */
+.card-image-container {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* PageSpeed için optimizasyon - sadece gerekli kadar alana izin ver */
+@media (max-width: 768px) {
+  .responsive-image-container {
+    max-width: 100%;
+  }
+  
+  .blog-featured-image {
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Mobil boyutları */
+@media (max-width: 480px) {
+  .blog-featured-image {
+    margin-bottom: 1rem;
+  }
+} 

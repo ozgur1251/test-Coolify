@@ -3,6 +3,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCategories, getCategoryPostCounts } from '../lib/supabase';
 import '../styles/cards.css';
+import ResponsiveImage from '../components/ResponsiveImage.astro';
+import '../styles/responsive-images.css';
 
 const pageTitle = "İstanbul Bina Güçlendirme - Karbon Fiber kolon, kiriş güçlendirme";
 const description = "İstanbul ve çevresinde profesyonel bina güçlendirme, kolon, kiriş güçlendirme ve CFRP karbon fiber takviye hizmetleri. Depreme dayanıklı yapılar için bize ulaşın.";
@@ -123,11 +125,13 @@ const schemaData = {
           <a href={`/kategori/${category.slug}`} 
              class="card-link"
              title={`${category.name} Bölgesi Bina Güçlendirme Hizmeti`}>
-            <div class="card-image">
+            <div class="card-image card-image-container">
               {category.featured_image ? (
-                <img 
+                <ResponsiveImage 
                   src={category.featured_image} 
                   alt={`${category.name} Bölgesi Bina Güçlendirme`}
+                  width={1320}
+                  height={920}
                 />
               ) : (
                 <div class="placeholder-image">

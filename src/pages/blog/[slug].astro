@@ -2,7 +2,9 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getBlogPostBySlug, getCategories } from '../../lib/supabase';
 import { parseMarkdown } from '../../lib/markdown';
+import ResponsiveImage from '../../components/ResponsiveImage.astro';
 import '../../styles/blog.css';
+import '../../styles/responsive-images.css';
 
 // Server-side rendering kullan (statik ön-render yerine)
 export const prerender = false;
@@ -399,14 +401,14 @@ const fullSchema = JSON.stringify({
   <article class="article-container">
     <header class="post-header">
       {post.featured_image && (
-        <div>
-            <img 
-              src={post.featured_image}
-              alt={imageAlt}
-              width="1320"
-              height="920"
-            />
-          </div>
+        <div class="blog-featured-image">
+          <ResponsiveImage 
+            src={post.featured_image}
+            alt={imageAlt}
+            width={1320}
+            height={920}
+          />
+        </div>
       )}
     </header>
     
