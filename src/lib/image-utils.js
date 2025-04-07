@@ -235,11 +235,27 @@ export function generateSrcsetString(imageUrl, originalWidth = 1320, originalHei
     // Yüksekliği hesapla
     const height = Math.round(width / aspectRatio);
     
-    // Direkt olarak URL'yi kullan, optimize fonksiyonu şu an çalışmıyor olabilir
-    // Supabase URL'lerinde direkt boyut parametreleri eklenebilir mi kontrol et
+    // Supabase URL'sine boyut parametrelerini ekle
+    // Örnek: https://supabase-url.com/storage/v1/object/public/images/image.jpg?width=480&height=335
     let url = imageUrl;
     
-    // Boyutu URL'ye ekle - basit bir şekilde
+    // URL nesnesini oluştur
+    try {
+      // URL'de zaten parametreler var mı kontrol et
+      if (url.includes('?')) {
+        // Zaten parametre varsa & ile ekle
+        url = `${url}&width=${width}&height=${height}`;
+      } else {
+        // Parametre yoksa ? ile ekle
+        url = `${url}?width=${width}&height=${height}`;
+      }
+      
+      // Görsel formatını ve kalitesini ekle (daha küçük dosya boyutu için)
+      url += '&format=webp&quality=80';
+    } catch (error) {
+      console.error('URL oluşturma hatası:', error);
+    }
+    
     srcsetParts.push(`${url} ${width}w`);
   });
   
