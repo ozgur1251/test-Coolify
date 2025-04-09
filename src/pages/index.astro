@@ -121,7 +121,7 @@ const schemaData = {
     <p class="lead-text">İstanbul ve çevresinde bina güçlendirme hizmetleri sunuyoruz. CFRP ve Karbon Fiber uygulamalarında uzmanız.</p>
   </header>
   <div class="post-grid">
-    {sortedCategories.map((category) => (
+    {sortedCategories.map((category, index) => (
       <article class="post-card">
         <a href={`/kategori/${category.slug}`}
            class="card-link"
@@ -134,6 +134,7 @@ const schemaData = {
                 width={1320}
                 height={920}
                 sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 991px) 470px, 370px"
+                lazy={index === 0 ? false : true}
               />
             ) : (
               <div class="placeholder-image">
