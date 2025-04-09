@@ -54,5 +54,6 @@ try {
     class="responsive-image"
     sizes={sizes}
     srcset={srcset || null}
+    fetchpriority={lazy ? "auto" : "high"}
   />
 </div> 
