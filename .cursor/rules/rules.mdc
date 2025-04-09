@@ -1,0 +1,53 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Proje Kuralları: SEO Astro Self-Host Coolify
+
+Bu proje, Astro framework kullanılarak oluşturulmuş, SEO odaklı, yüksek performanslı ve kendi kendine barındırılan (self-hosted via Coolify) bir web sitesidir. Bu projede çalışırken aşağıdaki kurallara ve önceliklere dikkat edin:
+
+## 🚀 Öncelikler
+
+1.  **SEO (Arama Motoru Optimizasyonu):** Tüm değişiklikler ve eklemeler SEO en iyi uygulamalarına uygun olmalıdır. Schema.org (`src/pages/blog/[slug].astro` içindeki JSON-LD), meta etiketler, canonical URL'ler, başlık hiyerarşisi ve içerik kalitesi kritik öneme sahiptir.
+2.  **Performans ve Hız:** Site hızı çok önemlidir. Minimal JavaScript kullanın, kodları optimize edin ve gereksiz bağımlılıklardan kaçının. Az kod, hızlı site demektir.
+    *   **Sunucu Tarafında Render (SSR):** Proje, özellikle dinamik içerik (blog yazıları gibi) için **Sunucu Tarafında Render (SSR)** kullanmaktadır. Bu genellikle sayfa dosyalarında `export const prerender = false;` satırıyla belirtilir. Statik site oluşturma (SSG) yerine SSR kullanılması, içeriğin istek anında sunucuda oluşturulduğu anlamına gelir. Bu, dinamik veri gerektiren sayfalar için önemlidir ancak sunucu yükünü etkileyebilir.
+    *   Astro'nun kısmi hidrasyon yeteneklerinden yararlanın.
+3.  **Kod Kalitesi ve Bakım:** Temiz, okunabilir ve sürdürülebilir kod yazın. Astro ve TypeScript/JavaScript en iyi pratiklerini takip edin.
+
+## 🖼️ Görsel Optimizasyonu (DOKUNULMAZ BÖLGE)
+
+Görsel optimizasyonu sitenin performansı için hayati önem taşır. Aşağıdaki dosyalar bu işlevsellik için merkezidir ve **kesinlikle gerekli olmadıkça veya talep edilmedikçe değiştirilmemelidir**:
+
+*   `src/components/ResponsiveImage.astro`: Duyarlı görselleri oluşturan bileşen.
+*   `src/lib/image-utils.js`: Görsel işleme yardımcı fonksiyonları (varsa).
+*   `src/styles/responsive-images.css`: Duyarlı görseller için özel stiller.
+
+Bu dosyalarda bir değişiklik yapmanız *gerekiyorsa*, değişikliğin nedenini ve potansiyel etkilerini açıkça belirtin.
+
+## 🎨 CSS ve Stil Değişiklikleri
+
+*   Genel veya bileşen özelinde stil değişiklikleri yaparken **öncelikle `src/styles/` dizinindeki mevcut CSS dosyalarını inceleyin**.
+*   Yeni stiller eklemek yerine mevcut stilleri genişletmeyi veya üzerine yazmayı tercih edin.
+*   **Görsellerle ilgili CSS kuralları *sadece* `src/styles/responsive-images.css` dosyasında bulunmalıdır.** Başka dosyalara görsel ile ilgili CSS eklemeyin.
+
+## 📈 Schema.org Yapısı (DOKUNULMAZ BÖLGE)
+
+*   Schema.org (JSON-LD) yapısı `src/pages/blog/[slug].astro` dosyasında tanımlanmıştır ve **yapısal olarak değiştirilmemelidir**.
+*   Schema verileri, `src/lib/supabase.js` aracılığıyla self-hosted Supabase veritabanından dinamik olarak çekilmektedir. Veri kaynağı veya çekme mantığına dokunmayın.
+*   Schema'da sadece *veri gösterimi* ile ilgili küçük düzeltmeler (örneğin, eksik bir alanın eklenmesi) yapılabilir, ancak ana yapı korunmalıdır.
+
+## 🗃️ Veri Kaynağı
+
+*   Sitenin içeriği (blog yazıları, kategoriler vb.) self-hosted Supabase üzerinden yönetilmektedir. Veri çekme işlemleri `src/lib/supabase.js` dosyasında bulunur. Bu dosyaya genellikle dokunulmamalıdır.
+
+## 🏗️ Genel Dizin Yapısı
+
+*   **`src/components`**: Tekrar kullanılabilir UI parçaları.
+*   **`src/layouts`**: Sayfa iskeletleri.
+*   **`src/lib`**: Yardımcı fonksiyonlar, API çağrıları (Supabase), harici servis entegrasyonları.
+*   **`src/pages`**: Site rotaları/sayfaları. Dinamik rotalar `[]` ile belirtilir. SSR kullanan sayfalar genellikle `export const prerender = false;` içerir.
+*   **`src/styles`**: Global ve bileşen stilleri.
+*   **`public`**: Statik varlıklar (resimler, fontlar, `robots.txt`).
+
+Bu kurallara uymanız, projenin tutarlılığını, performansını ve SEO başarısını korumak için önemlidir.

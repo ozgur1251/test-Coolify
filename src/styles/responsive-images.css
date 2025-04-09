@@ -51,32 +51,3 @@
 .card-image-container {
   overflow: hidden;
 }
-
-/* PageSpeed için optimizasyon - sadece gerekli kadar alana izin ver */
-/* @media (max-width: 768px) {
-  .blog-featured-image {
-    max-width: 768px; 
-  }
-} */
-
-/* Mobil boyutları */
-/* @media (max-width: 480px) {
-  .blog-featured-image {
-    max-width: 480px; 
-    margin-bottom: 1.5rem;
-  }
-} */
-
-/* Daha küçük mobil boyutları */
-/* @media (max-width: 360px) {
-  .blog-featured-image {
-    max-width: 360px; 
-  }
-} */
-
-/* En küçük mobil boyutları */
-/* @media (max-width: 320px) {
-  .blog-featured-image {
-    max-width: 100%; 
-  }
-} */ 

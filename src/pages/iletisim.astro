@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/contact.css'; // Astro tarafından bundle edilecek
+import ServiceAreas from '../components/ServiceAreas.astro'; // Yeni bileşeni import et
 
 const pageTitle = "İletişim - İstanbul Bina Güçlendirme";
 const description = "İstanbul Bina Güçlendirme ile iletişime geçin. Profesyonel bina güçlendirme, CFRP ve karbon fiber uygulamaları hakkında bilgi alın.";
@@ -27,11 +28,9 @@ const schemaData = {
   </slot>
 
   <div class="contact-container">
-    <h1 class="page-title">İstanbul Karbon Güçlendirme - İletişim</h1>
-    
     <div class="contact-content">
       <div class="contact-info">
-        <h2>İstanbul Bina Güçlendirme</h2>
+        <h1>İstanbul Güçlendirme - iletişim</h1>
         <p>Bina güçlendirme, karbon fiber uygulamaları ve yapısal takviye çözümleri için bize ulaşın.</p>
         
         <div class="contact-details">
@@ -76,29 +75,7 @@ const schemaData = {
       </div>
     </div>
     
-    <div class="service-areas">
-      <h2>Hizmet Bölgelerimiz</h2>
-      <p>İstanbul'un tüm ilçelerinde ve çevre illerde hizmet vermekteyiz.</p>
-      <div class="districts">
-        <h3>Kadıköy karbon güçlendirme</h3>
-        <h3>Beşiktaş karbon güçlendirme</h3>
-        <h3>Şişli karbon güçlendirme</h3>
-        <h3>Ataşehir karbon güçlendirme</h3>
-        <h3>Bakırköy karbon güçlendirme</h3>
-        <h3>Beylikdüzü karbon güçlendirme</h3>
-        <h3>Büyükçekmece karbon güçlendirme</h3>
-        <h3>Zeytinburnu karbon güçlendirme</h3>
-        <h3>Maltepe karbon güçlendirme</h3>
-        <h3>Üsküdar karbon güçlendirme</h3>
-        <h3>Eyüp karbon güçlendirme</h3>
-        <h3>Beyoğlu karbon güçlendirme</h3>
-        <h3>Kartal karbon güçlendirme</h3>
-        <h3>Esenyurt karbon güçlendirme</h3>
-        <h3>Göztepe karbon güçlendirme</h3>
-        <h3>Küçükçekmece karbon güçlendirme</h3>
-        <h3>Kadıköy karbon güçlendirme</h3>
-        <h3>Kadıköy karbon güçlendirme</h3>      
-      </div>
-    </div>
+    <ServiceAreas />
+
   </div>
 </BaseLayout> 

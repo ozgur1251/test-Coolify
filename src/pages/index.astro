@@ -117,10 +117,12 @@ const schemaData = {
     <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaData.localBusiness)} />
   </slot>
   <div class="home-container">
-    <h1 class="section-title">İstanbul Karbon Güçlendirme - Bölgelere Göre Hizmetlerimiz</h1>
-    <p class="lead-text">İstanbul ve çevresinde bina güçlendirme hizmetleri sunuyoruz. CFRP ve Karbon Fiber uygulamalarında uzmanız.</p>
+    <header class="page-header">
+      <h1 class="section-title">İstanbul Karbon Güçlendirme - Bölgelere Göre Hizmetlerimiz</h1>
+      <p class="lead-text">İstanbul ve çevresinde bina güçlendirme hizmetleri sunuyoruz. CFRP ve Karbon Fiber uygulamalarında uzmanız.</p>
+    </header>
     <div class="post-grid">
-      {sortedCategories.map((category, index) => (
+      {sortedCategories.map((category) => (
         <article class="post-card">
           <a href={`/kategori/${category.slug}`} 
              class="card-link"
@@ -179,3 +181,24 @@ const schemaData = {
     </section>
   </div>
 </BaseLayout>
+
+<style>
+  .page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .page-header .section-title {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .page-header .lead-text {
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+  }
+  .post-card .post-excerpt {
+    display: block;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: unset;
+    overflow: visible;
+  }
+</style>

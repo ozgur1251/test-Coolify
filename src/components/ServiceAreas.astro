@@ -1,0 +1,83 @@
+---
+// src/components/ServiceAreas.astro
+import { getCategories } from '../lib/supabase';
+
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+const categories = await getCategories();
+
+// Kategorileri alfabetik olarak sırala (isteğe bağlı)
+const sortedCategories = [...categories].sort((a, b) => a.name.localeCompare(b.name, 'tr'));
+---
+
+<div class="service-areas">
+  <h2>Hizmet Bölgelerimiz</h2>
+  <p>İstanbul'un tüm ilçelerinde ve çevre illerde hizmet vermekteyiz.</p>
+  <div class="districts-grid">
+    {sortedCategories.map((category: Category) => (
+      <a href={`/kategori/${category.slug}`} class="district-link">
+        {category.name}
+      </a>
+    ))}
+  </div>
+</div>
+
+<style>
+  .service-areas {
+    margin-top: 3rem;
+    padding: 2rem;
+    background-color: var(--color-grey-light);
+    border-radius: var(--radius-sm);
+  }
+
+  .service-areas h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    color: var(--color-text);
+  }
+
+  .service-areas p {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--color-text-light);
+  }
+
+  .districts-grid {
+    display: grid;
+    /* Ekran genişliğine göre sütun sayısını ayarla */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+    gap: 1rem;
+  }
+
+  .district-link {
+    display: block;
+    padding: 0.5rem 0.5rem;
+    background-color: white;
+    border-radius: var(--radius-xs);
+    text-align: center;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: background-color var(--transition), color var(--transition);
+    font-size: 0.95rem;
+    box-shadow: var(--shadow-xs);
+  }
+
+  .district-link:hover {
+    background-color: var(--color-primary);
+    color: white;
+  }
+
+  /* Küçük ekranlar için */
+  @media (max-width: 768px) {
+    .districts-grid {
+        grid-template-columns: 1fr; /* Tek sütun */
+    }
+    .service-areas { padding: 1.5rem; }
+  }
+
+</style> 

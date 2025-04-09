@@ -8,10 +8,16 @@
 }
 
 .page-title {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  color: var(--color-text);
+  margin: 0 0 1rem;
+  padding: 0 0 15px;
+  line-height: 1.2;
+  font-size: 1.3rem;
   text-align: center;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
 }
 
 .contact-content {
