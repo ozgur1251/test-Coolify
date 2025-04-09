@@ -5,6 +5,7 @@ import '../../styles/blog.css';
 import '../../styles/cards.css';
 import ResponsiveImage from '../../components/ResponsiveImage.astro';
 import '../../styles/responsive-images.css';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 // kategori sayfasına özel stiller Base Layout'ta bundle edilecek
 
 // Site URL'sini ve Şirket adını çevre değişkeninden alma veya varsayılan değerleri kullanma
@@ -43,6 +44,18 @@ const keywords = `bina güçlendirme, ${category.name}, deprem güçlendirme, ka
 
 // Canonical URL
 const canonicalURL = new URL(Astro.url.pathname, SITE_URL).toString();
+
+// BreadcrumbItem arayüzünü tanımla (Blog sayfası ile aynı)
+interface BreadcrumbItem {
+  name: string;
+  url?: string;
+}
+
+// Breadcrumb verilerini hazırla
+const breadcrumbItems: BreadcrumbItem[] = [
+  { name: "Ana Sayfa", url: SITE_URL },
+  { name: category.name } // Kategori sayfası olduğu için son öğe (kategori adı) tıklanabilir değil
+];
 
 // Schema.org yapısal veri (@graph ile birleştirildi)
 const fullSchema = {
@@ -158,9 +171,14 @@ const fullSchema = {
   canonicalURL={canonicalURL} // Canonical URL'i BaseLayout'a gönderelim
 >
   <Fragment slot="head">
+    <!-- Eski collectionSchema scriptini kaldırıyoruz -->
+    <!-- <script is:inline type="application/ld+json" set:html={JSON.stringify(collectionSchema)} /> -->
     <!-- Yeni birleştirilmiş schema scripti -->
     <script is:inline type="application/ld+json" set:html={JSON.stringify(fullSchema)} />
   </Fragment>
+
+  <!-- Breadcrumbs bileşenini buraya ekle -->
+  <Breadcrumbs items={breadcrumbItems} />
 
   <header class="category-header">
     <h1>{category.name}</h1>

@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/about.css'; // Astro tarafından bundle edilecek
 import ServiceAreas from '../components/ServiceAreas.astro'; // Yeni bileşeni import et
+import Breadcrumbs from '../components/Breadcrumbs.astro'; // Breadcrumbs bileşenini import et
 
 // Site URL'sini ve Şirket adını çevre değişkeninden alma veya varsayılan değerleri kullanma
 const SITE_URL = Astro.site?.href || import.meta.env.SITE_URL || "https://tr.istanbulbinaguclendirme.com";
@@ -22,6 +23,18 @@ const keywords = ["bina güçlendirme", "deprem güçlendirme", "İstanbul bina 
 
 // Canonical URL
 const canonicalURL = new URL(Astro.url.pathname, SITE_URL).toString();
+
+// BreadcrumbItem arayüzünü tanımla
+interface BreadcrumbItem {
+  name: string;
+  url?: string;
+}
+
+// Breadcrumb verilerini hazırla
+const breadcrumbItems: BreadcrumbItem[] = [
+  { name: "Ana Sayfa", url: SITE_URL },
+  { name: "Hakkında" } // Son öğe tıklanabilir değil
+];
 
 // Schema.org yapısal veri (@graph ile birleştirildi)
 const fullSchema = {
@@ -141,6 +154,10 @@ const fullSchema = {
     <!-- Yeni birleştirilmiş schema scripti -->
     <script is:inline type="application/ld+json" set:html={JSON.stringify(fullSchema)} />
   </slot>
+
+  <!-- Breadcrumbs bileşenini buraya ekle -->
+  <Breadcrumbs items={breadcrumbItems} />
+
 	<main class="about-container">
 		<section class="about-section">
 			<h1>Firmamız Hakkında</h1>
