@@ -62,17 +62,14 @@ const socialMedia = post.social_media || {};
 // Markdown içeriğini işle
 function adjustHeadingLevels(content: string): string {
   if (!content) return '';
-  
-  // Düzenlenmiş başlık hiyerarşisi: h2'leri h1'e ve h3'leri h2'ye dönüştür
-  // Ardından h4'leri h3'e dönüştür - böylece sıralama korunur
   content = content.replace(/^## (.+)$/gm, '# $1');
   content = content.replace(/^### (.+)$/gm, '## $1');
   content = content.replace(/^#### (.+)$/gm, '### $1');
   return content;
 }
 
-// İçeriği markdown'dan HTML'e dönüştür
-const contentHtml = parseMarkdown(adjustHeadingLevels(post.content));
+// === STEP 1: Get HTML and Headings ===
+const { html: contentHtml, headings: tocHeadings } = parseMarkdown(adjustHeadingLevels(post.content));
 
 // FAQ verilerini işleme fonksiyonu
 function processFaqData(faqData: any[]): FaqItem[] {
@@ -285,15 +282,15 @@ const fullSchema = JSON.stringify({
       "url": canonicalURL,
       "author": {
         "@type": "https://schema.org/Organization",
-        "@id": `${SITE_URL}/#organization`,
+        "@id": `${SITE_URL}/#localbusiness`,
         "name": category.name,
         "url": SITE_URL
       },
       "publisher": {
         "@type": "https://schema.org/Organization",
-        "@id": `${SITE_URL}/#organization`,
-        "name": pageTitle,
-        "url": canonicalURL,
+        "@id": `${SITE_URL}/#localbusiness`,
+        "name": COMPANY_NAME,
+        "url": SITE_URL,
         "logo": {
           "@type": "https://schema.org/ImageObject",
           "url": `${SITE_URL}/logo.webp`,
@@ -404,11 +401,9 @@ const fullSchema = JSON.stringify({
     {post.keywords && post.keywords.map((keyword: string) => (
       <meta property="article:tag" content={keyword} />
     ))}
-
     {facebookAppId && <meta property="fb:app_id" content={facebookAppId} />}
     {twitterUsername && <meta name="twitter:site" content={`@${twitterUsername}`} />}
     {twitterUsername && <meta name="twitter:creator" content={`@${twitterUsername}`} />}
-
     <script is:inline type="application/ld+json" set:html={fullSchema} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -422,17 +417,19 @@ const fullSchema = JSON.stringify({
         <div class="blog-featured-image">
           <ResponsiveImage
             src={post.featured_image}
-            alt={imageAlt}
+            alt={imageAlt || post.title}
             width={1200}
             height={800}
             lazy={false}
           />
         </div>
       )}
+      
+      <div id="toc-container" class="mb-8"></div>
     </header>
 
     <div class="post-content markdown-content">
-      <div set:html={contentHtml} />
+      <div id="post-content-inner" set:html={contentHtml} />
     </div>
 
     {hasFaq && (
@@ -442,7 +439,7 @@ const fullSchema = JSON.stringify({
           <div class="faq-item">
             <h2 class="faq-question">{item.question}</h2>
             <div class="faq-answer">
-              <div set:html={parseMarkdown(item.answer)} />
+              <div set:html={parseMarkdown(item.answer).html} />
             </div>
           </div>
         ))}
@@ -491,11 +488,58 @@ const fullSchema = JSON.stringify({
         )}
       </div>
     </footer>
-  </article>
-</BaseLayout>
 
-<style>
-  /* Constrain article width on blog detail page, overriding blog.css width:100% */
+  </article>
+
+  <script type="application/json" id="toc-data" set:html={JSON.stringify(tocHeadings)} is:inline></script>
+
+  <script is:inline>
+    function generateToc() {
+      const tocDataElement = document.getElementById('toc-data');
+      const tocContainer = document.getElementById('toc-container');
+      const contentExists = document.getElementById('post-content-inner');
+
+      if (!tocDataElement || !tocContainer || !contentExists) {
+        console.warn('TOC generation failed: Data, container, or content element not found.');
+        return;
+      }
+
+      const headingsWithId = contentExists.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
+      if (headingsWithId.length === 0) {
+         console.warn('TOC generation skipped: No headings with IDs found in content (check markdown.js).');
+         tocContainer.style.display = 'none';
+         return;
+      }
+      
+      let tocItems = [];
+      try {
+        tocItems = JSON.parse(tocDataElement.textContent || '[]');
+      } catch (e) {
+        console.error("Failed to parse ToC data:", e);
+        tocContainer.style.display = 'none';
+        return;
+      }
+
+      if (tocItems.length > 1) {
+        let tocHtml = '<h2 class="toc-title">İçindekiler</h2><ul class="toc-list">';
+        tocItems.forEach(/** @param {{level: number, text: string, slug: string}} item */ (item) => {
+          const indentClass = item.level === 3 ? 'ml-4' : item.level === 4 ? 'ml-8' : '';
+          tocHtml += `<li class="${indentClass}"><a href="#${item.slug}" class="toc-link">${item.text}</a></li>`;
+        });
+        tocHtml += '</ul>';
+        tocContainer.innerHTML = tocHtml;
+        tocContainer.classList.add('toc-box', 'border', 'p-4', 'rounded-md', 'bg-gray-50', 'dark:bg-gray-800', 'dark:border-gray-700');
+      } else {
+        tocContainer.style.display = 'none';
+      }
+    }
+
+    document.addEventListener('astro:page-load', generateToc);
+    generateToc();
+  </script>
+
+  <style>
+      /* Constrain article width on blog detail page, overriding blog.css width:100% */
   .article-container {
     max-width: 896px; /* Equivalent to Tailwind's max-w-4xl */
     //padding-left: 1rem; /* Add horizontal padding */
@@ -551,5 +595,36 @@ const fullSchema = JSON.stringify({
      margin-top: 0; /* Remove extra top margin inherited from blog.css as 'gap' handles spacing */
      width: 100%; /* Allow it to take full width in the column layout */
   }
+  .toc-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--color-text-default);
+    }
+  .toc-list {
+      list-style: disc;
+      padding-left: 1.5em;
+      margin: 0;
+    }
+  .toc-list li {
+      margin-bottom: 0.5em;
+    }
+  .toc-list li a.toc-link {
+      text-decoration: none;
+      color: var(--color-primary, #007bff);
+      transition: color 0.2s ease;
+    }
+  .toc-list li a.toc-link:hover,
+  .toc-list li a.toc-link:focus {
+      text-decoration: underline;
+      color: var(--color-secondary, #0056b3);
+    }
+  .toc-list li.ml-4 { list-style-type: circle; margin-left: 1em; }
+  .toc-list li.ml-8 { list-style-type: square; margin-left: 2em; }
+    
+  h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] {
+      scroll-margin-top: 4rem;
+  }
+</style>
 
-</style> 
+</BaseLayout> 

@@ -4,7 +4,7 @@ import node from '@astrojs/node';
 import 'dotenv/config'; // Dotenv'i yapılandırma dosyasında doğrudan yükle
 
 // Ortam değişkenine erişim
-const siteUrl = process.env.SITE_URL;
+const siteUrl = process.env.SITE_URL || 'https://tr.istanbulbinaguclendirme.com';
 
 // https://astro.build/config
 export default defineConfig({

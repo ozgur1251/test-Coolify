@@ -24,6 +24,9 @@ const isBlogDetail = currentPath.startsWith('/blog/') && currentPath !== '/blog/
 
 // Görsel URL'si için kontrol
 const ogImageUrl = imageUrl ? (imageUrl.startsWith('http') ? imageUrl : (Astro.site ? new URL(imageUrl, Astro.site).href : imageUrl)) : '';
+
+// Google Site Verification kodunu ortam değişkeninden al
+const googleSiteVerification = import.meta.env.GOOGLE_SITE_VERIFICATION;
 ---
 
 <html lang="tr">
@@ -37,6 +40,9 @@ const ogImageUrl = imageUrl ? (imageUrl.startsWith('http') ? imageUrl : (Astro.s
 		<meta name="keywords" content={keywords} />
 		<meta name="author" content={author} />
 		{noindex && <meta name="robots" content="noindex" />}
+		
+		<!-- Google Site Verification -->
+		{googleSiteVerification && <meta name="google-site-verification" content={googleSiteVerification} />}
 		
 		<!-- Performans optimizasyonları -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
