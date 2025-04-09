@@ -5,26 +5,12 @@ import ServiceAreas from '../components/ServiceAreas.astro'; // Yeni bileşeni i
 
 const pageTitle = "İletişim - İstanbul Bina Güçlendirme";
 const description = "İstanbul Bina Güçlendirme ile iletişime geçin. Profesyonel bina güçlendirme, CFRP ve karbon fiber uygulamaları hakkında bilgi alın.";
-
-// Schema.org yapılandırması
-const schemaData = {
-  organization: {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "İstanbul Bina Güçlendirme",
-    "url": Astro.site?.href || import.meta.env.SITE_URL || "",
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+90-542-748-3855",
-      "contactType": "customer service"
-    }
-  }
-};
 ---
 
 <BaseLayout pageTitle={pageTitle} description={description} noindex={true}>
   <slot slot="head">
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaData.organization)} />
+    <!-- Schema scripti kaldırıldı -->
+    <!-- <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaData.organization)} /> -->
   </slot>
 
   <div class="contact-container">

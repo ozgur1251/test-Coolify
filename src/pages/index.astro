@@ -6,6 +6,19 @@ import '../styles/cards.css';
 import ResponsiveImage from '../components/ResponsiveImage.astro';
 import '../styles/responsive-images.css';
 
+// Site URL'sini ve Şirket adını çevre değişkeninden alma veya varsayılan değerleri kullanma
+const SITE_URL = Astro.site?.href || import.meta.env.SITE_URL || "https://tr.istanbulbinaguclendirme.com"; // Varsayılan URL'yi güncelleyin
+const COMPANY_NAME = import.meta.env.COMPANY_NAME || "İstanbul Bina Güçlendirme";
+const COMPANY_PHONE = "+90-542-748-3855";
+const COMPANY_EMAIL = "info@karbonguclendirme.com"; // E-posta adresini ekleyin veya güncelleyin
+const COMPANY_ADDRESS = "İstanbul, Türkiye";
+const SOCIAL_LINKS = {
+  instagram: "https://www.instagram.com/karbonguclendirme/",
+  facebook: "https://www.facebook.com/karbonguclendirme/",
+  twitter: "https://twitter.com/karbonguclendirme/" // Twitter linkini doğrulayın
+};
+const cityName = "İstanbul"; // Şehir adı
+
 const pageTitle = "İstanbul Bina Güçlendirme - Karbon Fiber kolon, kiriş güçlendirme";
 const description = "İstanbul ve çevresinde profesyonel bina güçlendirme, kolon, kiriş güçlendirme ve CFRP karbon fiber takviye hizmetleri. Depreme dayanıklı yapılar için bize ulaşın.";
 
@@ -15,6 +28,7 @@ interface Category {
   slug: string;
   description?: string;
   featured_image?: string;
+  postCount: number;
 }
 
 interface CategoryCount {
@@ -38,83 +52,143 @@ const categoriesWithCounts = categories.map((category: Category) => {
 // Tüm kategorileri gösterelim, blog yazısı olmayan kategoriler de dahil
 const sortedCategories = [...categoriesWithCounts].sort((a, b) => b.postCount - a.postCount);
 
-// Schema.org yapılandırma verileri
-const schemaData = {
-  organization: {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "İstanbul Bina Güçlendirme",
-    "url": Astro.site?.href || import.meta.env.SITE_URL || "",
-    "logo": Astro.site 
-      ? new URL("/favicon.svg", Astro.site).href 
-      : "/favicon.svg",
-    "description": description,
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "İstanbul",
-      "addressRegion": "İstanbul",
-      "addressCountry": "TR"
-    },
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+90-542-748-3855",
-      "contactType": "customer service"
-    }
-  },
-  
-  website: {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "İstanbul Bina Güçlendirme",
-    "url": Astro.site?.href || import.meta.env.SITE_URL || ""
-  },
-  
-  localBusiness: {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "@id": (Astro.site?.href || import.meta.env.SITE_URL || "") + "#localBusiness",
-    "name": "İstanbul Bina Güçlendirme",
-    "image": [
-      Astro.site 
-        ? new URL("/favicon.svg", Astro.site).href 
-        : "/favicon.svg"
-    ],
-    "priceRange": "₺₺₺",
-    "telephone": "+90-542-748-3855",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "İstanbul",
-      "addressRegion": "İstanbul",
-      "addressCountry": "TR"
-    },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": 41.0082,
-      "longitude": 28.9784 
-    },
-    "openingHoursSpecification": [
+// Tüm kategorileri OfferCatalog yapısına dönüştür (Blog sayfasından uyarlandı)
+const offerCatalogs = sortedCategories.map((cat: any) => {
+  return {
+    "@type": "OfferCatalog",
+    "name": cat.name,
+    "itemListElement": [
       {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday"
-        ],
-        "opens": "09:00",
-        "closes": "18:00"
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": `${cat.name} Bölgesi Bina Güçlendirme Hizmeti`, // Servis adını özelleştirin
+          "description": cat.description || `${cat.name} bölgesinde profesyonel güçlendirme hizmetleri.` // Servis açıklamasını özelleştirin
+        }
       }
     ]
-  }
+  };
+});
+
+// Schema.org yapılandırma verileri - @graph yapısı ile birleştirildi
+const fullSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    // LocalBusiness (Daha detaylı)
+    {
+      "@type": "LocalBusiness",
+      "@id": `${SITE_URL}/#localBusiness`,
+      "name": COMPANY_NAME,
+      "url": SITE_URL,
+      "telephone": COMPANY_PHONE,
+      "email": COMPANY_EMAIL,
+      "description": description,
+      "image": [
+        `${SITE_URL}/logo.webp` // Logo URL'sini doğrulayın/güncelleyin
+      ],
+      "logo": {
+        "@type": "ImageObject",
+        "@id": `${SITE_URL}/#logo`,
+        "url": `${SITE_URL}/logo.webp`, // Logo URL'sini doğrulayın/güncelleyin
+        "width": "512", // Logo boyutunu doğrulayın/güncelleyin
+        "height": "512", // Logo boyutunu doğrulayın/güncelleyin
+        "contentUrl": `${SITE_URL}/logo.webp` // Logo URL'sini doğrulayın/güncelleyin
+      },
+      "priceRange": "₺₺₺", // Fiyat aralığını doğrulayın/güncelleyin
+      "currenciesAccepted": "TRY",
+      "paymentAccepted": "Nakit, Kredi Kartı, Banka Havalesi",
+      "areaServed": {
+        "@type": "City",
+        "name": cityName
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": COMPANY_ADDRESS, // Tam adresi eklemek daha iyi olabilir
+        "addressLocality": cityName,
+        "addressRegion": cityName, // Genellikle il adı kullanılır
+        "postalCode": "34000", // Genel bir posta kodu, gerekirse özelleştirin
+        "addressCountry": {
+          "@type": "Country",
+          "name": "TR"
+        }
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "41.0082", // Koordinatları doğrulayın/güncelleyin
+        "longitude": "28.9784" // Koordinatları doğrulayın/güncelleyin
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "opens": "09:00",
+          "closes": "18:00"
+        }
+      ],
+      "sameAs": Object.values(SOCIAL_LINKS),
+      "serviceType": [ // Sunulan ana hizmetleri listeleyin
+        "Bina Güçlendirme",
+        "Karbon Fiber Güçlendirme",
+        "CFRP Güçlendirme",
+        "Kolon Güçlendirme",
+        "Kiriş Güçlendirme",
+        "Deprem Güçlendirme",
+        "FRP Güçlendirme",
+        "Tavan Güçlendirme",
+        "Zemin Güçlendirme",
+        "Elyaf Güçlendirme"
+      ],
+      "makesOffer": offerCatalogs.flatMap(catalog => catalog.itemListElement) // OfferCatalog'daki teklifleri buraya ekleyebiliriz
+    },
+    // WebSite
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      "url": SITE_URL,
+      "name": COMPANY_NAME,
+      "description": description,
+      "publisher": {
+        "@id": `${SITE_URL}/#localBusiness` // LocalBusiness'a referans
+      },
+      "inLanguage": "tr-TR"
+    },
+    // CollectionPage (Ana sayfa için daha uygun)
+    {
+      "@type": "CollectionPage",
+      "@id": `${SITE_URL}/#webpage`,
+      "url": SITE_URL,
+      "name": pageTitle,
+      "isPartOf": {
+        "@id": `${SITE_URL}/#website` // WebSite'a referans
+      },
+      "description": description,
+      "breadcrumb": { // Basit bir breadcrumb eklenebilir
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Ana Sayfa",
+          "item": SITE_URL
+        }]
+      },
+      "inLanguage": "tr-TR"
+    },
+    // OfferCatalog (Blog sayfasından uyarlanan yapı)
+    ...offerCatalogs // offerCatalogs dizisindeki her bir öğeyi @graph'a ekle
+  ]
 };
 ---
 
 <BaseLayout pageTitle={pageTitle} description={description}>
   <slot slot="head">
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaData.organization)} />
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaData.website)} />
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaData.localBusiness)} />
+    <!-- Yeni birleştirilmiş schema scripti -->
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(fullSchema)} />
   </slot>
   <header class="page-header">
     <h1 class="section-title">İstanbul Karbon Güçlendirme - Bölgelere Göre Hizmetlerimiz</h1>

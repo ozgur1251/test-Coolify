@@ -2,47 +2,145 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/about.css'; // Astro tarafından bundle edilecek
 import ServiceAreas from '../components/ServiceAreas.astro'; // Yeni bileşeni import et
+
+// Site URL'sini ve Şirket adını çevre değişkeninden alma veya varsayılan değerleri kullanma
+const SITE_URL = Astro.site?.href || import.meta.env.SITE_URL || "https://tr.istanbulbinaguclendirme.com";
+const COMPANY_NAME = import.meta.env.COMPANY_NAME || "İstanbul Bina Güçlendirme";
+const COMPANY_PHONE = "+90-542-748-3855";
+const COMPANY_EMAIL = "info@karbonguclendirme.com";
+const COMPANY_ADDRESS = "İstanbul, Türkiye"; // Tam adresi kullanmak daha iyi olabilir
+const SOCIAL_LINKS = {
+  instagram: "https://www.instagram.com/karbonguclendirme/",
+  facebook: "https://www.facebook.com/karbonguclendirme/",
+  twitter: "https://twitter.com/karbonguclendirme/"
+};
+const cityName = "İstanbul";
+
 const pageTitle = "Hakkında - İstanbul Bina Güçlendirme";
 const description = "İstanbul'un lider bina güçlendirme şirketi. Uzman kadromuz ve profesyonel yaklaşımımızla 20 yılı aşkın süredir hizmetinizdeyiz. Karbon fiber ve kolona mantolama uygulamalarında öncü.";
 const keywords = ["bina güçlendirme", "deprem güçlendirme", "İstanbul bina güçlendirme", "karbon fiber güçlendirme", "yapısal güçlendirme", "betonarme güçlendirme"];
 
-// Yapısal veri
-const structuredData = {
+// Canonical URL
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL).toString();
+
+// Schema.org yapısal veri (@graph ile birleştirildi)
+const fullSchema = {
   "@context": "https://schema.org",
-  "@type": "AboutPage",
-  "name": pageTitle,
-  "description": description,
-  "publisher": {
-    "@type": "Organization",
-    "name": "İstanbul Bina Güçlendirme",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://istanbulbinaguclendirme.com/images/logo.png"
-    }
-  },
-  "mainEntity": {
-    "@type": "Organization",
-    "name": "İstanbul Bina Güçlendirme",
-    "description": "Bina güçlendirme ve depreme karşı koruma çözümleri sunan firma",
-    "foundingDate": "2010",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "İstanbul",
-      "addressRegion": "Marmara",
-      "addressCountry": "TR"
+  "@graph": [
+    // LocalBusiness (Diğer sayfalardan alındı, genel bilgilerle)
+    {
+      "@type": "LocalBusiness",
+      "@id": `${SITE_URL}/#localBusiness`,
+      "name": COMPANY_NAME,
+      "url": SITE_URL,
+      "telephone": COMPANY_PHONE,
+      "email": COMPANY_EMAIL,
+      "description": "İstanbul ve çevresinde profesyonel bina güçlendirme, karbon fiber ve CFRP uygulama hizmetleri.", // Genel şirket açıklaması
+      "image": [`${SITE_URL}/logo.webp`],
+      "logo": {
+        "@type": "ImageObject",
+        "@id": `${SITE_URL}/#logo`,
+        "url": `${SITE_URL}/logo.webp`,
+        "width": "512",
+        "height": "512",
+        "contentUrl": `${SITE_URL}/logo.webp`
+      },
+      "priceRange": "₺₺₺",
+      "currenciesAccepted": "TRY",
+      "paymentAccepted": "Nakit, Kredi Kartı, Banka Havalesi",
+      "areaServed": {
+        "@type": "AdministrativeArea", // İstanbul ve çevresi için daha uygun olabilir
+        "name": "İstanbul ve çevresi" // Mevcut bilgiyi kullandık
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": COMPANY_ADDRESS,
+        "addressLocality": cityName,
+        "addressRegion": cityName,
+        "postalCode": "34000",
+        "addressCountry": {"@type": "Country", "name": "TR"}
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "41.0082",
+        "longitude": "28.9784"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "09:00",
+          "closes": "18:00"
+        }
+      ],
+      "sameAs": Object.values(SOCIAL_LINKS),
+      "serviceType": [ // Ana hizmetler (index.astro'dan)
+        "Bina Güçlendirme",
+        "Karbon Fiber Güçlendirme",
+        "CFRP Güçlendirme",
+        "Kolon Güçlendirme",
+        "Kiriş Güçlendirme",
+        "Deprem Güçlendirme",
+        "FRP Güçlendirme",
+        "Tavan Güçlendirme",
+        "Zemin Güçlendirme",
+        "Elyaf Güçlendirme"
+      ]
     },
-    "areaServed": "İstanbul ve çevresi",
-    "serviceType": ["Bina Güçlendirme", "Karbon Fiber Güçlendirme", "Deprem Güçlendirme, Kolon Güçlendirme, Kiriş Güçlendirme, Yapısal Güçlendirme, Betonarme Güçlendirme"]
-  }
+    // WebSite (Diğer sayfalardan alındı)
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      "url": SITE_URL,
+      "name": COMPANY_NAME,
+      "description": "İstanbul ve çevresinde profesyonel bina güçlendirme hizmetleri.",
+      "publisher": {"@id": `${SITE_URL}/#localBusiness`},
+      "inLanguage": "tr-TR"
+    },
+    // AboutPage (Bu sayfaya özel)
+    {
+      "@type": "AboutPage",
+      "@id": `${canonicalURL}#webpage`,
+      "url": canonicalURL,
+      "name": pageTitle,
+      "isPartOf": {"@id": `${SITE_URL}/#website`},
+      "description": description,
+      "breadcrumb": {"@id": `${canonicalURL}#breadcrumb`},
+      "inLanguage": "tr-TR",
+      "mainEntity": {"@id": `${SITE_URL}/#localBusiness`} // Ana varlık olarak işletmeyi belirtebiliriz
+    },
+    // BreadcrumbList
+    {
+      "@type": "BreadcrumbList",
+      "@id": `${canonicalURL}#breadcrumb`,
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Ana Sayfa",
+          "item": SITE_URL
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Hakkında",
+          "item": canonicalURL
+        }
+      ]
+    }
+  ]
 };
 ---
-
 <BaseLayout 
   pageTitle={pageTitle}
   description={description}
-  keywords={keywords}
-  structuredData={structuredData}
+  keywords={keywords.join(', ')}
+  canonicalURL={canonicalURL}
 >
+  <slot slot="head">
+    <!-- Yeni birleştirilmiş schema scripti -->
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(fullSchema)} />
+  </slot>
 	<main class="about-container">
 		<section class="about-section">
 			<h1>Firmamız Hakkında</h1>
