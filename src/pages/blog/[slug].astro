@@ -458,11 +458,16 @@ const fullSchema = JSON.stringify({
           font-size: 0.9rem; /* Smaller link text on mobile */
         }
       }
-    </style>
 
-    <!-- Defer loading Non-Critical ToC CSS -->
-    <link rel="preload" href="/styles/toc.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/styles/toc.css"></noscript>
+      /* Content from toc.css */
+      .toc-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--color-text-default); }
+      .toc-list { list-style: disc; padding-left: 1.5em; margin: 0; }
+      .toc-list li { margin-bottom: 0.5em; }
+      .toc-list li a.toc-link { text-decoration: none; color: var(--color-primary, #007bff); transition: none; }
+      .toc-list li a.toc-link:hover, .toc-list li a.toc-link:focus { text-decoration: underline; color: var(--color-secondary, #0056b3); }
+      .toc-list li.ml-4 { list-style-type: circle; margin-left: 1em; }
+      .toc-list li.ml-8 { list-style-type: square; margin-left: 2em; }
+    </style>
   </slot>
 
   <article class="article-container">
