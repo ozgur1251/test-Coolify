@@ -15,7 +15,6 @@
 .toc-list li a.toc-link {
   text-decoration: none;
   color: var(--color-primary, #007bff);
-  transition: color 0.2s ease;
 }
 .toc-list li a.toc-link:hover,
 .toc-list li a.toc-link:focus {

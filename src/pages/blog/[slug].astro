@@ -430,6 +430,17 @@ const fullSchema = JSON.stringify({
       }
       .toc-list li a.toc-link {
         display: block; /* Ensure links take block space */
+        /* Base font-size will be inherited, adjust in media query */
+      }
+
+      /* Mobile specific ToC font sizes */
+      @media (max-width: 768px) {
+        .toc-title {
+          font-size: 1.1rem; /* Smaller title on mobile */
+        }
+        .toc-list li a.toc-link {
+          font-size: 0.9rem; /* Smaller link text on mobile */
+        }
       }
     </style>
 
