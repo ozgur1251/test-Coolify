@@ -466,6 +466,70 @@ const fullSchema = JSON.stringify({
       .toc-list li.ml-4 { list-style-type: circle; margin-left: 1em; }
       .toc-list li.ml-8 { list-style-type: square; margin-left: 2em; }
     </style>
+
+    <!-- Additional Critical CSS -->
+    <style is:inline>
+      :root {
+        --color-primary:rgb(71, 0, 204);
+        --color-primary-light: #e6f0fa;
+        --color-text: #333;
+        --color-text-light: #666;
+        --color-background: #fff;
+        --color-border: #eaeaea;
+        --color-grey-light: #f5f5f5;
+        --color-secondary: #4a90e2;
+        --shadow-sm: 0 3px 8px rgba(0,0,0,.1);
+        --shadow-md: 0 5px 15px rgba(0,0,0,.1);
+        --transition: .2s ease;
+        --radius-sm: 4px;
+        --radius-md: 8px;
+        --max-width: 1200px; /* Assume a max-width variable is used */
+      }
+      *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+      html, body { width:100%; position:relative; overflow-x:hidden; max-width:100%; }
+      body { font-family:Arial,sans-serif; line-height:1.6; display:flex; flex-direction:column; align-items:center; color:var(--color-text); background-color:var(--color-background); min-height:100vh; }
+      .site-header, main { width:100%; }
+      .header-container, .wide-page, .blog-detail-page { width:100%; max-width:var(--max-width); margin:0 auto; padding:0 1rem; }
+      .site-header { text-align:center; padding:15px 0 0; }
+      header { margin-bottom:0; }
+      main { flex:1; width:100%; max-width:100%; overflow-x:hidden; margin-top:30px; padding-bottom:30px; }
+      .page-title { margin:0 0 1rem; padding:0 0 15px; line-height:1.2; font-size:1.3rem; text-align:center; height:80px; display:flex; align-items:center; justify-content:center; font-weight:600; }
+      .nav-wrapper{width:100%;position:relative;margin:0;padding:0}
+      .nav-container{position:relative;width:100%;display:flex;flex-direction:column;align-items:center;height:auto;margin:0;padding:0}
+      .nav-border{position:relative;width:100vw;height:1px;left:50%;transform:translate(-50%);background:linear-gradient(90deg,#0000,#06c3,#0066cc80 30%,#06c,#0066cc80 70%,#06c3,#0000);margin:0;padding:0}
+      .top-border{margin-bottom:10px}
+      .bottom-border{margin-top:10px}
+      .main-nav{display:flex;justify-content:center;align-items:center;gap:20px;width:100%;max-width:var(--max-width);margin:0 auto;padding:5px 20px;height:40px}
+      .nav-item{color:var(--color-text);text-decoration:none;font-weight:500;padding:5px 10px;border-radius:var(--radius-sm);transition:background-color var(--transition),color var(--transition)}
+      /* Basic Breadcrumb Styles (Ensure these cover your component) */
+      .post-header nav ol { list-style: none; padding: 0; margin: 0 0 1rem 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      .post-header nav ol li { display: flex; align-items: center; font-size: 0.9rem; color: var(--color-text-light); }
+      .post-header nav ol li a { color: var(--color-primary); text-decoration: none; }
+      .post-header nav ol li a:hover { text-decoration: underline; }
+      .post-header nav ol li:not(:last-child)::after { content: '/'; margin-left: 0.5rem; color: var(--color-text-light); }
+      /* Article Specific */
+      .article-container { max-width: 896px; width: auto; margin: 2rem auto; box-sizing: border-box; }
+      .post-header { margin-bottom: 1rem; }
+      .blog-featured-image { margin-bottom: 1.5rem; overflow: hidden; }
+      .blog-featured-image .responsive-image-container { border-radius: var(--radius-md, 8px); box-shadow: var(--shadow-md, 0 5px 15px rgba(0,0,0,0.1)); overflow: hidden; }
+      .markdown-content h1{ font-size:clamp(1.75rem,5vw,2.5rem); line-height:1.2; font-weight:700; margin:0 0 1rem; color:var(--color-secondary,rgb(76, 74, 226)); }
+      /* Mobile Critical */
+      @media (max-width: 768px) {
+        .site-header{padding:10px 0 0}
+        .page-title{font-size:1.5rem;height:60px;padding:0 0 10px}
+        .nav-item{padding:6px 12px}
+        .main-nav{padding:6px 20px}
+        .markdown-content h1 { font-size: clamp(1.6rem, 5vw, 2rem); }
+        .article-container { margin: 1.5rem auto; }
+      }
+      @media (max-width: 480px) {
+        .page-title{font-size:1.3rem;height:50px}
+        .nav-item{padding:8px 15px}
+        .main-nav{gap:12px}
+        .markdown-content h1 { font-size: clamp(1.4rem, 5vw, 1.8rem); }
+        .article-container { margin: 1rem auto; }
+      }
+    </style>
   </slot>
 
   <article class="article-container">
