@@ -433,8 +433,11 @@ const fullSchema = JSON.stringify({
         /* Base font-size will be inherited, adjust in media query */
       }
 
-      /* Mobile specific ToC font sizes */
+      /* Mobile specific ToC font sizes and layout */
       @media (max-width: 768px) {
+        #toc-container {
+          min-height: 150px; /* Increased height for mobile */
+        }
         .toc-title {
           font-size: 1.1rem; /* Smaller title on mobile */
         }
