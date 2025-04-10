@@ -412,16 +412,8 @@ const fullSchema = JSON.stringify({
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Defer loading ToC CSS -->
-    <link rel="preload" href="/styles/toc.css" as="style" id="toc-styles">
+    <link rel="stylesheet" href="/styles/toc.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="/styles/toc.css"></noscript>
-    <script is:inline>
-      const tocLink = document.getElementById('toc-styles');
-      if (tocLink) {
-        tocLink.addEventListener('load', () => {
-          tocLink.setAttribute('rel', 'stylesheet');
-        });
-      }
-    </script>
   </slot>
 
   <article class="article-container">
