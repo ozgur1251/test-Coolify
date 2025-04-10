@@ -4,8 +4,6 @@ import { getBlogPostBySlug, getCategories } from '../../lib/supabase';
 import { parseMarkdown } from '../../lib/markdown';
 import ResponsiveImage from '../../components/ResponsiveImage.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import '../../styles/blog.css';
-import '../../styles/responsive-images.css';
 
 // Server-side rendering kullan (statik ön-render yerine)
 export const prerender = false;
@@ -89,6 +87,22 @@ function processFaqData(faqData: any[]): FaqItem[] {
 const processedFaq = processFaqData(post.faq) || processFaqData(post.sss) || [];
 const hasFaq = processedFaq.length > 0;
 
+// Category var mı kontrol et
+const hasCategory = !!category;
+
+// === STEP 2: Generate ToC HTML Server-side ===
+let tocHtml = '';
+if (tocHeadings && tocHeadings.length > 1) {
+  tocHtml += '<h2 class="toc-title">İçindekiler</h2><ul class="toc-list">';
+  tocHeadings.forEach((item: {level: number, text: string, slug: string}) => {
+    // Başlık seviyesine göre girinti sınıfı ekle (opsiyonel, Tailwind varsa kullanılabilir veya CSS ile hedeflenebilir)
+    // const indentClass = item.level === 3 ? 'ml-4' : item.level === 4 ? 'ml-8' : '';
+    // Şu anki CSS'de girinti olmadığı için sınıf eklenmiyor, gerekirse eklenmeli
+    tocHtml += `<li><a href="#${item.slug}" class="toc-link">${item.text}</a></li>`;
+  });
+  tocHtml += '</ul>';
+}
+
 // SEO meta verileri
 const pageTitle = post.title;
 const description = post.meta_description || post.excerpt || post.title;
@@ -145,7 +159,7 @@ const fullSchema = JSON.stringify({
     {
       "@type": "https://schema.org/LocalBusiness",
       "@id": `${SITE_URL}/#localbusiness`,
-      "name": category.name,
+      "name": category?.name,
       "url": SITE_URL,
       "telephone": COMPANY_PHONE,
       "email": COMPANY_EMAIL,
@@ -283,7 +297,7 @@ const fullSchema = JSON.stringify({
       "author": {
         "@type": "https://schema.org/Organization",
         "@id": `${SITE_URL}/#localbusiness`,
-        "name": category.name,
+        "name": category?.name,
         "url": SITE_URL
       },
       "publisher": {
@@ -397,6 +411,7 @@ const fullSchema = JSON.stringify({
     <link rel="canonical" href={canonicalURL} />
     <meta property="article:published_time" content={new Date(publishDate).toISOString()} />
     <meta property="article:modified_time" content={new Date(modifiedDate).toISOString()} />
+    {/* @ts-ignore - Linter might incorrectly flag category here */}
     {category && <meta property="article:section" content={category.name} />}
     {post.keywords && post.keywords.map((keyword: string) => (
       <meta property="article:tag" content={keyword} />
@@ -407,6 +422,114 @@ const fullSchema = JSON.stringify({
     <script is:inline type="application/ld+json" set:html={fullSchema} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Critical ToC CSS (Inlined) -->
+    <style is:inline>
+      #toc-container { min-height: 80px; } /* Reserve space for CLS */
+      .toc-title {
+        font-size: 1.25rem; /* 20px */
+        font-weight: 600;
+        margin-bottom: 0.75rem; /* 12px */
+      }
+      .toc-list {
+        list-style: disc;
+        padding-left: 1.5em; /* 24px */
+        margin: 0;
+      }
+      .toc-list li {
+        margin-bottom: 0.5em; /* 8px */
+      }
+      .toc-list li a.toc-link {
+        display: block; /* Ensure links take block space */
+        /* Base font-size will be inherited, adjust in media query */
+      }
+
+      /* Mobile specific ToC font sizes and layout */
+      @media (max-width: 768px) {
+        #toc-container {
+          min-height: 150px; /* Increased height for mobile */
+        }
+        .toc-title {
+          font-size: 1.1rem; /* Smaller title on mobile */
+        }
+        .toc-list li a.toc-link {
+          font-size: 0.9rem; /* Smaller link text on mobile */
+        }
+      }
+
+      /* Content from toc.css */
+      .toc-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--color-text-default); }
+      .toc-list { list-style: disc; padding-left: 1.5em; margin: 0; }
+      .toc-list li { margin-bottom: 0.5em; }
+      .toc-list li a.toc-link { text-decoration: none; color: var(--color-primary, #007bff); transition: none; }
+      .toc-list li a.toc-link:hover, .toc-list li a.toc-link:focus { text-decoration: underline; color: var(--color-secondary, #0056b3); }
+      .toc-list li.ml-4 { list-style-type: circle; margin-left: 1em; }
+      .toc-list li.ml-8 { list-style-type: square; margin-left: 2em; }
+    </style>
+
+    <!-- Additional Critical CSS -->
+    <style is:inline>
+      :root {
+        --color-primary:rgb(71, 0, 204);
+        --color-primary-light: #e6f0fa;
+        --color-text: #333;
+        --color-text-light: #666;
+        --color-background: #fff;
+        --color-border: #eaeaea;
+        --color-grey-light: #f5f5f5;
+        --color-secondary: #4a90e2;
+        --shadow-sm: 0 3px 8px rgba(0,0,0,.1);
+        --shadow-md: 0 5px 15px rgba(0,0,0,.1);
+        --transition: .2s ease;
+        --radius-sm: 4px;
+        --radius-md: 8px;
+        --max-width: 1200px; /* Assume a max-width variable is used */
+      }
+      *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+      html, body { width:100%; position:relative; overflow-x:hidden; max-width:100%; }
+      body { font-family:Arial,sans-serif; line-height:1.6; display:flex; flex-direction:column; align-items:center; color:var(--color-text); background-color:var(--color-background); min-height:100vh; }
+      .site-header, main { width:100%; }
+      .header-container, .wide-page, .blog-detail-page { width:100%; max-width:var(--max-width); margin:0 auto; padding:0 1rem; }
+      .site-header { text-align:center; padding:15px 0 0; }
+      header { margin-bottom:0; }
+      main { flex:1; width:100%; max-width:100%; overflow-x:hidden; margin-top:30px; padding-bottom:30px; }
+      .page-title { margin:0 0 1rem; padding:0 0 15px; line-height:1.2; font-size:1.3rem; text-align:center; height:80px; display:flex; align-items:center; justify-content:center; font-weight:600; }
+      .nav-wrapper{width:100%;position:relative;margin:0;padding:0}
+      .nav-container{position:relative;width:100%;display:flex;flex-direction:column;align-items:center;height:auto;margin:0;padding:0}
+      .nav-border{position:relative;width:100vw;height:1px;left:50%;transform:translate(-50%);background:linear-gradient(90deg,#0000,#06c3,#0066cc80 30%,#06c,#0066cc80 70%,#06c3,#0000);margin:0;padding:0}
+      .top-border{margin-bottom:10px}
+      .bottom-border{margin-top:10px}
+      .main-nav{display:flex;justify-content:center;align-items:center;gap:20px;width:100%;max-width:var(--max-width);margin:0 auto;padding:5px 20px;height:40px}
+      .nav-item{color:var(--color-text);text-decoration:none;font-weight:500;padding:5px 10px;border-radius:var(--radius-sm);transition:background-color var(--transition),color var(--transition)}
+      /* Basic Breadcrumb Styles (Ensure these cover your component) */
+      .post-header nav ol { list-style: none; padding: 0; margin: 0 0 1rem 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      .post-header nav ol li { display: flex; align-items: center; font-size: 0.9rem; color: var(--color-text-light); }
+      .post-header nav ol li a { color: var(--color-primary); text-decoration: none; }
+      .post-header nav ol li a:hover { text-decoration: underline; }
+      .post-header nav ol li:not(:last-child)::after { content: '/'; margin-left: 0.5rem; color: var(--color-text-light); }
+      /* Article Specific */
+      .article-container { max-width: 896px; width: auto; margin: 2rem auto; box-sizing: border-box; }
+      .post-header { margin-bottom: 1rem; }
+      .blog-featured-image { margin-bottom: 1.5rem; overflow: hidden; }
+      .blog-featured-image .responsive-image-container { border-radius: var(--radius-md, 8px); box-shadow: var(--shadow-md, 0 5px 15px rgba(0,0,0,0.1)); overflow: hidden; }
+      .markdown-content h1{ font-size:clamp(1.75rem,5vw,2.5rem); line-height:1.2; font-weight:700; margin:0 0 1rem; color:var(--color-secondary,rgb(76, 74, 226)); }
+      /* Mobile Critical */
+      @media (max-width: 768px) {
+        .site-header{padding:10px 0 0}
+        .page-title{font-size:1.5rem;height:60px;padding:0 0 10px}
+        .nav-item{padding:6px 12px}
+        .main-nav{padding:6px 20px}
+        .markdown-content h1 { font-size: clamp(1.6rem, 5vw, 2rem); }
+        .article-container { margin: 1.5rem auto; }
+      }
+      @media (max-width: 480px) {
+        .page-title{font-size:1.3rem;height:50px}
+        .nav-item{padding:8px 15px}
+        .main-nav{gap:12px}
+        .markdown-content h1 { font-size: clamp(1.4rem, 5vw, 1.8rem); }
+        .article-container { margin: 1rem auto; }
+      }
+    </style>
   </slot>
 
   <article class="article-container">
@@ -425,7 +548,14 @@ const fullSchema = JSON.stringify({
         </div>
       )}
       
-      <div id="toc-container" class="mb-8"></div>
+      {/* Inject server-generated ToC HTML if it exists */}
+      {tocHtml && (
+        <div 
+          id="toc-container" 
+          class="mb-8 toc-box border p-4 rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
+          set:html={tocHtml} 
+        />
+      )}
     </header>
 
     <div class="post-content markdown-content">
@@ -480,86 +610,40 @@ const fullSchema = JSON.stringify({
           )}
         </div>
 
-        {category && (
-          <div class="related-category">
-            <span class="category-label">Kategori:</span>
-            <a href={`/kategori/${category.slug}`} class="category-link">{category.name}</a>
-          </div>
-        )}
+        {/* @ts-ignore - Linter incorrectly flags category as potentially undefined here */}
+        {hasCategory && (() => {
+          const catSlug = category.slug;
+          const catName = category.name;
+          return (
+            <div class="related-category">
+              <span class="category-label">Kategori:</span>
+              <a href={`/kategori/${catSlug}`} class="category-link">{catName}</a>
+            </div>
+          );
+        })()}
       </div>
     </footer>
 
   </article>
 
-  <script type="application/json" id="toc-data" set:html={JSON.stringify(tocHeadings)} is:inline></script>
-
-  <script is:inline>
-    function generateToc() {
-      const tocDataElement = document.getElementById('toc-data');
-      const tocContainer = document.getElementById('toc-container');
-      const contentExists = document.getElementById('post-content-inner');
-
-      if (!tocDataElement || !tocContainer || !contentExists) {
-        console.warn('TOC generation failed: Data, container, or content element not found.');
-        return;
-      }
-
-      const headingsWithId = contentExists.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
-      if (headingsWithId.length === 0) {
-         console.warn('TOC generation skipped: No headings with IDs found in content (check markdown.js).');
-         tocContainer.style.display = 'none';
-         return;
-      }
-      
-      let tocItems = [];
-      try {
-        tocItems = JSON.parse(tocDataElement.textContent || '[]');
-      } catch (e) {
-        console.error("Failed to parse ToC data:", e);
-        tocContainer.style.display = 'none';
-        return;
-      }
-
-      if (tocItems.length > 1) {
-        let tocHtml = '<h2 class="toc-title">İçindekiler</h2><ul class="toc-list">';
-        tocItems.forEach(/** @param {{level: number, text: string, slug: string}} item */ (item) => {
-          const indentClass = item.level === 3 ? 'ml-4' : item.level === 4 ? 'ml-8' : '';
-          tocHtml += `<li class="${indentClass}"><a href="#${item.slug}" class="toc-link">${item.text}</a></li>`;
-        });
-        tocHtml += '</ul>';
-        tocContainer.innerHTML = tocHtml;
-        tocContainer.classList.add('toc-box', 'border', 'p-4', 'rounded-md', 'bg-gray-50', 'dark:bg-gray-800', 'dark:border-gray-700');
-      } else {
-        tocContainer.style.display = 'none';
-      }
-    }
-
-    document.addEventListener('astro:page-load', generateToc);
-    generateToc();
-  </script>
-
   <style>
       /* Constrain article width on blog detail page, overriding blog.css width:100% */
   .article-container {
     max-width: 896px; /* Equivalent to Tailwind's max-w-4xl */
-    //padding-left: 1rem; /* Add horizontal padding */
-    //padding-right: 1rem;
     width: auto; /* Allow max-width to take effect */
-     /* margin-left/right: auto is already applied in blog.css, no need to repeat */
   }
 
-  /* Style the featured image within the constrained container */
+  /* Style the featured image container within the constrained container */
   .blog-featured-image .responsive-image-container { /* Target the div from ResponsiveImage.astro */
      border-radius: var(--radius-md, 8px);
      box-shadow: var(--shadow-md, 0 5px 15px rgba(0,0,0,0.1));
      margin-bottom: 1.5rem; /* Add space below image */
      overflow: hidden; /* Ensure image respects border radius */
   }
-  .blog-featured-image img { /* Style the actual img tag */
-     display: block; /* Remove potential extra space below image */
-     width: 100%; /* Make image fill its container */
-     height: auto; /* Maintain aspect ratio */
-     border-radius: var(--radius-md, 8px); /* Apply radius to image itself too */
+
+  /* Reserve space for ToC to prevent CLS */
+  #toc-container {
+    min-height: 80px; 
   }
 
   /* --- NEW STYLES FOR FOOTER --- */
@@ -595,32 +679,6 @@ const fullSchema = JSON.stringify({
      margin-top: 0; /* Remove extra top margin inherited from blog.css as 'gap' handles spacing */
      width: 100%; /* Allow it to take full width in the column layout */
   }
-  .toc-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      color: var(--color-text-default);
-    }
-  .toc-list {
-      list-style: disc;
-      padding-left: 1.5em;
-      margin: 0;
-    }
-  .toc-list li {
-      margin-bottom: 0.5em;
-    }
-  .toc-list li a.toc-link {
-      text-decoration: none;
-      color: var(--color-primary, #007bff);
-      transition: color 0.2s ease;
-    }
-  .toc-list li a.toc-link:hover,
-  .toc-list li a.toc-link:focus {
-      text-decoration: underline;
-      color: var(--color-secondary, #0056b3);
-    }
-  .toc-list li.ml-4 { list-style-type: circle; margin-left: 1em; }
-  .toc-list li.ml-8 { list-style-type: square; margin-left: 2em; }
     
   h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] {
       scroll-margin-top: 4rem;
