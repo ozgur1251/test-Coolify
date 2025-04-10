@@ -19,30 +19,13 @@ export default defineConfig({
   // CSS işleme için build optimizasyonları
   build: {
     assets: '_astro',
-    inlineStylesheets: 'auto' // Astro'nun varsayılanına geri dönüldü ('auto')
+    inlineStylesheets: 'always' // Tüm CSS'i inline yapmaya zorla ('always')
   },
   vite: {
     build: {
       cssCodeSplit: true,
-      cssMinify: true,
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes('src/styles/base.css')) {
-              return 'base-styles';
-            }
-            if (id.includes('src/styles/blog.css')) {
-              return 'blog-styles';
-            }
-            if (id.includes('src/styles/navigation.css')) {
-              return 'nav-styles';
-            }
-            if (id.includes('src/styles/responsive-images.css')) {
-              return 'respimg-styles';
-            }
-          }
-        }
-      }
+      cssMinify: true
+      // rollupOptions kaldırıldı
     }
   }
 });
