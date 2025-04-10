@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getBlogPostBySlug, getCategories } from '../../lib/supabase';
 import { parseMarkdown } from '../../lib/markdown';
@@ -6,7 +8,7 @@ import ResponsiveImage from '../../components/ResponsiveImage.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 
 // Server-side rendering kullan (statik ön-render yerine)
-export const prerender = false;
+// export const prerender = false;
 
 // Site URL'sini ve Şirket adını çevre değişkeninden alma
 const SITE_URL = import.meta.env.SITE_URL || Astro.url.origin || "https://tr.istanbulbinaguclendirme.com";
