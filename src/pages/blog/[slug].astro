@@ -92,6 +92,19 @@ const hasFaq = processedFaq.length > 0;
 // Category var mı kontrol et
 const hasCategory = !!category;
 
+// === STEP 2: Generate ToC HTML Server-side ===
+let tocHtml = '';
+if (tocHeadings && tocHeadings.length > 1) {
+  tocHtml += '<h2 class="toc-title">İçindekiler</h2><ul class="toc-list">';
+  tocHeadings.forEach((item: {level: number, text: string, slug: string}) => {
+    // Başlık seviyesine göre girinti sınıfı ekle (opsiyonel, Tailwind varsa kullanılabilir veya CSS ile hedeflenebilir)
+    // const indentClass = item.level === 3 ? 'ml-4' : item.level === 4 ? 'ml-8' : '';
+    // Şu anki CSS'de girinti olmadığı için sınıf eklenmiyor, gerekirse eklenmeli
+    tocHtml += `<li><a href="#${item.slug}" class="toc-link">${item.text}</a></li>`;
+  });
+  tocHtml += '</ul>';
+}
+
 // SEO meta verileri
 const pageTitle = post.title;
 const description = post.meta_description || post.excerpt || post.title;
@@ -468,7 +481,14 @@ const fullSchema = JSON.stringify({
         </div>
       )}
       
-      <div id="toc-container" class="mb-8"></div>
+      {/* Inject server-generated ToC HTML if it exists */}
+      {tocHtml && (
+        <div 
+          id="toc-container" 
+          class="mb-8 toc-box border p-4 rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
+          set:html={tocHtml} 
+        />
+      )}
     </header>
 
     <div class="post-content markdown-content">
@@ -538,53 +558,6 @@ const fullSchema = JSON.stringify({
     </footer>
 
   </article>
-
-  <script type="application/json" id="toc-data" set:html={JSON.stringify(tocHeadings)} is:inline></script>
-
-  <script is:inline>
-    function generateToc() {
-      const tocDataElement = document.getElementById('toc-data');
-      const tocContainer = document.getElementById('toc-container');
-      const contentExists = document.getElementById('post-content-inner');
-
-      if (!tocDataElement || !tocContainer || !contentExists) {
-        console.warn('TOC generation failed: Data, container, or content element not found.');
-        return;
-      }
-
-      const headingsWithId = contentExists.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
-      if (headingsWithId.length === 0) {
-         console.warn('TOC generation skipped: No headings with IDs found in content (check markdown.js).');
-         tocContainer.style.display = 'none';
-         return;
-      }
-      
-      let tocItems = [];
-      try {
-        tocItems = JSON.parse(tocDataElement.textContent || '[]');
-      } catch (e) {
-        console.error("Failed to parse ToC data:", e);
-        tocContainer.style.display = 'none';
-        return;
-      }
-
-      if (tocItems.length > 1) {
-        let tocHtml = '<h2 class="toc-title">İçindekiler</h2><ul class="toc-list">';
-        tocItems.forEach(/** @param {{level: number, text: string, slug: string}} item */ (item) => {
-          const indentClass = item.level === 3 ? 'ml-4' : item.level === 4 ? 'ml-8' : '';
-          tocHtml += `<li class="${indentClass}"><a href="#${item.slug}" class="toc-link">${item.text}</a></li>`;
-        });
-        tocHtml += '</ul>';
-        tocContainer.innerHTML = tocHtml;
-        tocContainer.classList.add('toc-box', 'border', 'p-4', 'rounded-md', 'bg-gray-50', 'dark:bg-gray-800', 'dark:border-gray-700');
-      } else {
-        tocContainer.style.display = 'none';
-      }
-    }
-
-    document.addEventListener('astro:page-load', generateToc);
-    generateToc();
-  </script>
 
   <style>
       /* Constrain article width on blog detail page, overriding blog.css width:100% */
