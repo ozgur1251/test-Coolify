@@ -1,31 +1,31 @@
 /* Blog Post Stilleri */
-/* .article-container, .category-container { */ /* Defined inline in [slug].astro */
-/*  width: 100%; */
-/*  margin: 0 auto; */
-/* } */
-
-.category-container { /* Keep category-container specific rule if needed elsewhere */
+.article-container, .category-container {
   width: 100%;
   margin: 0 auto;
 }
 
-/* .blog-detail-page .article-container, .post-content { */ /* Covered by inline */
-/*   width: 100%; */
-/*   margin: 0 auto; */
-/* } */
-
-/* .article-container { */ /* Base defined inline, maybe keep margin here? Let's comment out for now */
+/* .category-container { */ /* Keep category-container specific rule if needed elsewhere */
 /*  width: 100%; */
-/*  margin: 2rem auto; */
-/*  box-sizing: border-box; */
+/*  margin: 0 auto; */
 /* } */
 
-/* .post-header {margin-bottom: 1rem;} */ /* Defined inline in [slug].astro */
+.blog-detail-page .article-container, .post-content {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.article-container { /* Base defined inline, maybe keep margin here? Let's comment out for now */
+/*  width: 100%; */
+ margin: 2rem auto; 
+ box-sizing: border-box; 
+}
+
+.post-header {margin-bottom: 1rem;} /* Defined inline in [slug].astro */
 
 .post-meta {
   margin-top: 1rem;
   margin-bottom: 1rem;
-  color: var(--color-text);
+  /* color: var(--color-text); */ /* Reverted: Remove added rule */
 }
 
 .meta-container {
@@ -35,7 +35,7 @@
   gap: 1rem;
   flex-wrap: wrap;
   font-size: 0.9rem;
-  color: var(--color-text-light);
+  color: var(--color-text);
 }
 
 .post-category {
@@ -74,13 +74,13 @@
   color: var(--color-text);
 }
 
-/* .markdown-content h1 { */ /* Defined inline in [slug].astro */
-/*  font-size: clamp(1.75rem, 5vw, 2.5rem); */
-/*  line-height: 1.2; */
-/*  font-weight: 700; */
-/*  margin: 0 0 1rem; */
-/*  color: var(--color-secondary,rgb(76, 74, 226)); */
-/* } */
+.markdown-content h1 { /* Defined inline in [slug].astro */
+ font-size: clamp(1.75rem, 5vw, 2.5rem); 
+ line-height: 1.2; 
+ font-weight: 700; 
+ margin: 0 0 1rem; 
+ color: var(--color-secondary,rgb(76, 74, 226)); 
+}
 
 .markdown-content h2 {
   font-size: clamp(1.5rem, 4vw, 1.75rem);
@@ -88,9 +88,9 @@
   margin-bottom: 0.8rem;
   font-weight: 600;
   color: var(--color-secondary,rgb(74, 76, 226));
-  text-align: center;
-  color: var(--color-text-light);
-  margin-bottom: 3rem;
+  /* text-align: center; */ /* Reverted: Remove potentially incorrect additions */
+  /* color: var(--color-text-light); */
+  /* margin-bottom: 3rem; */
 }
 
 .markdown-content h3 {
@@ -278,7 +278,7 @@
 
 /* FAQ Bölümü */
 .faq-section {
-  margin-top: 3rem;
+  /* margin-top: 3rem; */ /* Reverted: Use original rule */
   margin: 2rem auto;
   padding: 1.5rem;
   background-color: var(--color-grey-light);

@@ -1,71 +1,70 @@
 /* Renk paleti ve global değişkenler */
-/* :root { */ /* Defined inline in BaseLayout and [slug].astro */
-/*  */
-/*   --color-primary:rgb(71, 0, 204); */
-/*  --color-primary-dark: #004d99; */
-/*  --color-primary-light: #e6f0fa; */
-/*  --color-text: #333; */
-/*  --color-text-light: #666; */
-/*  --color-background: #fff; */
-/*  --color-border: #eaeaea; */
-/*  --color-grey-light: #f5f5f5; */
-/*  */
-/*  */
-/*  --color-bg-secondary: #f5f5f5; */
-/*  --color-bg-accent: #e6f0fa; */
-/*  --color-secondary: #4a90e2; */
-/*  */
-/*  */
-/*  --shadow-sm: 0 3px 8px rgba(0,0,0,0.1); */
-/*  --shadow-md: 0 5px 15px rgba(0,0,0,0.1); */
-/*  --transition: 0.2s ease; */
-/*  */
-/*  */
-/*  --radius-sm: 4px; */
-/*  --radius-md: 8px; */
-/* } */
+:root {
+  --color-primary:rgb(71, 0, 204);
+  --color-primary-dark: #004d99;
+  --color-primary-light: #e6f0fa;
+  --color-text: #333;
+  --color-text-light: #666;
+  --color-background: #fff;
+  --color-border: #eaeaea;
+  --color-grey-light: #f5f5f5;
+  
+  
+  --color-bg-secondary: #f5f5f5;
+  --color-bg-accent: #e6f0fa;
+  --color-secondary: #4a90e2;
+  
+  
+  --shadow-sm: 0 3px 8px rgba(0,0,0,0.1);
+  --shadow-md: 0 5px 15px rgba(0,0,0,0.1);
+  --transition: 0.2s ease;
+  
+  
+  --radius-sm: 4px;
+  --radius-md: 8px;
+}
 
 /* Reset ve temel stiller */
-/* * {box-sizing: border-box; margin: 0; padding: 0;} */ /* Defined inline in [slug].astro */
+* {box-sizing: border-box; margin: 0; padding: 0;}
 
-/* html, body {width: 100%; position: relative; overflow-x: hidden; max-width: 100%;} */ /* Defined inline in [slug].astro */
+html, body {width: 100%; position: relative; overflow-x: hidden; max-width: 100%;}
 
-/* body { */ /* Defined inline in BaseLayout and [slug].astro */
-/*  font-family: Arial, sans-serif; */
-/*  line-height: 1.6; */
-/*  display: flex; */
-/*  flex-direction: column; */
-/*  align-items: center; */
-/*  color: var(--color-text); */
-/*  background-color: var(--color-background); */
-/*  min-height: 100vh; */
-/* } */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  min-height: 100vh;
+}
 
 /* Temel konteynır stiller */
-/* .site-header, .standard-footer, main {width: 100%;} */ /* Defined inline in BaseLayout and [slug].astro */
+.site-header, .standard-footer, main {width: 100%;}
 
-/* .header-container, .standard-footer, .wide-page, .blog-detail-page, .home-container { */ /* Defined inline in BaseLayout and [slug].astro */
-/*  width: 100%; */
-/*  max-width: var(--max-width); */
-/*  margin: 0 auto; */
-/*  padding: 0 1rem; */
-/* } */
+.header-container, .standard-footer, .wide-page, .blog-detail-page, .home-container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1rem;
+}
 
 /* Header ve footer */
-/* .site-header {text-align: center; padding: 15px 0 0;} */ /* Defined inline in [slug].astro */
+.site-header {text-align: center; padding: 15px 0 0;}
 
-/* header {margin-bottom: 0;} */ /* Defined inline in [slug].astro */
+header {margin-bottom: 0;}
 
 .standard-footer {margin-top: auto; padding: 1rem 0; text-align: center;}
 
-/* main { */ /* Defined inline in BaseLayout and [slug].astro */
-/*  flex: 1; */
-/*  width: 100%; */
-/*  max-width: 100%; */
-/*  overflow-x: hidden; */
-/*  margin-top: 30px; */
-/*  padding-bottom: 30px; */
-/* } */
+main {
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  margin-top: 30px;
+  padding-bottom: 30px;
+}
 
 /* Erişilebilirlik için görünmez metin */
 .visually-hidden {
@@ -81,13 +80,13 @@
 }
 
 /* Responsive */
-/* @media (max-width: 768px) { */ /* Covered inline in [slug].astro */
-/*  .site-header {padding: 10px 0 0;} */
-/* } */
+@media (max-width: 768px) {
+  .site-header {padding: 10px 0 0;}
+}
 
-/* @media (max-width: 480px) { */ /* Covered inline in [slug].astro */
-/*  .page-title { */
-/*    font-size: 1.3rem; */
-/*    height: 50px; */
-/*  } */
-/* } */ 
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.3rem;
+    height: 50px;
+  }
+} 
