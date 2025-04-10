@@ -2,9 +2,9 @@
 // BaseLayout.astro - Tüm sayfalarda kullanılacak ortak temel düzen
 import Navigation from '../components/Navigation.astro';
 // CSS import - build sırasında işlenecek
-// import '../styles/base.css'; // KALDIRILDI - Manuel preload eklenecek
-// import '../styles/blog.css'; // KALDIRILDI - Manuel preload eklenecek
-// import '../styles/responsive-images.css'; // KALDIRILDI - Manuel preload eklenecek
+import '../styles/base.css'; // Yorum kaldırıldı
+import '../styles/blog.css'; // Yorum kaldırıldı
+import '../styles/responsive-images.css'; // Yorum kaldırıldı
 
 const { 
 	pageTitle, 
@@ -96,92 +96,54 @@ const googleSiteVerification = import.meta.env.GOOGLE_SITE_VERIFICATION;
 				--color-primary-light: #e6f0fa;
 				--color-text: #333;
 				--color-background: #fff;
-        /* NOT: Diğer değişkenler (secondary, border, grey vb.) kaldırıldı */
-        /* Bunlar dış CSS yüklendiğinde geçerli olacak */
 			}
 
 			/* Temel sıfırlama ve görünüm */
 			body {
 				margin: 0;
-				font-family: Arial, sans-serif; /* Orijinal font stack */
+				font-family: Arial, sans-serif;
 				line-height: 1.6;
 				color: var(--color-text);
 				background: var(--color-background);
 				overflow-x: hidden;
 			}
 
-      /* ÖNEMLİ: Eklenen tüm header, nav, main, footer, mobil vb. stiller kaldırıldı */
-      /* Bu stiller artık dış CSS dosyalarından (base.css, navigation.css) yüklenecek */
-
       /* === MINIMAL KRITIK BLOG DETAY STilleri === */
-      /* Blog gönderileri için temel layout kısıtlamaları (ilk boyamayı etkiler) */
       main.blog-detail-page {
-        max-width: 800px; /* Layout için kritik */
-        margin-left: auto; /* max-width ile ortalamayı sağla */
+        max-width: 800px;
+        margin-left: auto;
         margin-right: auto;
-        padding-left: 1rem; /* Temel yatay boşluk */
+        padding-left: 1rem;
         padding-right: 1rem;
-        display: block; /* block olduğundan emin ol */
+        display: block;
       }
-
-      /* Blog gönderisi için çok temel başlık alanı boşluğu */
-      .blog-detail-page .post-header { /* Sadece blog detayında hedefle */
-        padding-bottom: 0.5rem; /* Başlık alanı altında minimal boşluk */
-        /* border-bottom dış CSS'i bekleyebilir */
-        margin-bottom: 1rem; /* Başlık alanı ile içerik arasına boşluk */
+      .blog-detail-page .post-header {
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
       }
-
-      /* Blog gönderisi için çok temel başlık stili */
-      .blog-detail-page h1.post-title { /* Sadece blog detayında hedefle */
-        margin-top: 0; /* Üstteki boşluğu sıfırla (header'dan sonra) */
-        margin-bottom: 0.5rem; /* Başlık altında minimal boşluk */
-        font-size: 1.8em; /* Makul varsayılan boyut */
-        line-height: 1.3; /* Makul varsayılan satır yüksekliği */
-        font-weight: 600; /* Okunabilirlik için temel kalınlık */
-        /* Renk, tam boyut vb. dış CSS'i bekleyebilir */
+      .blog-detail-page h1.post-title {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: 1.8em;
+        line-height: 1.3;
+        font-weight: 600;
       }
-
-      /* Ana içerik alanının genişliği almasını sağla */
       .blog-detail-page .markdown-content {
-          width: 100%; /* Beklenmedik küçülmeyi önle */
+          width: 100%;
       }
-
-      /* Bunlar için minimal mobil ayarlamalar */
       @media (max-width: 768px) {
         main.blog-detail-page {
-          padding-left: 0.75rem; /* Mobil için padding'i azalt */
+          padding-left: 0.75rem;
           padding-right: 0.75rem;
         }
         .blog-detail-page h1.post-title {
-          font-size: 1.6em; /* Mobil için biraz daha küçük */
+          font-size: 1.6em;
           line-height: 1.25;
         }
       }
       /* === MINIMAL KRITIK BLOG DETAY STilleri SONU === */
 		</style>
 		
-    <!-- Preload Non-Critical CSS -->
-    <!-- ÖNEMLİ: Aşağıdaki href değerleri YER TUTUCUDUR! -->
-    <!-- Projenizi build ettikten sonra dist/assets içindeki gerçek dosya adlarıyla güncelleyin! -->
-    
-    {/* Linter hatasını engellemek için @ts-ignore eklendi, onload içindeki 'this' kullanımı standarttır */} 
-    {/* @ts-ignore */} 
-    <link rel="preload" href="/assets/base.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/assets/base.css"></noscript>
-
-    {/* Linter hatasını engellemek için @ts-ignore eklendi, onload içindeki 'this' kullanımı standarttır */} 
-    {/* @ts-ignore */} 
-    <link rel="preload" href="/assets/blog.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/assets/blog.css"></noscript>
-
-    {/* Linter hatasını engellemek için @ts-ignore eklendi, onload içindeki 'this' kullanımı standarttır */} 
-    {/* @ts-ignore */} 
-    <link rel="preload" href="/assets/responsive-images.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/assets/responsive-images.css"></noscript>
-
-    <!-- Not: Navigation.astro gibi bileşenlerden import edilen CSS'ler için de benzer bir işlem gerekebilir -->
-    <!-- Astro'nun bunları ayrı bir dosyada mı yoksa ana chunk'ta mı topladığını kontrol edin -->
-
 		<slot name="head" />
 	</head>
 	<body>
