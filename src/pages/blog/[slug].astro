@@ -571,6 +571,11 @@ const fullSchema = JSON.stringify({
      border-radius: var(--radius-md, 8px); /* Apply radius to image itself too */
   }
 
+  /* Reserve space for ToC to prevent CLS */
+  #toc-container {
+    min-height: 80px; 
+  }
+
   /* --- NEW STYLES FOR FOOTER --- */
 
   /* Override blog.css width/flex behavior for navigation within constrained container */
