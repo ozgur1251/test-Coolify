@@ -6,7 +6,6 @@ import ResponsiveImage from '../../components/ResponsiveImage.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import '../../styles/blog.css';
 import '../../styles/responsive-images.css';
-import '../../styles/toc.css';
 
 // Server-side rendering kullan (statik ön-render yerine)
 export const prerender = false;
@@ -90,6 +89,9 @@ function processFaqData(faqData: any[]): FaqItem[] {
 const processedFaq = processFaqData(post.faq) || processFaqData(post.sss) || [];
 const hasFaq = processedFaq.length > 0;
 
+// Category var mı kontrol et
+const hasCategory = !!category;
+
 // SEO meta verileri
 const pageTitle = post.title;
 const description = post.meta_description || post.excerpt || post.title;
@@ -146,7 +148,7 @@ const fullSchema = JSON.stringify({
     {
       "@type": "https://schema.org/LocalBusiness",
       "@id": `${SITE_URL}/#localbusiness`,
-      "name": category.name,
+      "name": category?.name,
       "url": SITE_URL,
       "telephone": COMPANY_PHONE,
       "email": COMPANY_EMAIL,
@@ -284,7 +286,7 @@ const fullSchema = JSON.stringify({
       "author": {
         "@type": "https://schema.org/Organization",
         "@id": `${SITE_URL}/#localbusiness`,
-        "name": category.name,
+        "name": category?.name,
         "url": SITE_URL
       },
       "publisher": {
@@ -398,6 +400,7 @@ const fullSchema = JSON.stringify({
     <link rel="canonical" href={canonicalURL} />
     <meta property="article:published_time" content={new Date(publishDate).toISOString()} />
     <meta property="article:modified_time" content={new Date(modifiedDate).toISOString()} />
+    {/* @ts-ignore - Linter might incorrectly flag category here */}
     {category && <meta property="article:section" content={category.name} />}
     {post.keywords && post.keywords.map((keyword: string) => (
       <meta property="article:tag" content={keyword} />
@@ -408,6 +411,17 @@ const fullSchema = JSON.stringify({
     <script is:inline type="application/ld+json" set:html={fullSchema} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Defer loading ToC CSS -->
+    <link rel="preload" href="/styles/toc.css" as="style" id="toc-styles">
+    <noscript><link rel="stylesheet" href="/styles/toc.css"></noscript>
+    <script is:inline>
+      const tocLink = document.getElementById('toc-styles');
+      if (tocLink) {
+        tocLink.addEventListener('load', () => {
+          tocLink.setAttribute('rel', 'stylesheet');
+        });
+      }
+    </script>
   </slot>
 
   <article class="article-container">
@@ -481,12 +495,17 @@ const fullSchema = JSON.stringify({
           )}
         </div>
 
-        {category && (
-          <div class="related-category">
-            <span class="category-label">Kategori:</span>
-            <a href={`/kategori/${category.slug}`} class="category-link">{category.name}</a>
-          </div>
-        )}
+        {/* @ts-ignore - Linter incorrectly flags category as potentially undefined here */}
+        {hasCategory && (() => {
+          const catSlug = category.slug;
+          const catName = category.name;
+          return (
+            <div class="related-category">
+              <span class="category-label">Kategori:</span>
+              <a href={`/kategori/${catSlug}`} class="category-link">{catName}</a>
+            </div>
+          );
+        })()}
       </div>
     </footer>
 
