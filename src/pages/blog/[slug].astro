@@ -649,6 +649,28 @@ const fullSchema = JSON.stringify({
   h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] {
       scroll-margin-top: 4rem;
   }
+
+  /* Make featured image break out slightly to counter parent padding */
+  .blog-featured-image {
+    width: calc(100% + 2rem); /* Add parent padding (1rem each side) back */
+    margin-left: -1rem;
+    margin-right: -1rem;
+    max-width: none; /* Ensure it can exceed the parent's max-width */
+  }
+
+  /* Style the featured image container within the expanded div */
+  .blog-featured-image .responsive-image-container { /* Target the div from ResponsiveImage.astro */
+     border-radius: var(--radius-md, 8px);
+     box-shadow: var(--shadow-md, 0 5px 15px rgba(0,0,0,0.1));
+     margin-bottom: 1.5rem; /* Add space below image */
+     overflow: hidden; /* Ensure image respects border radius */
+  }
+  .blog-featured-image img { /* Style the actual img tag */
+     display: block; /* Remove potential extra space below image */
+     width: 100%; /* Make image fill its container */
+     height: auto; /* Maintain aspect ratio */
+     border-radius: var(--radius-md, 8px); /* Apply radius to image itself too */
+  }
 </style>
 
 </BaseLayout> 
