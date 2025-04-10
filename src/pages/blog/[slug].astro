@@ -467,6 +467,58 @@ const fullSchema = JSON.stringify({
       .toc-list li a.toc-link:hover, .toc-list li a.toc-link:focus { text-decoration: underline; color: var(--color-secondary, #0056b3); }
       .toc-list li.ml-4 { list-style-type: circle; margin-left: 1em; }
       .toc-list li.ml-8 { list-style-type: square; margin-left: 2em; }
+
+      /* Sondaki style bloğundan taşınan kurallar */
+      /* Constrain article width on blog detail page, overriding blog.css width:100% */
+      .article-container {
+        max-width: 896px; /* Equivalent to Tailwind's max-w-4xl */
+        width: auto; /* Allow max-width to take effect */
+      }
+
+      /* Style the featured image container within the constrained container */
+      .blog-featured-image .responsive-image-container { /* Target the div from ResponsiveImage.astro */
+         border-radius: var(--radius-md, 8px);
+         box-shadow: var(--shadow-md, 0 5px 15px rgba(0,0,0,0.1));
+         overflow: hidden; /* Ensure image respects border radius */
+      }
+
+      /* --- NEW STYLES FOR FOOTER --- */
+
+      /* Override blog.css width/flex behavior for navigation within constrained container */
+      .post-navigation {
+        width: auto; /* Don't force 100% width from blog.css */
+        max-width: 100%; /* Ensure it doesn't overflow its parent */
+        display: flex; /* Keep flex, but change direction */
+        flex-direction: column; /* Stack items vertically */
+        align-items: flex-start; /* Align items to the start (left) */
+        gap: 1rem; /* Add space between stacked items (dates, tags, category) */
+      }
+
+      /* Adjust date container alignment */
+      .post-meta .meta-container {
+        justify-content: flex-start; /* Align dates to the start (left) instead of center */
+        width: 100%; /* Allow it to take full width in the column layout */
+      }
+
+      /* Adjust tags container */
+      .post-tags {
+         flex: none; /* Remove flex: 1 from blog.css */
+         width: 100%; /* Allow it to take full width in the column layout */
+      }
+
+      .post-tags .tags-container {
+        justify-content: flex-start; /* Align tags to the start */
+      }
+
+      /* Adjust category alignment/margin */
+      .related-category {
+         margin-top: 0; /* Remove extra top margin inherited from blog.css as 'gap' handles spacing */
+         width: 100%; /* Allow it to take full width in the column layout */
+      }
+        
+      h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] {
+          scroll-margin-top: 4rem;
+      }
     </style>
   </slot>
 
@@ -564,64 +616,5 @@ const fullSchema = JSON.stringify({
     </footer>
 
   </article>
-
-  <style>
-      /* Constrain article width on blog detail page, overriding blog.css width:100% */
-  .article-container {
-    max-width: 896px; /* Equivalent to Tailwind's max-w-4xl */
-    width: auto; /* Allow max-width to take effect */
-  }
-
-  /* Style the featured image container within the constrained container */
-  .blog-featured-image .responsive-image-container { /* Target the div from ResponsiveImage.astro */
-     border-radius: var(--radius-md, 8px);
-     box-shadow: var(--shadow-md, 0 5px 15px rgba(0,0,0,0.1));
-     margin-bottom: 1.5rem; /* Add space below image */
-     overflow: hidden; /* Ensure image respects border radius */
-  }
-
-  /* Reserve space for ToC to prevent CLS */
-  #toc-container {
-    min-height: 80px; 
-  }
-
-  /* --- NEW STYLES FOR FOOTER --- */
-
-  /* Override blog.css width/flex behavior for navigation within constrained container */
-  .post-navigation {
-    width: auto; /* Don't force 100% width from blog.css */
-    max-width: 100%; /* Ensure it doesn't overflow its parent */
-    display: flex; /* Keep flex, but change direction */
-    flex-direction: column; /* Stack items vertically */
-    align-items: flex-start; /* Align items to the start (left) */
-    gap: 1rem; /* Add space between stacked items (dates, tags, category) */
-  }
-
-  /* Adjust date container alignment */
-  .post-meta .meta-container {
-    justify-content: flex-start; /* Align dates to the start (left) instead of center */
-    width: 100%; /* Allow it to take full width in the column layout */
-  }
-
-  /* Adjust tags container */
-  .post-tags {
-     flex: none; /* Remove flex: 1 from blog.css */
-     width: 100%; /* Allow it to take full width in the column layout */
-  }
-
-  .post-tags .tags-container {
-    justify-content: flex-start; /* Align tags to the start */
-  }
-
-  /* Adjust category alignment/margin */
-  .related-category {
-     margin-top: 0; /* Remove extra top margin inherited from blog.css as 'gap' handles spacing */
-     width: 100%; /* Allow it to take full width in the column layout */
-  }
-    
-  h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] {
-      scroll-margin-top: 4rem;
-  }
-</style>
 
 </BaseLayout> 
