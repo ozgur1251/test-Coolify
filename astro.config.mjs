@@ -23,8 +23,26 @@ export default defineConfig({
   },
   vite: {
     build: {
-      cssCodeSplit: true, // CSS modüllerini sayfa başına böl
-      cssMinify: true // CSS'i minimize et
+      cssCodeSplit: true,
+      cssMinify: true,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('src/styles/base.css')) {
+              return 'base-styles';
+            }
+            if (id.includes('src/styles/blog.css')) {
+              return 'blog-styles';
+            }
+            if (id.includes('src/styles/navigation.css')) {
+              return 'nav-styles';
+            }
+            if (id.includes('src/styles/responsive-images.css')) {
+              return 'respimg-styles';
+            }
+          }
+        }
+      }
     }
   }
 });
