@@ -320,3 +320,47 @@
   .post-content {font-size: 0.95rem;}
   
 }
+
+/* İçerik Listesi (Table of Contents) Stilleri */
+.toc-title {
+  font-size: 1.3em; /* Örnek boyut */
+  font-weight: bold;
+  margin-top: 1.5rem; /* Üst boşluk */
+  margin-bottom: 0.8rem;
+  color: var(--color-secondary, #333); /* Başlık rengi */
+  /* İstediğiniz diğer stiller */
+}
+
+.toc-list {
+  list-style: none; /* Madde işaretlerini kaldır */
+  padding-left: 0; /* Sol girintiyi kaldır */
+  margin-bottom: 1.5rem; /* Alt boşluk */
+  border: 1px solid var(--color-border, #eee); /* Çerçeve */
+  padding: 1rem; /* İç boşluk */
+  border-radius: var(--radius-sm, 4px); /* Köşe yuvarlatma */
+  background-color: var(--color-grey-light, #f9f9f9); /* Arka plan */
+}
+
+.toc-list li {
+  margin-bottom: 0.5rem;
+}
+
+.toc-list li:last-child {
+  margin-bottom: 0;
+}
+
+.toc-link {
+  color: var(--color-primary, #0066cc); /* Link rengi */
+  text-decoration: none;
+  transition: color var(--transition, 0.2s ease);
+}
+
+.toc-link:hover {
+  color: var(--color-secondary, #004c99); /* Hover rengi */
+  text-decoration: underline;
+}
+
+/* SSS Bölümü Stilleri (Eğer daha önce yoksa ekleyin veya güncelleyin) */
+.faq-section {
+  margin-top: 2rem;
+}

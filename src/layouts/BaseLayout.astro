@@ -90,36 +90,147 @@ const googleSiteVerification = import.meta.env.GOOGLE_SITE_VERIFICATION;
 		<!-- Kritik CSS doğrudan yerleştirilmiş olarak kalacak -->
 		<style is:inline>
 			/* Kritik CSS - Sayfanın ilk yüklenmesinde gerekli temel CSS */
-			/* Temel değişkenler */
+			/* Temel değişkenler (Mevcutları koru ve gerekirse ekle) */
 			:root {
 				--color-primary: #0066cc;
 				--color-primary-light: #e6f0fa;
+				--color-secondary: #4a4ce2; /* Örnek ikincil renk */
 				--color-text: #333;
+				--color-text-light: #666; /* Açık metin rengi */
 				--color-background: #fff;
+				--color-border: #eee; /* Kenarlık rengi */
+				--color-grey-light: #f8f8f8; /* Açık gri */
+				--radius-sm: 4px; /* Küçük köşe yuvarlatma */
+				--transition: 0.2s ease; /* Geçiş süresi */
 			}
 
 			/* Temel sıfırlama ve görünüm */
 			body {
 				margin: 0;
-				font-family: Arial, sans-serif;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; /* Daha modern font stack */
 				line-height: 1.6;
 				color: var(--color-text);
 				background: var(--color-background);
-				overflow-x: hidden;
+				overflow-x: hidden; /* Yatay kaydırmayı engelle */
+				-webkit-font-smoothing: antialiased; /* Font yumuşatma */
+				-moz-osx-font-smoothing: grayscale;
 			}
 
+			*, *::before, *::after {
+				box-sizing: border-box; /* Daha tutarlı boyutlandırma */
+			}
 
-			/* Temel yerleşim */
+			/* ---- YENİ EKLENEN KRİTİK STİLLER ---- */
+
+			/* Temel Yerleşim */
 			.site-header, main, footer {
 				width: 100%;
+				display: block; /* block olduğundan emin ol */
 			}
 
-			/* Tepkisel görünüm için temel düzen */
+			/* Header Stilleri (navigation.css ve base.css'den temel alınarak) */
+			.site-header {
+				/* background-color: var(--color-background); Belki beyaz kalmalı? */
+				padding: 0.5rem 0; /* Daha ince header */
+				border-bottom: 1px solid var(--color-border);
+			}
+			.header-container {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 0 1rem;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				min-height: 50px; /* Minimum yükseklik */
+			}
+			.page-title { /* BaseLayout'taki span */
+				font-size: 1.1em;
+				font-weight: 600; /* Biraz daha ince */
+				color: var(--color-primary);
+			}
+			/* Logo vb. varsa buraya eklenebilir */
+
+
+			/* Navigasyon Stilleri (navigation.css'den temel alınarak) */
+			/* Navigation.astro'nun iç yapısına bağlıdır! */
+			nav { /* Navigation.astro'daki ana eleman varsayılarak */
+				background-color: var(--color-grey-light);
+				border-bottom: 1px solid var(--color-border);
+			}
+			nav ul { /* Veya .nav-list vb. */
+				list-style: none;
+				padding: 0;
+				margin: 0 auto;
+				max-width: 1200px;
+				display: flex;
+				justify-content: center; /* Veya sola dayalı vs. */
+				padding: 0.5rem 1rem; /* İç boşluklar */
+				flex-wrap: wrap; /* Mobilde sığmazsa alta atsın */
+			}
+			nav ul li {
+				margin: 0.25rem 0.5rem; /* Dikey ve yatay boşluk */
+			}
+			nav ul li a {
+				text-decoration: none;
+				color: var(--color-primary);
+				font-weight: 500; /* Orta kalınlık */
+				padding: 0.25rem 0.5rem;
+				border-radius: var(--radius-sm);
+				/* Hover efekti kritik olmayabilir, dış CSS'e bırakılabilir */
+			}
+
+
+			/* Ana İçerik Alanı Stilleri */
+			main {
+				display: block;
+				padding: 1.5rem 1rem; /* Üst/alt boşluğu artır */
+				margin: 0 auto; /* Üst/alt margin'i kaldır, padding yeterli */
+			}
+			main.blog-detail-page {
+				max-width: 800px;
+			}
+			main.wide-page {
+				max-width: 1200px;
+			}
+
+			/* Blog içeriği için çok temel stiller (dış CSS yüklenene kadar) */
+			.markdown-content h1, .markdown-content h2, .markdown-content h3 {
+				margin-top: 1.5em;
+				margin-bottom: 0.8em;
+				line-height: 1.3;
+				font-weight: 600;
+			}
+			.markdown-content p { margin-bottom: 1em; }
+			.markdown-content a { color: var(--color-primary); }
+
+
+			/* Footer Stilleri */
+			.standard-footer {
+				text-align: center;
+				padding: 1.5rem 1rem;
+				margin-top: 2rem;
+				border-top: 1px solid var(--color-border);
+				font-size: 0.9em;
+				color: var(--color-text-light);
+			}
+
+
+			/* Mobil için Temel Tepkisel Ayarlar */
 			@media (max-width: 768px) {
 				body {
-					font-size: 16px;
+					font-size: 16px; /* Standart mobil font boyutu */
 				}
+				.header-container, main, nav ul { /* nav ul kapsayıcısı değilse düzeltilmeli */
+					padding-left: 0.75rem; /* Mobilde biraz daha az boşluk */
+					padding-right: 0.75rem;
+				}
+				/* Mobilde navigasyon gizlenip hamburger menü gösterilecekse, */
+				/* ilgili temel stiller buraya eklenebilir. */
+				/* Örn: nav ul { display: none; } */
 			}
+
+			/* ---- YENİ EKLENEN KRİTİK STİLLER SONU ---- */
+
 		</style>
 		
 		<slot name="head" />
