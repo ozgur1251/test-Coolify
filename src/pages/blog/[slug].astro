@@ -482,6 +482,7 @@ const fullSchema = JSON.stringify({
             width={1200}
             height={800}
             lazy={false}
+            sizes="(max-width: 896px) 100vw, 896px"
           />
         </div>
       )}
@@ -577,7 +578,6 @@ const fullSchema = JSON.stringify({
      box-shadow: var(--shadow-md, 0 5px 15px rgba(0,0,0,0.1));
      margin-bottom: 1.5rem; /* Add space below image */
      overflow: hidden; /* Ensure image respects border radius */
-     width: 100%; /* Ensure the container takes full width */
   }
 
   /* Reserve space for ToC to prevent CLS */
