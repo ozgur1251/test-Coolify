@@ -113,6 +113,17 @@ const googleSiteVerification = import.meta.env.GOOGLE_SITE_VERIFICATION;
         line-height: 1.3;
         font-weight: 600;
       }
+      
+      /* === Minimal Meta Container Stilleri === */
+      .blog-detail-page .meta-container {
+        display: flex; /* Temel hizalama */
+        flex-wrap: wrap; /* Taşmayı engelle */
+        gap: 0.5rem 1rem; /* Öğeler arası temel boşluk */
+        font-size: 0.9em; /* Biraz daha küçük font */
+        margin-bottom: 1rem; /* Meta alanı altı boşluk */
+        /* Renkler, arka planlar vb. dış CSS'ten gelecek */
+      }
+      
       @media (max-width: 768px) {
         main.blog-detail-page {
           padding-left: 0.75rem;
@@ -121,6 +132,10 @@ const googleSiteVerification = import.meta.env.GOOGLE_SITE_VERIFICATION;
         .blog-detail-page h1.post-title {
           font-size: 1.6em;
           line-height: 1.25;
+        }
+        .blog-detail-page .meta-container { /* Mobil için meta stilleri */
+           font-size: 0.85em; /* Mobilde daha küçük font */
+           gap: 0.25rem 0.75rem; /* Mobilde daha dar boşluk */
         }
       }
     </style>
