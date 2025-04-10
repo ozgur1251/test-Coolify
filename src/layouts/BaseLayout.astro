@@ -3,6 +3,8 @@
 import Navigation from '../components/Navigation.astro';
 // CSS import - build sırasında işlenecek
 import '../styles/base.css'; // Bu dosya Astro tarafından bundle edilecek
+import '../styles/blog.css';
+import '../styles/responsive-images.css';
 
 const { 
 	pageTitle, 
@@ -119,12 +121,6 @@ const googleSiteVerification = import.meta.env.GOOGLE_SITE_VERIFICATION;
 				}
 			}
 		</style>
-		
-		<!-- Kritik olmayan CSS'i ertele -->
-		<link rel="preload" href="/styles/blog.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-		<noscript><link rel="stylesheet" href="/styles/blog.css"></noscript>
-		<link rel="preload" href="/styles/responsive-images.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-		<noscript><link rel="stylesheet" href="/styles/responsive-images.css"></noscript>
 		
 		<slot name="head" />
 	</head>
