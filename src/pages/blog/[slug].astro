@@ -411,7 +411,29 @@ const fullSchema = JSON.stringify({
     <script is:inline type="application/ld+json" set:html={fullSchema} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Defer loading ToC CSS -->
+
+    <!-- Critical ToC CSS (Inlined) -->
+    <style is:inline>
+      #toc-container { min-height: 80px; } /* Reserve space for CLS */
+      .toc-title {
+        font-size: 1.25rem; /* 20px */
+        font-weight: 600;
+        margin-bottom: 0.75rem; /* 12px */
+      }
+      .toc-list {
+        list-style: disc;
+        padding-left: 1.5em; /* 24px */
+        margin: 0;
+      }
+      .toc-list li {
+        margin-bottom: 0.5em; /* 8px */
+      }
+      .toc-list li a.toc-link {
+        display: block; /* Ensure links take block space */
+      }
+    </style>
+
+    <!-- Defer loading Non-Critical ToC CSS -->
     <link rel="preload" href="/styles/toc.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/styles/toc.css"></noscript>
   </slot>
