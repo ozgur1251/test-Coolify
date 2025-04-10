@@ -6,6 +6,7 @@ import ResponsiveImage from '../../components/ResponsiveImage.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import '../../styles/blog.css';
 import '../../styles/responsive-images.css';
+import '../../styles/toc.css';
 
 // Server-side rendering kullan (statik ön-render yerine)
 export const prerender = false;
@@ -542,10 +543,7 @@ const fullSchema = JSON.stringify({
       /* Constrain article width on blog detail page, overriding blog.css width:100% */
   .article-container {
     max-width: 896px; /* Equivalent to Tailwind's max-w-4xl */
-    //padding-left: 1rem; /* Add horizontal padding */
-    //padding-right: 1rem;
     width: auto; /* Allow max-width to take effect */
-     /* margin-left/right: auto is already applied in blog.css, no need to repeat */
   }
 
   /* Style the featured image within the constrained container */
@@ -595,32 +593,6 @@ const fullSchema = JSON.stringify({
      margin-top: 0; /* Remove extra top margin inherited from blog.css as 'gap' handles spacing */
      width: 100%; /* Allow it to take full width in the column layout */
   }
-  .toc-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      color: var(--color-text-default);
-    }
-  .toc-list {
-      list-style: disc;
-      padding-left: 1.5em;
-      margin: 0;
-    }
-  .toc-list li {
-      margin-bottom: 0.5em;
-    }
-  .toc-list li a.toc-link {
-      text-decoration: none;
-      color: var(--color-primary, #007bff);
-      transition: color 0.2s ease;
-    }
-  .toc-list li a.toc-link:hover,
-  .toc-list li a.toc-link:focus {
-      text-decoration: underline;
-      color: var(--color-secondary, #0056b3);
-    }
-  .toc-list li.ml-4 { list-style-type: circle; margin-left: 1em; }
-  .toc-list li.ml-8 { list-style-type: square; margin-left: 2em; }
     
   h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] {
       scroll-margin-top: 4rem;
