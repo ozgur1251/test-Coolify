@@ -87,28 +87,17 @@ const googleSiteVerification = import.meta.env.GOOGLE_SITE_VERIFICATION;
 		<!-- Yapısal veri ekle -->
 		{structuredData && <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
 		
-		<!-- Kritik CSS doğrudan yerleştirilmiş olarak kalacak -->
-		<style is:inline>
-			/* Kritik CSS - Sayfanın ilk yüklenmesinde gerekli temel CSS */
-			/* Temel değişkenler */
-			:root {
-				--color-primary: #0066cc;
-				--color-primary-light: #e6f0fa;
-				--color-text: #333;
-				--color-background: #fff;
-			}
-
-			/* Temel sıfırlama ve görünüm */
-			body {
-				margin: 0;
-				font-family: Arial, sans-serif;
-				line-height: 1.6;
-				color: var(--color-text);
-				background: var(--color-background);
-				overflow-x: hidden;
-			}
-
-      /* === MINIMAL KRITIK BLOG DETAY STilleri === */
+    {/* Minimal Kritik Blog Detay Stilleri - SSR dostu */}
+    <style is:inline>
+      /* Temel body stilleri */
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif; /* Fontu dış CSS belirleyecek, bu fallback */
+        line-height: 1.6;
+        /* Renkler/arkaplan dış CSS'ten gelecek */
+        overflow-x: hidden;
+      }
+      /* Blog Detay Sayfası için çok temel layout */
       main.blog-detail-page {
         max-width: 800px;
         margin-left: auto;
@@ -117,10 +106,6 @@ const googleSiteVerification = import.meta.env.GOOGLE_SITE_VERIFICATION;
         padding-right: 1rem;
         display: block;
       }
-      .blog-detail-page .post-header {
-        padding-bottom: 0.5rem;
-        margin-bottom: 1rem;
-      }
       .blog-detail-page h1.post-title {
         margin-top: 0;
         margin-bottom: 0.5rem;
@@ -128,62 +113,18 @@ const googleSiteVerification = import.meta.env.GOOGLE_SITE_VERIFICATION;
         line-height: 1.3;
         font-weight: 600;
       }
-      .blog-detail-page .markdown-content {
-          width: 100%;
-      }
-      /* @media (max-width: 768px) Bloğu aşağıya taşındı ve birleştirildi */
-      /* === MINIMAL KRITIK BLOG DETAY STilleri SONU === */
-      
-      /* === ENHANCED MINIMAL KRITIK BLOG DETAY STilleri === */
-
-      /* Container padding from [slug].astro (adjusts space inside main) */
-      .blog-detail-page .article-container {
-        padding-left: 1rem; /* Desktop */
-        padding-right: 1rem;
-        /* margin-top/bottom can wait for external CSS */
-      }
-
-      /* Meta container basic layout & spacing from blog.css & [slug].astro */
-      .blog-detail-page .meta-container {
-        display: flex; /* Basic alignment */
-        flex-wrap: wrap; /* Prevent overflow */
-        align-items: center;
-        gap: 0.5rem 1rem; /* Basic spacing */
-        font-size: 0.9em; /* Smaller text */
-        margin-bottom: 1rem; /* Space below meta */
-        /* color, category background etc. can wait */
-      }
-
-      /* Basic paragraph spacing from blog.css */
-      .blog-detail-page .markdown-content p {
-        margin-bottom: 1.25rem; /* Consistent spacing */
-        /* line-height is inherited */
-      }
-
-      /* Adjustments for mobile (Birleştirilmiş @media bloğu) */
       @media (max-width: 768px) {
         main.blog-detail-page {
           padding-left: 0.75rem;
-          padding-right: 0.75rem;
-        }
-        /* Container padding adjustment from [slug].astro */
-        .blog-detail-page .article-container {
-          padding-left: 0.75rem; /* Mobile */
           padding-right: 0.75rem;
         }
         .blog-detail-page h1.post-title {
           font-size: 1.6em;
           line-height: 1.25;
         }
-        /* Adjust meta font size for mobile */
-        .blog-detail-page .meta-container {
-          font-size: 0.85em; /* Smaller font on mobile */
-          gap: 0.25rem 0.75rem; /* Tighter gap on mobile */
-        }
       }
-      /* === ENHANCED MINIMAL KRITIK BLOG DETAY STilleri SONU === */
-		</style>
-		
+    </style>
+
 		<slot name="head" />
 	</head>
 	<body>
